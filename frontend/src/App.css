@@ -32,3 +32,37 @@
         transform: rotate(360deg);
     }
 }
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Selection color */
+::selection {
+    background: rgba(245, 158, 11, 0.3);
+    color: #fff;
+}
+
+/* Focus ring color override */
+*:focus-visible {
+    outline-color: #f59e0b;
+}
