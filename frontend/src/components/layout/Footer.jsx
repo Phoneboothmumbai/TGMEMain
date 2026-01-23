@@ -1,0 +1,119 @@
+import React from 'react';
+import { companyInfo, contactInfo, services } from '../../data/mock';
+import { Mail, Phone, MapPin, ArrowUpRight } from 'lucide-react';
+
+export const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  const quickLinks = [
+    { label: 'Services', href: '#services' },
+    { label: 'Why Us', href: '#why-us' },
+    { label: 'Clients', href: '#clients' },
+    { label: 'Philosophy', href: '#philosophy' },
+    { label: 'Contact', href: '#contact' }
+  ];
+
+  const scrollToSection = (href) => {
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <footer className="bg-slate-950 border-t border-slate-800/50">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Brand Column */}
+          <div className="lg:col-span-1">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-slate-900 text-lg">
+                TG
+              </div>
+              <div className="flex flex-col">
+                <span className="text-white font-semibold text-lg">{companyInfo.shortName}</span>
+                <span className="text-slate-500 text-xs">The Good Men Enterprise</span>
+              </div>
+            </div>
+            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              {companyInfo.tagline}
+            </p>
+            <div className="flex flex-col gap-3 text-sm">
+              <a href={`mailto:${contactInfo.email}`} className="text-slate-400 hover:text-amber-400 transition-colors flex items-center gap-2">
+                <Mail size={16} />
+                {contactInfo.email}
+              </a>
+              <a href={`tel:${contactInfo.phone}`} className="text-slate-400 hover:text-amber-400 transition-colors flex items-center gap-2">
+                <Phone size={16} />
+                {contactInfo.phone}
+              </a>
+              <span className="text-slate-400 flex items-center gap-2">
+                <MapPin size={16} />
+                {contactInfo.address}
+              </span>
+            </div>
+          </div>
+
+          {/* Services Column */}
+          <div>
+            <h4 className="text-white font-semibold mb-6">Services</h4>
+            <ul className="space-y-3">
+              {services.slice(0, 6).map((service) => (
+                <li key={service.id}>
+                  <button
+                    onClick={() => scrollToSection('#services')}
+                    className="text-slate-400 hover:text-amber-400 transition-colors text-sm text-left"
+                  >
+                    {service.shortTitle}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Quick Links Column */}
+          <div>
+            <h4 className="text-white font-semibold mb-6">Quick Links</h4>
+            <ul className="space-y-3">
+              {quickLinks.map((link) => (
+                <li key={link.label}>
+                  <button
+                    onClick={() => scrollToSection(link.href)}
+                    className="text-slate-400 hover:text-amber-400 transition-colors text-sm flex items-center gap-1 group"
+                  >
+                    {link.label}
+                    <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* CTA Column */}
+          <div>
+            <h4 className="text-white font-semibold mb-6">Ready to Start?</h4>
+            <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+              Let's discuss how TGME can help build your technology foundation.
+            </p>
+            <button
+              onClick={() => scrollToSection('#contact')}
+              className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25"
+            >
+              Get in Touch
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-slate-500 text-sm">
+            © {currentYear} The Good Men Enterprise. All rights reserved.
+          </p>
+          <p className="text-slate-600 text-xs">
+            Making technology dependable again.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
