@@ -218,10 +218,12 @@ export default function ServicePage() {
                   <div className={`w-10 h-10 rounded-lg ${colors.bg} flex items-center justify-center`}>
                     <Users className={`w-5 h-5 ${colors.text}`} />
                   </div>
-                  <h2 className="text-2xl font-bold text-white">Who This Is For</h2>
+                  <h2 className="text-2xl font-bold text-white">
+                    {service.whenMakesSense ? 'When This Makes Sense' : 'Who This Is For'}
+                  </h2>
                 </div>
                 <ul className="space-y-4">
-                  {service.whoIsFor.map((item, idx) => (
+                  {(service.whenMakesSense || service.whoIsFor).map((item, idx) => (
                     <li key={idx} className="flex items-start gap-3">
                       <CheckCircle2 className={`w-5 h-5 ${colors.text} mt-0.5 flex-shrink-0`} />
                       <span className="text-slate-300 text-lg">{item}</span>
@@ -233,7 +235,85 @@ export default function ServicePage() {
           </div>
         </section>
 
-        {/* Problems We Solve / Why It Matters */}
+        {/* Approach Steps - for webapps service */}
+        {service.approachSteps && (
+          <section className="py-20 bg-slate-950">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <div className={`w-10 h-10 rounded-lg ${colors.bg} flex items-center justify-center`}>
+                    <Lightbulb className={`w-5 h-5 ${colors.text}`} />
+                  </div>
+                  <h2 className="text-2xl font-bold text-white">How TGME Approaches Custom Builds</h2>
+                </div>
+                <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                  We don't start with code. We start with understanding the problem.
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {service.approachSteps.map((step, idx) => (
+                  <Card key={idx} className="bg-slate-800/30 border-slate-700/50">
+                    <CardContent className="p-6">
+                      <div className={`w-10 h-10 rounded-lg ${colors.bg} flex items-center justify-center mb-4`}>
+                        <span className={`text-lg font-bold ${colors.text}`}>{idx + 1}</span>
+                      </div>
+                      <p className="text-slate-300">{step}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* What We Don't Do - for webapps service */}
+        {service.whatWeDontDo && (
+          <section className="py-20 bg-slate-900">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8">
+              <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                      <X className="w-5 h-5 text-red-400" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white">What We Don't Do</h2>
+                  </div>
+                  <ul className="space-y-4">
+                    {service.whatWeDontDo.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <X className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                        <span className="text-slate-300 text-lg">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {service.useCases && (
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className={`w-10 h-10 rounded-lg ${colors.bg} flex items-center justify-center`}>
+                        <Target className={`w-5 h-5 ${colors.text}`} />
+                      </div>
+                      <h2 className="text-2xl font-bold text-white">Typical Use Cases</h2>
+                    </div>
+                    <ul className="space-y-4">
+                      {service.useCases.map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <CheckCircle2 className={`w-5 h-5 ${colors.text} mt-0.5 flex-shrink-0`} />
+                          <span className="text-slate-300 text-lg">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Problems We Solve / Why It Matters - skip for webapps as it has different sections */}
+        {!service.approachSteps && (
         <section className="py-20 bg-slate-950">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <div className="text-center mb-12">
@@ -261,6 +341,7 @@ export default function ServicePage() {
             </div>
           </div>
         </section>
+        )}
 
         {/* Approach Section */}
         <section className="py-20 bg-slate-900">
