@@ -35,7 +35,7 @@ export const Header = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-slate-950/95 backdrop-blur-md border-b border-slate-800/50 shadow-lg'
+          ? 'bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm'
           : 'bg-transparent'
       }`}
     >
@@ -43,12 +43,12 @@ export const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-slate-900 text-lg transition-transform group-hover:scale-105">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center font-bold text-white text-lg transition-transform group-hover:scale-105">
               TG
             </div>
             <div className="flex flex-col">
-              <span className="text-white font-semibold text-lg tracking-tight">{companyInfo.shortName}</span>
-              <span className="text-slate-400 text-xs hidden sm:block">The Good Men Enterprise</span>
+              <span className="text-slate-800 font-semibold text-lg tracking-tight">{companyInfo.shortName}</span>
+              <span className="text-slate-500 text-xs hidden sm:block">The Good Men Enterprise</span>
             </div>
           </a>
 
@@ -58,7 +58,7 @@ export const Header = () => {
               <button
                 key={link.label}
                 onClick={() => scrollToSection(link.href)}
-                className="text-slate-300 hover:text-amber-400 transition-colors duration-200 text-sm font-medium"
+                className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium"
               >
                 {link.label}
               </button>
@@ -69,7 +69,7 @@ export const Header = () => {
           <div className="hidden lg:flex items-center gap-4">
             <Button
               onClick={() => scrollToSection('#contact')}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold px-6 transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25"
+              className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25"
             >
               Get in Touch
             </Button>
@@ -78,7 +78,7 @@ export const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-slate-300 hover:text-white transition-colors"
+            className="lg:hidden p-2 text-slate-600 hover:text-slate-800 transition-colors"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -86,20 +86,20 @@ export const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-20 left-0 right-0 bg-slate-950/98 backdrop-blur-md border-b border-slate-800/50">
+          <div className="lg:hidden absolute top-20 left-0 right-0 bg-white/98 backdrop-blur-md border-b border-slate-200 shadow-lg">
             <nav className="flex flex-col p-6 gap-4">
               {navLinks.map((link) => (
                 <button
                   key={link.label}
                   onClick={() => scrollToSection(link.href)}
-                  className="text-slate-300 hover:text-amber-400 transition-colors duration-200 text-left py-2 text-lg"
+                  className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-2 text-lg"
                 >
                   {link.label}
                 </button>
               ))}
               <Button
                 onClick={() => scrollToSection('#contact')}
-                className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold mt-4"
+                className="bg-amber-500 hover:bg-amber-600 text-white font-semibold mt-4"
               >
                 Get in Touch
               </Button>
