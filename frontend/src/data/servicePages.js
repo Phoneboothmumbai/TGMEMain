@@ -183,6 +183,57 @@ export const servicePages = {
     ],
     approach: 'We believe good IT support should feel boring—because everything works.',
     result: 'Fewer disruptions, predictable support, and controlled IT operations.'
+  },
+  webapps: {
+    id: 'webapps',
+    title: 'Websites & Custom Web Applications',
+    tagline: 'Built for Your Business, Not From a Template',
+    description: 'Not every business problem has a ready-made software solution. TGME helps companies design and build custom websites and web applications tailored exactly to their workflow, operations, and growth plans. If what you need doesn\'t exist off-the-shelf — we build it.',
+    icon: 'Code',
+    color: 'cyan',
+    whatWeDo: [
+      'Business websites (corporate, service-based, solution-led)',
+      'Internal portals & dashboards',
+      'Custom web applications',
+      'Process automation tools',
+      'Admin panels & management systems',
+      'Integration with third-party tools and APIs'
+    ],
+    whenMakesSense: [
+      'You have a manual or broken process',
+      'Existing software doesn\'t fit your workflow',
+      'You\'re juggling Excel sheets, WhatsApp, and emails',
+      'You want control over your data and systems',
+      'You need something simple, specific, and reliable'
+    ],
+    whoIsFor: [
+      'Companies with unique workflow requirements',
+      'Businesses replacing manual processes',
+      'Organizations needing internal tools',
+      'Teams wanting control over their data'
+    ],
+    approachSteps: [
+      'Requirement discovery & process mapping',
+      'Feature scoping (what\'s needed vs what\'s noise)',
+      'UX-first design (simple, usable, practical)',
+      'Development & testing',
+      'Deployment & documentation',
+      'Ongoing support & enhancements (if required)'
+    ],
+    whatWeDontDo: [
+      'Over-engineered apps nobody uses',
+      'Buzzword-driven "AI for everything" builds',
+      'Bloated features that increase cost without value'
+    ],
+    useCases: [
+      'Asset & warranty management systems',
+      'Internal IT or operations dashboards',
+      'Customer portals',
+      'Workflow & approval systems',
+      'Custom tools to replace repetitive manual work'
+    ],
+    approach: 'We don\'t start with code. We start with understanding the problem. Then we build exactly what\'s needed — nothing more, nothing less.',
+    result: 'Software that fits your business instead of forcing your business to fit the software.'
   }
 };
 
