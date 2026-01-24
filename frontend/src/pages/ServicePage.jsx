@@ -7,12 +7,12 @@ import { Card, CardContent } from '../components/ui/card';
 import { Toaster } from '../components/ui/sonner';
 import { servicePages, serviceOrder } from '../data/servicePages';
 import {
-  Server, Shield, Laptop, Cloud, Package, Headphones,
-  ArrowLeft, ArrowRight, CheckCircle2, Target, Users, Wrench, Zap
+  Server, Shield, Laptop, Cloud, Package, Headphones, Code,
+  ArrowLeft, ArrowRight, CheckCircle2, Target, Users, Wrench, Zap, X, Lightbulb
 } from 'lucide-react';
 
 const iconMap = {
-  Server, Shield, Laptop, Cloud, Package, Headphones
+  Server, Shield, Laptop, Cloud, Package, Headphones, Code
 };
 
 const colorMap = {
@@ -51,6 +51,12 @@ const colorMap = {
     text: 'text-rose-400',
     border: 'border-rose-500/30',
     gradient: 'from-rose-500/20 to-transparent'
+  },
+  cyan: {
+    bg: 'bg-cyan-500/10',
+    text: 'text-cyan-400',
+    border: 'border-cyan-500/30',
+    gradient: 'from-cyan-500/20 to-transparent'
   }
 };
 
