@@ -59,7 +59,7 @@ html {
 /* Selection color */
 ::selection {
     background: rgba(245, 158, 11, 0.3);
-    color: #fff;
+    color: #1e293b;
 }
 
 /* Focus ring color override */
