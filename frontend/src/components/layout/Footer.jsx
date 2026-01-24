@@ -58,7 +58,7 @@ export const Footer = () => {
           <div>
             <h4 className="text-white font-semibold mb-6">Services</h4>
             <ul className="space-y-3">
-              {services.slice(0, 6).map((service) => (
+              {services.map((service) => (
                 <li key={service.id}>
                   <button
                     onClick={() => scrollToSection('#services')}
