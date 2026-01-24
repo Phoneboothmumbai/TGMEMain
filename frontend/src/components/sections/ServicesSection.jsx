@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '../ui/card';
 import { services } from '../../data/mock';
-import { Server, Shield, Laptop, Cloud, Package, Headphones, ArrowRight } from 'lucide-react';
+import { Server, Shield, Laptop, Cloud, Package, Headphones, Code, ArrowRight } from 'lucide-react';
 
 const iconMap = {
   Server,
@@ -10,7 +10,8 @@ const iconMap = {
   Laptop,
   Cloud,
   Package,
-  Headphones
+  Headphones,
+  Code
 };
 
 const serviceRoutes = {
@@ -19,7 +20,8 @@ const serviceRoutes = {
   3: 'devices',
   4: 'cloud',
   5: 'assets',
-  6: 'support'
+  6: 'support',
+  7: 'webapps'
 };
 
 export const ServicesSection = () => {
