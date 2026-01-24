@@ -186,4 +186,4 @@ export const servicePages = {
   }
 };
 
-export const serviceOrder = ['infrastructure', 'networking', 'devices', 'cloud', 'assets', 'support'];
+export const serviceOrder = ['infrastructure', 'networking', 'devices', 'cloud', 'assets', 'support', 'webapps'];
