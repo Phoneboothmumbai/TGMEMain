@@ -21,13 +21,13 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-slate-950 border-t border-slate-800/50">
+    <footer className="bg-slate-900 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-slate-900 text-lg">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center font-bold text-white text-lg">
                 TG
               </div>
               <div className="flex flex-col">
@@ -97,7 +97,7 @@ export const Footer = () => {
             </p>
             <button
               onClick={() => scrollToSection('#contact')}
-              className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25"
+              className="w-full bg-amber-500 hover:bg-amber-400 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25"
             >
               Get in Touch
             </button>
@@ -105,7 +105,7 @@ export const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="mt-16 pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-slate-500 text-sm">
             © {currentYear} The Good Men Enterprise. All rights reserved.
           </p>
