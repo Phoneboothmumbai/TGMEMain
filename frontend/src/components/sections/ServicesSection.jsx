@@ -28,17 +28,17 @@ export const ServicesSection = () => {
   const [hoveredId, setHoveredId] = useState(null);
 
   return (
-    <section id="services" className="py-24 lg:py-32 bg-slate-900">
+    <section id="services" className="py-24 lg:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span className="text-amber-400 font-medium text-sm tracking-wider uppercase mb-4 block">
+          <span className="text-amber-600 font-medium text-sm tracking-wider uppercase mb-4 block">
             What We Do
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-6">
             End-to-End Technology Solutions
           </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
             We don't just sell products. We design solutions, source the right components, 
             deploy them correctly, and support them long after installation.
           </p>
@@ -60,25 +60,25 @@ export const ServicesSection = () => {
                 onMouseLeave={() => setHoveredId(null)}
               >
                 <Card
-                  className={`h-full bg-slate-800/50 border-slate-700/50 backdrop-blur-sm transition-all duration-300 cursor-pointer group overflow-hidden ${
-                    isHovered ? 'bg-slate-800 border-amber-500/30 shadow-xl shadow-amber-500/5 -translate-y-1' : 'hover:border-slate-600'
+                  className={`h-full bg-white border-slate-200 transition-all duration-300 cursor-pointer group overflow-hidden ${
+                    isHovered ? 'border-amber-500/50 shadow-xl shadow-amber-500/10 -translate-y-1' : 'hover:border-slate-300 hover:shadow-lg'
                   }`}
                 >
                   <CardContent className="p-8">
                     {/* Icon */}
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-all duration-300 ${
-                      isHovered ? 'bg-amber-500 text-slate-900' : 'bg-slate-700/50 text-amber-400'
+                      isHovered ? 'bg-amber-500 text-white' : 'bg-amber-50 text-amber-600'
                     }`}>
                       <IconComponent size={28} />
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-amber-400 transition-colors">
+                    <h3 className="text-xl font-semibold text-slate-800 mb-3 group-hover:text-amber-600 transition-colors">
                       {service.shortTitle}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                    <p className="text-slate-600 text-sm leading-relaxed mb-6">
                       {service.description}
                     </p>
 
@@ -86,15 +86,15 @@ export const ServicesSection = () => {
                     <ul className="space-y-2">
                       {service.features.map((feature, idx) => (
                         <li key={idx} className="flex items-center gap-2 text-sm text-slate-500">
-                          <span className="w-1.5 h-1.5 bg-amber-500/60 rounded-full" />
+                          <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
                           {feature}
                         </li>
                       ))}
                     </ul>
 
                     {/* Learn More Link */}
-                    <div className={`mt-6 pt-6 border-t border-slate-700/50 flex items-center gap-2 text-sm font-medium transition-all duration-300 ${
-                      isHovered ? 'text-amber-400' : 'text-slate-500'
+                    <div className={`mt-6 pt-6 border-t border-slate-100 flex items-center gap-2 text-sm font-medium transition-all duration-300 ${
+                      isHovered ? 'text-amber-600' : 'text-slate-400'
                     }`}>
                       <span>Learn more</span>
                       <ArrowRight size={16} className={`transition-transform duration-300 ${isHovered ? 'translate-x-1' : ''}`} />
