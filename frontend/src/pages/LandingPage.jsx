@@ -11,7 +11,7 @@ import { Toaster } from '../components/ui/sonner';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-white">
       <Toaster position="top-right" richColors />
       <Header />
       <main>
