@@ -56,6 +56,14 @@ export const services = [
     description: "Reliable ongoing support and maintenance to keep your systems running without interruption.",
     icon: "Headphones",
     features: ["24/7 support", "SLA management", "Proactive maintenance", "Issue resolution"]
+  },
+  {
+    id: 7,
+    title: "Websites & Custom Web Applications",
+    shortTitle: "Custom Web Apps",
+    description: "Custom-built websites and web applications tailored to your workflow, operations, and business requirements.",
+    icon: "Code",
+    features: ["Business websites", "Internal portals", "Process automation", "Custom dashboards"]
   }
 ];
 
