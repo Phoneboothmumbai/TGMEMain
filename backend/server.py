@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -10,6 +11,8 @@ from typing import List
 import uuid
 from datetime import datetime, timezone
 
+from kb_routes import kb_router, set_database
+
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -19,8 +22,18 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Set database for KB routes
+set_database(db)
+
 # Create the main app without a prefix
 app = FastAPI()
+
+# Create uploads directory
+uploads_dir = ROOT_DIR / "uploads" / "kb"
+uploads_dir.mkdir(parents=True, exist_ok=True)
+
+# Mount static files for uploads
+app.mount("/api/kb/uploads", StaticFiles(directory=str(uploads_dir)), name="kb_uploads")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
