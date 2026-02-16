@@ -135,7 +135,7 @@ async def get_all_categories(admin = Depends(get_current_admin)):
         subcat_count = await db.kb_subcategories.count_documents({"main_category_id": cat["id"]})
         article_count = await db.kb_articles.count_documents({
             "subcategory_id": {"$in": [
-                s["id"] for s in await db.kb_subcategories.find(
+                s.get("_id", s.get("id")) for s in await db.kb_subcategories.find(
                     {"main_category_id": cat["id"]}, {"id": 1, "_id": 1}
                 ).to_list(1000)
             ]}
