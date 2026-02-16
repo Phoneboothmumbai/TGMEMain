@@ -41,8 +41,8 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/services/:serviceId" element={<ServicePage />} />
       <Route path="/kb" element={<KnowledgeBasePage />} />
-      <Route path="/kb/:categoryId" element={<KBCategoryPage />} />
-      <Route path="/kb/:categoryId/:articleId" element={<KBArticlePage />} />
+      <Route path="/kb/category/:categorySlug" element={<KBCategoryPage />} />
+      <Route path="/kb/article/:articleSlug" element={<KBArticlePage />} />
 
       {/* Admin Routes */}
       <Route path="/kb/admin/login" element={<KBLoginPage />} />
