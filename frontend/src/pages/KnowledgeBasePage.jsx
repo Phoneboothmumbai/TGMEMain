@@ -1,46 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Card, CardContent } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Toaster } from '../components/ui/sonner';
-import { kbCategories, searchArticles } from '../data/knowledgeBase';
+import axios from 'axios';
 import {
-  Search, Apple, Mail, IndianRupee, Info, Cpu, Wifi,
-  FileText, Wrench, Scale, Download, BookOpen, ChevronRight, ArrowRight
+  Search, Folder, ChevronRight, ArrowRight, BookOpen, Loader2
 } from 'lucide-react';
 
-const iconMap = {
-  Apple,
-  Mail,
-  IndianRupee,
-  Info,
-  Cpu,
-  Wifi,
-  FileText,
-  Wrench,
-  Scale,
-  Download,
-  BookOpen
-};
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function KnowledgeBasePage() {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searching, setSearching] = useState(false);
 
-  const handleSearch = (query) => {
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/kb/public/categories`);
+      setCategories(response.data);
+    } catch (error) {
+      console.error('Failed to load categories:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.trim().length > 2) {
       setIsSearching(true);
-      const results = searchArticles(query);
-      setSearchResults(results);
+      setSearching(true);
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/kb/public/search`, {
+          params: { q: query }
+        });
+        setSearchResults(response.data);
+      } catch (error) {
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
     } else {
       setIsSearching(false);
       setSearchResults([]);
     }
   };
+
+  // Get total article count
+  const totalArticles = categories.reduce((sum, cat) => sum + (cat.article_count || 0), 0);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -75,22 +92,28 @@ export default function KnowledgeBasePage() {
               <div className="mt-4 text-left max-w-2xl mx-auto">
                 <Card className="bg-white border-slate-200 shadow-lg">
                   <CardContent className="p-4">
-                    {searchResults.length > 0 ? (
+                    {searching ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+                      </div>
+                    ) : searchResults.length > 0 ? (
                       <>
                         <p className="text-sm text-slate-500 mb-3">
                           Found {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
                         </p>
                         <ul className="space-y-2">
                           {searchResults.slice(0, 5).map((article) => (
-                            <li key={`${article.categoryId}-${article.id}`}>
+                            <li key={article.id}>
                               <Link
-                                to={`/kb/${article.categoryId}/${article.id}`}
+                                to={`/kb/article/${article.slug}`}
                                 className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors"
                               >
                                 <ChevronRight className="w-4 h-4 text-amber-500 mt-1 flex-shrink-0" />
                                 <div>
                                   <p className="font-medium text-slate-800">{article.title}</p>
-                                  <p className="text-sm text-slate-500">{article.categoryTitle}</p>
+                                  <p className="text-sm text-slate-500">
+                                    {article.main_category_name} → {article.subcategory_name}
+                                  </p>
                                 </div>
                               </Link>
                             </li>
@@ -119,79 +142,70 @@ export default function KnowledgeBasePage() {
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-slate-800 mb-8">Browse by Category</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {kbCategories.map((category) => {
-                const IconComponent = iconMap[category.icon] || FileText;
-                return (
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+              </div>
+            ) : categories.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <Folder className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                  <p className="text-slate-500">No categories available yet.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categories.map((category) => (
                   <Link
                     key={category.id}
-                    to={`/kb/${category.id}`}
+                    to={`/kb/category/${category.slug}`}
                     className="block group"
                   >
                     <Card className="h-full bg-white border-slate-200 transition-all duration-300 hover:shadow-lg hover:border-amber-500/30 hover:-translate-y-1">
                       <CardContent className="p-6">
                         <div className="flex items-start gap-4">
                           <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                            <IconComponent className="w-6 h-6 text-amber-600" />
+                            <Folder className="w-6 h-6 text-amber-600" />
                           </div>
                           <div className="flex-1">
                             <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-amber-600 transition-colors">
-                              {category.title}
+                              {category.name}
                             </h3>
                             <p className="text-sm text-slate-500 mb-3">
                               {category.description}
                             </p>
                             <span className="text-xs text-amber-600 font-medium">
-                              {category.articleCount} article{category.articleCount !== 1 ? 's' : ''}
+                              {category.article_count || 0} article{category.article_count !== 1 ? 's' : ''}
                             </span>
+                            {category.subcategories && category.subcategories.length > 0 && (
+                              <div className="mt-3 pt-3 border-t border-slate-100">
+                                <p className="text-xs text-slate-400 mb-2">{category.subcategories.length} subcategories:</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {category.subcategories.slice(0, 3).map(sub => (
+                                    <span key={sub.id} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
+                                      {sub.name}
+                                    </span>
+                                  ))}
+                                  {category.subcategories.length > 3 && (
+                                    <span className="text-xs text-slate-400">+{category.subcategories.length - 3} more</span>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-amber-500 group-hover:translate-x-1 transition-all" />
                         </div>
                       </CardContent>
                     </Card>
                   </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Popular Articles */}
-        <section className="py-16 lg:py-24 bg-white border-t border-slate-200">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-8">Popular Articles</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {kbCategories.slice(0, 4).flatMap(cat => 
-                cat.articles.slice(0, 1).map(article => ({
-                  ...article,
-                  categoryId: cat.id,
-                  categoryTitle: cat.title
-                }))
-              ).map((article) => (
-                <Link
-                  key={`${article.categoryId}-${article.id}`}
-                  to={`/kb/${article.categoryId}/${article.id}`}
-                  className="flex items-start gap-4 p-4 rounded-xl border border-slate-200 hover:border-amber-500/30 hover:bg-slate-50 transition-all group"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
-                    <BookOpen className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-slate-800 group-hover:text-amber-600 transition-colors">
-                      {article.title}
-                    </h3>
-                    <p className="text-sm text-slate-500 mt-1">{article.excerpt}</p>
-                    <p className="text-xs text-amber-600 mt-2">{article.categoryTitle}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 bg-slate-50 border-t border-slate-200">
+        <section className="py-16 bg-white border-t border-slate-200">
           <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
             <h2 className="text-2xl font-bold text-slate-800 mb-4">
               Can't find what you're looking for?
