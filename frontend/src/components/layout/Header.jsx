@@ -18,12 +18,15 @@ export const Header = () => {
   const navLinks = [
     { label: 'Services', href: '#services' },
     { label: 'Why Us', href: '#why-us' },
-    { label: 'Clients', href: '#clients' },
-    { label: 'Philosophy', href: '#philosophy' },
+    { label: 'Knowledge Base', href: '/kb', isPage: true },
     { label: 'Contact', href: '#contact' }
   ];
 
   const scrollToSection = (href) => {
+    if (href.startsWith('/')) {
+      window.location.href = href;
+      return;
+    }
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
