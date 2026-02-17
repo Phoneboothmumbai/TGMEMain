@@ -191,6 +191,12 @@ export const servicePages = {
       'Affordable Pricing',
       '30-Day Money-Back Guarantee'
     ],
+    problemsWeSolve: [
+      'Reliability over hype',
+      'Security over shortcuts',
+      'Long-term manageability',
+      'Expert local support'
+    ],
     approach: 'We don\'t just set it up—we ensure your team actually uses it efficiently. With Hosting Bay\'s infrastructure and TGME\'s implementation expertise, you get the best of both worlds.',
     result: 'A cloud environment that supports growth, not friction.',
     cta: {
