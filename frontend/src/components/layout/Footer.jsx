@@ -74,18 +74,18 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Services Column */}
+          {/* Solutions Column */}
           <div>
-            <h4 className="text-white font-semibold mb-6">Services</h4>
+            <h4 className="text-white font-semibold mb-6">Solutions</h4>
             <ul className="space-y-3">
-              {services.map((service) => (
-                <li key={service.id}>
-                  <button
-                    onClick={() => scrollToSection('#services')}
+              {solutions.map((solution) => (
+                <li key={solution.href}>
+                  <a
+                    href={solution.href}
                     className="text-slate-400 hover:text-amber-400 transition-colors text-sm text-left"
                   >
-                    {service.shortTitle}
-                  </button>
+                    {solution.label}
+                  </a>
                 </li>
               ))}
             </ul>
