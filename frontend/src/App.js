@@ -43,6 +43,9 @@ function AppRoutes() {
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/services/:serviceId" element={<ServicePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/how-we-work" element={<HowWeWorkPage />} />
+      <Route path="/case-studies" element={<CaseStudiesPage />} />
       <Route path="/kb" element={<KnowledgeBasePage />} />
       <Route path="/kb/category/:categorySlug" element={<KBCategoryPage />} />
       <Route path="/kb/article/:articleSlug" element={<KBArticlePage />} />
