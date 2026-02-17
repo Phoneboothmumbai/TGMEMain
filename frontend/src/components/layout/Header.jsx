@@ -72,7 +72,7 @@ export const Header = () => {
             {navLinks.map((link) => (
               <button
                 key={link.label}
-                onClick={() => scrollToSection(link.href)}
+                onClick={() => handleNavClick(link.href)}
                 className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium"
               >
                 {link.label}
