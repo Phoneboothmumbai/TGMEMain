@@ -114,6 +114,15 @@ export const Header = () => {
                       </div>
                     )}
                   </div>
+                ) : link.external ? (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium"
+                  >
+                    {link.label}
+                  </a>
                 ) : (
                   <button
                     onClick={() => handleNavClick(link.href)}
