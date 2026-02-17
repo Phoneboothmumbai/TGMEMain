@@ -83,7 +83,7 @@ export const Header = () => {
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-4">
             <Button
-              onClick={() => scrollToSection('#contact')}
+              onClick={() => handleNavClick('/#contact')}
               className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25"
             >
               Get in Touch
