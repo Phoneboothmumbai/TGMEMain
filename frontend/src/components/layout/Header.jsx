@@ -16,22 +16,34 @@ export const Header = () => {
   }, []);
 
   const navLinks = [
-    { label: 'Services', href: '#services' },
-    { label: 'Why Us', href: '#why-us' },
-    { label: 'Knowledge Base', href: '/kb', isPage: true },
-    { label: 'Contact', href: '#contact' }
+    { label: 'Services', href: '/#services' },
+    { label: 'Why Us', href: '/#why-us' },
+    { label: 'Knowledge Base', href: '/kb' },
+    { label: 'Contact', href: '/#contact' }
   ];
 
-  const scrollToSection = (href) => {
-    if (href.startsWith('/')) {
-      window.location.href = href;
-      return;
-    }
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleNavClick = (href) => {
     setIsMobileMenuOpen(false);
+    
+    // Check if we're on the homepage
+    const isHomePage = window.location.pathname === '/';
+    
+    if (href.startsWith('/#')) {
+      // Anchor link to homepage section
+      if (isHomePage) {
+        // Already on homepage, just scroll
+        const element = document.querySelector(href.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // Navigate to homepage with anchor
+        window.location.href = href;
+      }
+    } else {
+      // Regular page link
+      window.location.href = href;
+    }
   };
 
   return (
