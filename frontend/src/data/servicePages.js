@@ -98,28 +98,97 @@ export const servicePages = {
     id: 'cloud',
     title: 'Cloud Services, Hosting & Productivity',
     tagline: 'Modern Work Needs Modern Infrastructure',
-    description: 'Email, collaboration, storage, and hosting are no longer optional—they\'re business essentials. TGME helps companies move to the cloud the right way, without confusion or vendor lock-in.',
+    description: 'Email, collaboration, storage, and hosting are no longer optional—they\'re business essentials. Through our sister brand Hosting Bay (hostingbay.in), we offer comprehensive cloud and hosting solutions with enterprise-grade reliability.',
     icon: 'Cloud',
     color: 'violet',
-    whatWeDo: [
-      'Business email solutions',
-      'Collaboration & productivity tools',
-      'Cloud hosting & infrastructure',
-      'Domain, DNS & identity setup',
-      'Migration from legacy systems'
+    partnerBrand: {
+      name: 'Hosting Bay',
+      url: 'https://hostingbay.in',
+      tagline: 'Web Hosting made EASY and AFFORDABLE'
+    },
+    serviceCategories: [
+      {
+        category: 'Web Hosting',
+        services: [
+          'Linux Shared Hosting (cPanel)',
+          'Windows Hosting (Plesk)',
+          'WordPress Optimized Hosting',
+          'Cloud Hosting'
+        ],
+        features: ['Unlimited Bandwidth & Space', '99.9% Uptime Guarantee', 'Free Email Included', '30-Day Money-Back Guarantee']
+      },
+      {
+        category: 'Reseller Hosting',
+        services: [
+          'Linux Reseller Hosting',
+          'Windows Reseller Hosting',
+          'Free WHMCS Included',
+          'Softaculous Included'
+        ],
+        features: ['Start Your Own Hosting Business', 'White-Label Solutions', 'Full Control Panel Access']
+      },
+      {
+        category: 'Business Email',
+        services: [
+          'Business Email Hosting',
+          'Enterprise Email',
+          'Google Workspace',
+          'Titan Email'
+        ],
+        features: ['Professional Email Addresses', 'Collaboration Tools', 'Calendar & Drive Integration']
+      },
+      {
+        category: 'Domain Services',
+        services: [
+          'Domain Registration',
+          'Domain Transfer',
+          'Bulk Domain Registration',
+          'DNS Management'
+        ],
+        features: ['Competitive Pricing', 'Free Privacy Protection', 'Easy Management']
+      },
+      {
+        category: 'Security & Protection',
+        services: [
+          'SSL Certificates (up to 256-bit)',
+          'SiteLock Security',
+          'CodeGuard Backup',
+          'DDoS Protection'
+        ],
+        features: ['Browser Compatibility', 'Free Reissues', 'Malware Scanning']
+      },
+      {
+        category: 'Infrastructure',
+        services: [
+          'Dedicated Servers',
+          'Cloud Infrastructure',
+          'Website Builder',
+          'Combo Offers'
+        ],
+        features: ['24/7 Server Monitoring', 'Backup & Recovery', 'Enterprise-Grade Security']
+      }
     ],
     whoIsFor: [
       'New companies setting up systems from scratch',
       'Businesses moving from on-premise to cloud',
-      'Teams adopting remote or hybrid work'
+      'Teams adopting remote or hybrid work',
+      'Web developers & agencies needing reliable hosting',
+      'Resellers looking to start hosting business'
     ],
-    problemsWeSolve: [
-      'Reliability over hype',
-      'Security over shortcuts',
-      'Long-term manageability'
+    whyHostingBay: [
+      '99.9% Uptime Guarantee',
+      '24/7 Server Monitoring',
+      'Data Center Security',
+      'Backup & Recovery Solutions',
+      'Affordable Pricing',
+      '30-Day Money-Back Guarantee'
     ],
-    approach: 'We don\'t just set it up—we ensure your team actually uses it efficiently.',
-    result: 'A cloud environment that supports growth, not friction.'
+    approach: 'We don\'t just set it up—we ensure your team actually uses it efficiently. With Hosting Bay\'s infrastructure and TGME\'s implementation expertise, you get the best of both worlds.',
+    result: 'A cloud environment that supports growth, not friction.',
+    cta: {
+      text: 'Explore Hosting Bay Services',
+      url: 'https://hostingbay.in'
+    }
   },
   assets: {
     id: 'assets',
