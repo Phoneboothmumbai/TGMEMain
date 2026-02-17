@@ -1,6 +1,6 @@
 import React from 'react';
 import { companyInfo, contactInfo } from '../../data/mock';
-import { Mail, Phone, MapPin, ArrowUpRight } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowUpRight, Headphones } from 'lucide-react';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
