@@ -1,22 +1,42 @@
 import React from 'react';
-import { companyInfo, contactInfo, services } from '../../data/mock';
+import { companyInfo, contactInfo } from '../../data/mock';
 import { Mail, Phone, MapPin, ArrowUpRight } from 'lucide-react';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  const quickLinks = [
-    { label: 'Services', href: '#services' },
-    { label: 'Why Us', href: '#why-us' },
-    { label: 'Clients', href: '#clients' },
-    { label: 'Philosophy', href: '#philosophy' },
-    { label: 'Contact', href: '#contact' }
+  const solutions = [
+    { label: 'IT Infrastructure & Hardware', href: '/services/infrastructure' },
+    { label: 'Networking, Wi-Fi & Security', href: '/services/networking' },
+    { label: 'Device Lifecycle Management', href: '/services/devices' },
+    { label: 'Cloud & Productivity', href: '/services/cloud' },
+    { label: 'IT Asset Management', href: '/services/assets' },
+    { label: 'Managed IT Support', href: '/services/support' },
+    { label: 'Web & Business Apps', href: '/services/webapps' }
   ];
 
-  const scrollToSection = (href) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const quickLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'About TGME', href: '/about' },
+    { label: 'How We Work', href: '/how-we-work' },
+    { label: 'Case Studies', href: '/case-studies' },
+    { label: 'Knowledge Base', href: '/kb' },
+    { label: 'Contact', href: '/#contact' }
+  ];
+
+  const handleNavClick = (href) => {
+    if (href.startsWith('/#')) {
+      const isHomePage = window.location.pathname === '/';
+      if (isHomePage) {
+        const element = document.querySelector(href.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        window.location.href = href;
+      }
+    } else {
+      window.location.href = href;
     }
   };
 
