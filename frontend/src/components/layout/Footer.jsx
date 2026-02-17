@@ -19,7 +19,6 @@ export const Footer = () => {
     { label: 'Home', href: '/' },
     { label: 'About TGME', href: '/about' },
     { label: 'How We Work', href: '/how-we-work' },
-    { label: 'Case Studies', href: '/case-studies' },
     { label: 'Knowledge Base', href: '/kb' },
     { label: 'Support Portal', href: 'https://support.thegoodmen.in', external: true },
     { label: 'Contact', href: '/#contact' }
