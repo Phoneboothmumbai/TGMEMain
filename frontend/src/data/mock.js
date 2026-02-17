@@ -152,7 +152,8 @@ export const stats = [
 ];
 
 export const contactInfo = {
-  email: "hello@tgme.in",
-  phone: "+91 98765 43210",
-  address: "Mumbai, India"
+  email: "support@thegoodmen.in",
+  phone: "+91 9769444455",
+  address: "7, Lok Kedar, JSD Road, Mulund West, Mumbai - 400080",
+  supportPortal: "https://support.thegoodmen.in"
 };
