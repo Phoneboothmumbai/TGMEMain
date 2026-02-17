@@ -101,6 +101,14 @@ export const servicePages = {
     description: 'Email, collaboration, storage, and hosting are no longer optional—they\'re business essentials. Through our sister brand Hosting Bay (hostingbay.in), we offer comprehensive cloud and hosting solutions with enterprise-grade reliability.',
     icon: 'Cloud',
     color: 'violet',
+    whatWeDo: [
+      'Web Hosting (Linux, Windows, WordPress, Cloud)',
+      'Business Email & Collaboration (Google Workspace, Titan)',
+      'Domain Registration & DNS Management',
+      'SSL Certificates & Security Solutions',
+      'Dedicated Servers & Cloud Infrastructure',
+      'Website Builder & Development Tools'
+    ],
     partnerBrand: {
       name: 'Hosting Bay',
       url: 'https://hostingbay.in',
