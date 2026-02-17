@@ -367,6 +367,92 @@ export default function ServicePage() {
           </div>
         </section>
 
+        {/* Hosting Bay Services Section - Only for Cloud Service */}
+        {service.serviceCategories && (
+          <section className="py-20 bg-slate-50">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8">
+              {/* Partner Brand Header */}
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-3 bg-violet-100 border border-violet-200 rounded-full px-6 py-3 mb-6">
+                  <Globe className="w-5 h-5 text-violet-600" />
+                  <span className="text-violet-700 font-medium">Powered by {service.partnerBrand.name}</span>
+                </div>
+                <h2 className="text-3xl font-bold text-slate-800 mb-4">
+                  Complete Cloud & Hosting Solutions
+                </h2>
+                <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+                  {service.partnerBrand.tagline}
+                </p>
+              </div>
+
+              {/* Service Categories Grid */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                {service.serviceCategories.map((cat, idx) => {
+                  const CategoryIcon = categoryIconMap[cat.category] || Cloud;
+                  return (
+                    <Card key={idx} className="bg-white border-slate-200 hover:shadow-lg transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center">
+                            <CategoryIcon className="w-6 h-6 text-violet-600" />
+                          </div>
+                          <h3 className="text-lg font-semibold text-slate-800">{cat.category}</h3>
+                        </div>
+                        <ul className="space-y-2 mb-4">
+                          {cat.services.map((svc, svcIdx) => (
+                            <li key={svcIdx} className="flex items-center gap-2 text-slate-600 text-sm">
+                              <CheckCircle2 className="w-4 h-4 text-violet-500 flex-shrink-0" />
+                              {svc}
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="pt-4 border-t border-slate-100">
+                          <p className="text-xs text-slate-500 font-medium mb-2">Key Features:</p>
+                          <div className="flex flex-wrap gap-1">
+                            {cat.features.slice(0, 2).map((feat, featIdx) => (
+                              <span key={featIdx} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
+                                {feat}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              {/* Why Hosting Bay */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 mb-8">
+                <h3 className="text-xl font-bold text-slate-800 mb-6 text-center">
+                  Why Choose Hosting Bay?
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                  {service.whyHostingBay.map((item, idx) => (
+                    <div key={idx} className="text-center p-4 rounded-lg bg-slate-50">
+                      <CheckCircle2 className="w-6 h-6 text-violet-500 mx-auto mb-2" />
+                      <p className="text-sm text-slate-700 font-medium">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA to Hosting Bay */}
+              <div className="text-center">
+                <a
+                  href={service.cta.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-200 hover:shadow-lg"
+                >
+                  {service.cta.text}
+                  <ExternalLink className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* CTA Section */}
         <section className="py-20 bg-slate-50">
           <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
