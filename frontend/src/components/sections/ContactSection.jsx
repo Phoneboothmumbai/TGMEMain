@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { contactInfo } from '../../data/mock';
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2, Headphones } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const ContactSection = () => {
