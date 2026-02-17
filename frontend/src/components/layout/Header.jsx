@@ -83,15 +83,46 @@ export const Header = () => {
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
-              <button
-                key={link.label}
-                onClick={() => handleNavClick(link.href)}
-                className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium"
-              >
-                {link.label}
-              </button>
+              <div key={link.label} className="relative">
+                {link.hasDropdown ? (
+                  <div 
+                    className="relative"
+                    onMouseEnter={() => setIsSolutionsOpen(true)}
+                    onMouseLeave={() => setIsSolutionsOpen(false)}
+                  >
+                    <button
+                      className="flex items-center gap-1 text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium"
+                    >
+                      {link.label}
+                      <ChevronDown size={16} className={`transition-transform ${isSolutionsOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    
+                    {/* Dropdown Menu */}
+                    {isSolutionsOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
+                        {solutions.map((solution) => (
+                          <a
+                            key={solution.href}
+                            href={solution.href}
+                            className="block px-4 py-3 text-sm text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-colors"
+                          >
+                            {solution.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleNavClick(link.href)}
+                    className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium"
+                  >
+                    {link.label}
+                  </button>
+                )}
+              </div>
             ))}
           </nav>
 
