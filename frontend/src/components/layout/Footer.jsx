@@ -98,7 +98,7 @@ export const Footer = () => {
               {quickLinks.map((link) => (
                 <li key={link.label}>
                   <button
-                    onClick={() => scrollToSection(link.href)}
+                    onClick={() => handleNavClick(link.href)}
                     className="text-slate-400 hover:text-amber-400 transition-colors text-sm flex items-center gap-1 group"
                   >
                     {link.label}
