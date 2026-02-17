@@ -184,6 +184,16 @@ export const Header = () => {
                         </div>
                       )}
                     </div>
+                  ) : link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg block"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {link.label}
+                    </a>
                   ) : (
                     <button
                       onClick={() => handleNavClick(link.href)}
