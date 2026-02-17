@@ -104,8 +104,24 @@ export const ContactSection = () => {
                     <MapPin className="w-5 h-5 text-amber-600" />
                   </div>
                   <div>
-                    <p className="text-slate-500 text-sm">Located in</p>
-                    <p className="text-slate-800 font-medium">{contactInfo.address}</p>
+                    <p className="text-slate-500 text-sm">Located at</p>
+                    <p className="text-slate-800 font-medium text-sm">{contactInfo.address}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-amber-500 border-amber-500 shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                    <Headphones className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-amber-100 text-sm">Existing Customer?</p>
+                    <a href={contactInfo.supportPortal} target="_blank" rel="noopener noreferrer" className="text-white font-medium hover:underline">
+                      Visit Support Portal →
+                    </a>
                   </div>
                 </div>
               </CardContent>
