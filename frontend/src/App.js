@@ -6,6 +6,9 @@ import ServicePage from "./pages/ServicePage";
 import KnowledgeBasePage from "./pages/KnowledgeBasePage";
 import KBCategoryPage from "./pages/KBCategoryPage";
 import KBArticlePage from "./pages/KBArticlePage";
+import AboutPage from "./pages/AboutPage";
+import HowWeWorkPage from "./pages/HowWeWorkPage";
+import CaseStudiesPage from "./pages/CaseStudiesPage";
 
 // Admin pages
 import { AuthProvider, useAuth } from "./contexts/KBAuthContext";
