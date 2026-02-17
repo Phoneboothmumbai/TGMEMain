@@ -106,14 +106,14 @@ export const Header = () => {
               {navLinks.map((link) => (
                 <button
                   key={link.label}
-                  onClick={() => scrollToSection(link.href)}
+                  onClick={() => handleNavClick(link.href)}
                   className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-2 text-lg"
                 >
                   {link.label}
                 </button>
               ))}
               <Button
-                onClick={() => scrollToSection('#contact')}
+                onClick={() => handleNavClick('/#contact')}
                 className="bg-amber-500 hover:bg-amber-600 text-white font-semibold mt-4"
               >
                 Get in Touch
