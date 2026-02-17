@@ -147,16 +147,43 @@ export const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-20 left-0 right-0 bg-white/98 backdrop-blur-md border-b border-slate-200 shadow-lg">
-            <nav className="flex flex-col p-6 gap-4">
+          <div className="lg:hidden absolute top-20 left-0 right-0 bg-white/98 backdrop-blur-md border-b border-slate-200 shadow-lg max-h-[80vh] overflow-y-auto">
+            <nav className="flex flex-col p-6 gap-2">
               {navLinks.map((link) => (
-                <button
-                  key={link.label}
-                  onClick={() => handleNavClick(link.href)}
-                  className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-2 text-lg"
-                >
-                  {link.label}
-                </button>
+                <div key={link.label}>
+                  {link.hasDropdown ? (
+                    <div>
+                      <button
+                        onClick={() => setIsSolutionsOpen(!isSolutionsOpen)}
+                        className="flex items-center justify-between w-full text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg font-medium"
+                      >
+                        {link.label}
+                        <ChevronDown size={20} className={`transition-transform ${isSolutionsOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {isSolutionsOpen && (
+                        <div className="pl-4 pb-2 space-y-1">
+                          {solutions.map((solution) => (
+                            <a
+                              key={solution.href}
+                              href={solution.href}
+                              className="block py-2 text-slate-500 hover:text-amber-600 transition-colors text-base"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {solution.label}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleNavClick(link.href)}
+                      className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg w-full"
+                    >
+                      {link.label}
+                    </button>
+                  )}
+                </div>
               ))}
               <Button
                 onClick={() => handleNavClick('/#contact')}
