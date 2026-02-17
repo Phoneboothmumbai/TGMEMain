@@ -116,7 +116,7 @@ export const Footer = () => {
               Let's discuss how TGME can help build your technology foundation.
             </p>
             <button
-              onClick={() => scrollToSection('#contact')}
+              onClick={() => handleNavClick('/#contact')}
               className="w-full bg-amber-500 hover:bg-amber-400 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25"
             >
               Get in Touch
