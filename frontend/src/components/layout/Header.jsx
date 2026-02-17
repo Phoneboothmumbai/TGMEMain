@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { companyInfo } from '../../data/mock';
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,33 +17,46 @@ export const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { label: 'Services', href: '/#services' },
-    { label: 'Why Us', href: '/#why-us' },
-    { label: 'Knowledge Base', href: '/kb' },
-    { label: 'Contact', href: '/#contact' }
+  const solutions = [
+    { label: 'IT Infrastructure & Hardware', href: '/services/infrastructure' },
+    { label: 'Networking, Wi-Fi & Security', href: '/services/networking' },
+    { label: 'Device Lifecycle Management', href: '/services/devices' },
+    { label: 'Cloud & Productivity Solutions', href: '/services/cloud' },
+    { label: 'IT Asset & License Management', href: '/services/assets' },
+    { label: 'Managed IT Support', href: '/services/support' },
+    { label: 'Web & Business Applications', href: '/services/webapps' }
   ];
 
-  const handleNavClick = (href) => {
-    setIsMobileMenuOpen(false);
+  const navLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'Solutions', href: '#', hasDropdown: true },
+    { label: 'About TGME', href: '/about' },
+    { label: 'How We Work', href: '/how-we-work' },
+    { label: 'Case Studies', href: '/case-studies' },
+    { label: 'Knowledge Base', href: '/kb' }
+  ];
+
+  const handleNavClick = (href, hasDropdown = false) => {
+    if (hasDropdown) {
+      setIsSolutionsOpen(!isSolutionsOpen);
+      return;
+    }
     
-    // Check if we're on the homepage
+    setIsMobileMenuOpen(false);
+    setIsSolutionsOpen(false);
+    
     const isHomePage = window.location.pathname === '/';
     
     if (href.startsWith('/#')) {
-      // Anchor link to homepage section
       if (isHomePage) {
-        // Already on homepage, just scroll
         const element = document.querySelector(href.substring(1));
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         }
       } else {
-        // Navigate to homepage with anchor
         window.location.href = href;
       }
     } else {
-      // Regular page link
       window.location.href = href;
     }
   };
