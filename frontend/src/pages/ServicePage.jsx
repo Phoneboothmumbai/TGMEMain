@@ -8,7 +8,8 @@ import { Toaster } from '../components/ui/sonner';
 import { servicePages, serviceOrder } from '../data/servicePages';
 import {
   Server, Shield, Laptop, Cloud, Package, Headphones, Code,
-  ArrowLeft, ArrowRight, CheckCircle2, Target, Users, Wrench, Zap, X, Lightbulb
+  ArrowLeft, ArrowRight, CheckCircle2, Target, Users, Wrench, Zap, X, Lightbulb,
+  ExternalLink, Globe, Mail, Lock, Database, Monitor
 } from 'lucide-react';
 
 const iconMap = {
