@@ -98,13 +98,25 @@ export const Footer = () => {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.label}>
-                  <button
-                    onClick={() => handleNavClick(link.href)}
-                    className="text-slate-400 hover:text-amber-400 transition-colors text-sm flex items-center gap-1 group"
-                  >
-                    {link.label}
-                    <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </button>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-400 hover:text-amber-400 transition-colors text-sm flex items-center gap-1 group"
+                    >
+                      {link.label}
+                      <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => handleNavClick(link.href)}
+                      className="text-slate-400 hover:text-amber-400 transition-colors text-sm flex items-center gap-1 group"
+                    >
+                      {link.label}
+                      <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
