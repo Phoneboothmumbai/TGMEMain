@@ -16,6 +16,15 @@ const iconMap = {
   Server, Shield, Laptop, Cloud, Package, Headphones, Code
 };
 
+const categoryIconMap = {
+  'Web Hosting': Globe,
+  'Reseller Hosting': Server,
+  'Business Email': Mail,
+  'Domain Services': Globe,
+  'Security & Protection': Lock,
+  'Infrastructure': Database
+};
+
 const colorMap = {
   amber: {
     bg: 'bg-amber-50',
