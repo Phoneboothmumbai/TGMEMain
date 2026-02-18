@@ -49,6 +49,7 @@ function AppRoutes() {
       <Route path="/how-we-work" element={<HowWeWorkPage />} />
       <Route path="/case-studies" element={<CaseStudiesPage />} />
       <Route path="/services/email" element={<EmailSolutionsPage />} />
+      <Route path="/services/cybersecurity" element={<CyberSecurityPage />} />
       <Route path="/kb" element={<KnowledgeBasePage />} />
       <Route path="/kb/category/:categorySlug" element={<KBCategoryPage />} />
       <Route path="/kb/article/:articleSlug" element={<KBArticlePage />} />
