@@ -101,23 +101,25 @@ export const Header = () => {
                       <ChevronDown size={16} className={`transition-transform ${isSolutionsOpen ? 'rotate-180' : ''}`} />
                     </button>
                     
-                    {/* Dropdown Menu */}
+                    {/* Mega Menu Dropdown */}
                     {isSolutionsOpen && (
-                      <div className="absolute top-full left-0 pt-2 w-72 z-50">
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
                         {/* Invisible bridge to prevent hover gap */}
                         <div className="absolute top-0 left-0 w-full h-2 bg-transparent"></div>
-                        <div className="bg-white rounded-xl shadow-xl border border-slate-200 py-2 max-h-96 overflow-y-auto">
-                          {solutions.map((solution) => (
-                            <a
-                              key={solution.href}
-                              href={solution.href}
-                              target={solution.external ? "_blank" : undefined}
-                              rel={solution.external ? "noopener noreferrer" : undefined}
-                              className="block px-4 py-3 text-sm text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-colors"
-                            >
-                              {solution.label}
-                            </a>
-                          ))}
+                        <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-6 min-w-[500px]">
+                          <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                            {solutions.map((solution) => (
+                              <a
+                                key={solution.href}
+                                href={solution.href}
+                                target={solution.external ? "_blank" : undefined}
+                                rel={solution.external ? "noopener noreferrer" : undefined}
+                                className="block px-3 py-2.5 text-sm text-slate-600 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors"
+                              >
+                                {solution.label}
+                              </a>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}
