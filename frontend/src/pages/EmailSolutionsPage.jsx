@@ -17,7 +17,7 @@ export default function EmailSolutionsPage() {
       description: 'The complete productivity suite with Gmail, Drive, Docs, Sheets, Meet, and more. Perfect for teams that need collaboration and cloud storage.',
       logo: '🟡',
       color: 'amber',
-      startingPrice: '$5.02/user/month',
+      startingPrice: '₹136/user/month',
       features: [
         'Professional Gmail with your domain',
         '30GB - Unlimited cloud storage',
@@ -29,10 +29,10 @@ export default function EmailSolutionsPage() {
         '24/7 support'
       ],
       plans: [
-        { name: 'Business Starter', storage: '30GB', price: '$5.02/mo', users: 'Ideal for small teams' },
-        { name: 'Business Standard', storage: '2TB', price: '$11.90/mo', users: 'Recording + 150 participants' },
-        { name: 'Business Plus', storage: '5TB', price: '$17.86/mo', users: 'Vault + Advanced security' },
-        { name: 'Enterprise', storage: 'Unlimited', price: '$26.47/mo', users: 'Full enterprise features' }
+        { name: 'Business Starter', storage: '30GB', price: '₹136/mo', users: 'Ideal for small teams' },
+        { name: 'Business Standard', storage: '2TB', price: '₹736/mo', users: 'Recording + 150 participants' },
+        { name: 'Business Plus', storage: '5TB', price: '₹1,380/mo', users: 'Vault + Advanced security' },
+        { name: 'Enterprise', storage: 'Unlimited', price: '₹2,069/mo', users: 'Full enterprise features' }
       ],
       cta: {
         text: 'Get Google Workspace',
