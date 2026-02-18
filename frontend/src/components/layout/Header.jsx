@@ -20,6 +20,7 @@ export const Header = () => {
   const solutions = [
     { label: 'IT Infrastructure & Hardware', href: '/services/infrastructure' },
     { label: 'Networking & Wi-Fi', href: '/services/networking' },
+    { label: 'Device Lifecycle Management', href: '/services/devices' },
     { label: 'Cloud & Hosting', href: '/services/cloud' },
     { label: 'Email Solutions', href: '/services/email' },
     { label: 'Cyber Security', href: '/services/cybersecurity' },
