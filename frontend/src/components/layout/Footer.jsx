@@ -7,12 +7,12 @@ export const Footer = () => {
 
   const solutions = [
     { label: 'IT Infrastructure & Hardware', href: '/services/infrastructure' },
-    { label: 'Networking, Wi-Fi & Security', href: '/services/networking' },
-    { label: 'Device Lifecycle Management', href: '/services/devices' },
-    { label: 'Cloud & Productivity', href: '/services/cloud' },
-    { label: 'IT Asset Management', href: '/services/assets' },
+    { label: 'Networking & Cyber Security', href: '/services/networking' },
+    { label: 'Cloud & Hosting', href: '/services/cloud' },
+    { label: 'Email Solutions', href: '/services/email' },
+    { label: 'Asset Lifecycle Management', href: '/services/assets' },
     { label: 'Managed IT Support', href: '/services/support' },
-    { label: 'Web & Business Apps', href: '/services/webapps' }
+    { label: 'Plug & Track', href: 'https://aftersales.support', external: true }
   ];
 
   const quickLinks = [
