@@ -7,10 +7,10 @@ export const Footer = () => {
 
   const solutions = [
     { label: 'IT Infrastructure & Hardware', href: '/services/infrastructure' },
-    { label: 'Networking & Cyber Security', href: '/services/networking' },
+    { label: 'Networking & Security', href: '/services/networking' },
     { label: 'Cloud & Hosting', href: '/services/cloud' },
     { label: 'Email Solutions', href: '/services/email' },
-    { label: 'Asset Lifecycle Management', href: '/services/assets' },
+    { label: 'Cyber Security', href: '/services/cybersecurity' },
     { label: 'Managed IT Support', href: '/services/support' },
     { label: 'Plug & Track', href: 'https://aftersales.support', external: true }
   ];
