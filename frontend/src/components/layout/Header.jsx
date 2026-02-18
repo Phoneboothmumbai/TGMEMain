@@ -21,10 +21,13 @@ export const Header = () => {
     { label: 'IT Infrastructure & Hardware', href: '/services/infrastructure' },
     { label: 'Networking, Wi-Fi & Security', href: '/services/networking' },
     { label: 'Device Lifecycle Management', href: '/services/devices' },
-    { label: 'Cloud & Productivity Solutions', href: '/services/cloud' },
-    { label: 'IT Asset & License Management', href: '/services/assets' },
+    { label: 'Cloud & Hosting Solutions', href: '/services/cloud' },
+    { label: 'Email Solutions', href: '/services/email' },
+    { label: 'Asset Lifecycle Management', href: '/services/assets' },
     { label: 'Managed IT Support', href: '/services/support' },
-    { label: 'Web & Business Applications', href: '/services/webapps' }
+    { label: 'Web & Business Applications', href: '/services/webapps' },
+    { label: 'Cyber Security', href: '/services/networking' },
+    { label: 'Plug & Track (Asset Mgmt)', href: 'https://aftersales.support', external: true }
   ];
 
   const navLinks = [
