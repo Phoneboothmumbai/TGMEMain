@@ -13,7 +13,8 @@ export const Footer = () => {
     { label: 'Email Solutions', href: '/services/email' },
     { label: 'Cyber Security', href: '/services/cybersecurity' },
     { label: 'Managed IT Support', href: '/services/support' },
-    { label: 'Web & Business Applications', href: '/services/webapps' }
+    { label: 'Web & Business Applications', href: '/services/webapps' },
+    { label: 'Hardware Repair & Service', href: '/services/repair' }
   ];
 
   const quickLinks = [
