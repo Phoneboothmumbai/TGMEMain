@@ -26,7 +26,7 @@ export const Header = () => {
     { label: 'Asset Lifecycle Management', href: '/services/assets' },
     { label: 'Managed IT Support', href: '/services/support' },
     { label: 'Web & Business Applications', href: '/services/webapps' },
-    { label: 'Cyber Security', href: '/services/networking' },
+    { label: 'Cyber Security', href: '/services/cybersecurity' },
     { label: 'Plug & Track (Asset Mgmt)', href: 'https://aftersales.support', external: true }
   ];
 
