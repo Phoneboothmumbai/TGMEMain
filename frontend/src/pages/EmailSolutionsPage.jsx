@@ -284,7 +284,7 @@ export default function EmailSolutionsPage() {
                 <tbody>
                   <tr className="border-b border-slate-200">
                     <td className="p-4 text-slate-600">Starting Price</td>
-                    <td className="p-4 text-center">$5.02/mo</td>
+                    <td className="p-4 text-center">₹136/mo</td>
                     <td className="p-4 text-center">₹99/mo</td>
                     <td className="p-4 text-center">₹49/mo</td>
                   </tr>
