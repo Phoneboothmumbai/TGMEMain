@@ -82,6 +82,8 @@ export const Footer = () => {
                 <li key={solution.href}>
                   <a
                     href={solution.href}
+                    target={solution.external ? "_blank" : undefined}
+                    rel={solution.external ? "noopener noreferrer" : undefined}
                     className="text-slate-400 hover:text-amber-400 transition-colors text-sm text-left"
                   >
                     {solution.label}
