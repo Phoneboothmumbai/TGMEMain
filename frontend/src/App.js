@@ -10,6 +10,7 @@ import AboutPage from "./pages/AboutPage";
 import HowWeWorkPage from "./pages/HowWeWorkPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
 import EmailSolutionsPage from "./pages/EmailSolutionsPage";
+import CyberSecurityPage from "./pages/CyberSecurityPage";
 
 // Admin pages
 import { AuthProvider, useAuth } from "./contexts/KBAuthContext";
