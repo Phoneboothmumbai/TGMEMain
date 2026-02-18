@@ -29,7 +29,7 @@ export default function EmailSolutionsPage() {
         '24/7 support'
       ],
       plans: [
-        { name: 'Business Starter', storage: '30GB', price: '₹136/mo', users: 'Ideal for small teams' },
+        { name: 'Business Starter', storage: '30GB', price: '₹249/mo', users: 'Ideal for small teams' },
         { name: 'Business Standard', storage: '2TB', price: '₹736/mo', users: 'Recording + 150 participants' },
         { name: 'Business Plus', storage: '5TB', price: '₹1,380/mo', users: 'Vault + Advanced security' },
         { name: 'Enterprise', storage: 'Unlimited', price: '₹2,069/mo', users: 'Full enterprise features' }
