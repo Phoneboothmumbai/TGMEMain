@@ -104,11 +104,13 @@ export const Header = () => {
                     
                     {/* Dropdown Menu */}
                     {isSolutionsOpen && (
-                      <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
+                      <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 max-h-96 overflow-y-auto">
                         {solutions.map((solution) => (
                           <a
                             key={solution.href}
                             href={solution.href}
+                            target={solution.external ? "_blank" : undefined}
+                            rel={solution.external ? "noopener noreferrer" : undefined}
                             className="block px-4 py-3 text-sm text-slate-600 hover:bg-amber-50 hover:text-amber-600 transition-colors"
                           >
                             {solution.label}
