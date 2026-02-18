@@ -17,7 +17,7 @@ export default function EmailSolutionsPage() {
       description: 'The complete productivity suite with Gmail, Drive, Docs, Sheets, Meet, and more. Perfect for teams that need collaboration and cloud storage.',
       logo: '🟡',
       color: 'amber',
-      startingPrice: '₹136/user/month',
+      startingPrice: '₹249/user/month',
       features: [
         'Professional Gmail with your domain',
         '30GB - Unlimited cloud storage',
