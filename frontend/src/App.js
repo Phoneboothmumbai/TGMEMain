@@ -11,6 +11,7 @@ import HowWeWorkPage from "./pages/HowWeWorkPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
 import EmailSolutionsPage from "./pages/EmailSolutionsPage";
 import CyberSecurityPage from "./pages/CyberSecurityPage";
+import HardwareRepairPage from "./pages/HardwareRepairPage";
 
 // Admin pages
 import { AuthProvider, useAuth } from "./contexts/KBAuthContext";
