@@ -57,8 +57,12 @@ export const WorkspaceAuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Login failed');
+        let errorMsg = 'Login failed';
+        try {
+          const error = await response.json();
+          errorMsg = error.detail || errorMsg;
+        } catch (e) {}
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -196,7 +200,12 @@ export const workspaceApi = {
   getDashboardStats: () => workspaceApi.fetch('/dashboard/stats'),
   
   // Setup
-  setup: () => workspaceApi.fetch('/setup', { method: 'POST' })
+  setup: () => workspaceApi.fetch('/setup', { method: 'POST' }),
+
+  // Bulk Upload
+  bulkUploadClients: (rows) => workspaceApi.fetch('/bulk/clients', { method: 'POST', body: JSON.stringify({ rows }) }),
+  bulkUploadEmployees: (rows) => workspaceApi.fetch('/bulk/employees', { method: 'POST', body: JSON.stringify({ rows }) }),
+  bulkUploadParts: (rows) => workspaceApi.fetch('/bulk/parts', { method: 'POST', body: JSON.stringify({ rows }) }),
 };
 
 export default WorkspaceAuthContext;

@@ -344,6 +344,138 @@ async def update_part(part_id: str, updates: dict):
         raise HTTPException(status_code=404, detail="Part not found")
     return {"message": "Part updated"}
 
+# ==================== BULK UPLOAD ====================
+
+@router.post("/bulk/clients")
+async def bulk_upload_clients(data: dict):
+    """Bulk upload clients from CSV data. Expects {rows: [{company_name, gst_number, industry, notes}]}"""
+    rows = data.get("rows", [])
+    if not rows:
+        raise HTTPException(status_code=400, detail="No data provided")
+    
+    created = 0
+    skipped = 0
+    errors = []
+    
+    for i, row in enumerate(rows):
+        try:
+            if not row.get("company_name"):
+                errors.append(f"Row {i+1}: company_name is required")
+                skipped += 1
+                continue
+            
+            existing = await db.workspace_clients.find_one({"company_name": row["company_name"]})
+            if existing:
+                errors.append(f"Row {i+1}: '{row['company_name']}' already exists")
+                skipped += 1
+                continue
+            
+            client_dict = {
+                "company_name": row["company_name"],
+                "gst_number": row.get("gst_number", ""),
+                "industry": row.get("industry", ""),
+                "notes": row.get("notes", ""),
+                "is_active": True,
+                "created_at": datetime.now(timezone.utc)
+            }
+            
+            result = await db.workspace_clients.insert_one(client_dict)
+            client_id = str(result.inserted_id)
+            qr_code = generate_qr_code(f"TGME_CLIENT:{client_id}")
+            await db.workspace_clients.update_one({"_id": result.inserted_id}, {"$set": {"qr_code": qr_code}})
+            created += 1
+        except Exception as e:
+            errors.append(f"Row {i+1}: {str(e)}")
+            skipped += 1
+    
+    return {"created": created, "skipped": skipped, "errors": errors}
+
+@router.post("/bulk/employees")
+async def bulk_upload_employees(data: dict):
+    """Bulk upload employees. Expects {rows: [{employee_id, name, phone, email, role, password}]}"""
+    rows = data.get("rows", [])
+    if not rows:
+        raise HTTPException(status_code=400, detail="No data provided")
+    
+    created = 0
+    skipped = 0
+    errors = []
+    
+    for i, row in enumerate(rows):
+        try:
+            if not row.get("employee_id") or not row.get("name"):
+                errors.append(f"Row {i+1}: employee_id and name are required")
+                skipped += 1
+                continue
+            
+            existing = await db.workspace_employees.find_one({"employee_id": row["employee_id"]})
+            if existing:
+                errors.append(f"Row {i+1}: '{row['employee_id']}' already exists")
+                skipped += 1
+                continue
+            
+            emp_dict = {
+                "employee_id": row["employee_id"],
+                "name": row["name"],
+                "phone": row.get("phone", ""),
+                "email": row.get("email", ""),
+                "role": row.get("role", "engineer"),
+                "password": hash_password(row.get("password", "tgme123")),
+                "is_active": True,
+                "apps_access": ["servicebook"],
+                "created_at": datetime.now(timezone.utc)
+            }
+            await db.workspace_employees.insert_one(emp_dict)
+            created += 1
+        except Exception as e:
+            errors.append(f"Row {i+1}: {str(e)}")
+            skipped += 1
+    
+    return {"created": created, "skipped": skipped, "errors": errors}
+
+@router.post("/bulk/parts")
+async def bulk_upload_parts(data: dict):
+    """Bulk upload parts. Expects {rows: [{name, sku, category, unit, stock_qty, min_stock, price}]}"""
+    rows = data.get("rows", [])
+    if not rows:
+        raise HTTPException(status_code=400, detail="No data provided")
+    
+    created = 0
+    skipped = 0
+    errors = []
+    
+    for i, row in enumerate(rows):
+        try:
+            if not row.get("name"):
+                errors.append(f"Row {i+1}: name is required")
+                skipped += 1
+                continue
+            
+            existing = await db.workspace_parts.find_one({"name": row["name"]})
+            if existing:
+                errors.append(f"Row {i+1}: '{row['name']}' already exists")
+                skipped += 1
+                continue
+            
+            part_dict = {
+                "name": row["name"],
+                "sku": row.get("sku", ""),
+                "category": row.get("category", ""),
+                "unit": row.get("unit", "pcs"),
+                "stock_qty": float(row.get("stock_qty", 0)),
+                "min_stock": float(row.get("min_stock", 0)),
+                "price": float(row.get("price", 0)),
+                "is_active": True,
+                "created_at": datetime.now(timezone.utc)
+            }
+            await db.workspace_parts.insert_one(part_dict)
+            created += 1
+        except Exception as e:
+            errors.append(f"Row {i+1}: {str(e)}")
+            skipped += 1
+    
+    return {"created": created, "skipped": skipped, "errors": errors}
+
 # ==================== TASKS ====================
 
 @router.get("/tasks")

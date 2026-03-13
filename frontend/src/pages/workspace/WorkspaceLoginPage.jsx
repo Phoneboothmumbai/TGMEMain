@@ -47,9 +47,9 @@ export default function WorkspaceLoginPage() {
     try {
       setLoading(true);
       const result = await workspaceApi.setup();
-      toast.success('Setup completed! Default login: ADMIN001 / admin123');
-      setEmployeeId('ADMIN001');
-      setPassword('admin123');
+      toast.success('Setup completed!');
+      setEmployeeId('maharathy');
+      setPassword('Charu@123@');
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -94,7 +94,7 @@ export default function WorkspaceLoginPage() {
                     type="text"
                     placeholder="e.g., EMP001"
                     value={employeeId}
-                    onChange={(e) => setEmployeeId(e.target.value.toUpperCase())}
+                    onChange={(e) => setEmployeeId(e.target.value)}
                     className="pl-10 bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500"
                     required
                   />

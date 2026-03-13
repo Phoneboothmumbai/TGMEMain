@@ -8,7 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
 import { workspaceApi } from '../../contexts/WorkspaceAuthContext';
 import { toast } from 'sonner';
-import { Package, Plus, Search, Loader2, AlertTriangle } from 'lucide-react';
+import { Package, Plus, Search, Loader2, AlertTriangle, Upload } from 'lucide-react';
+import BulkUploadDialog from './BulkUploadDialog';
 
 export default function PartsPage() {
   const [parts, setParts] = useState([]);
@@ -16,6 +17,7 @@ export default function PartsPage() {
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
   const [form, setForm] = useState({
     name: '', sku: '', category: '', unit: 'pcs', stock_qty: 0, min_stock: 0, price: 0
   });
@@ -74,9 +76,14 @@ export default function PartsPage() {
           <h1 className="text-2xl font-bold text-slate-800" data-testid="parts-title">Parts & Materials</h1>
           <p className="text-slate-500 text-sm">{parts.length} items in inventory</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} className="bg-amber-500 hover:bg-amber-600" data-testid="add-part-btn">
-          <Plus className="w-4 h-4 mr-2" /> Add Part
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowBulk(true)} data-testid="bulk-upload-parts-btn">
+            <Upload className="w-4 h-4 mr-2" /> Bulk Upload
+          </Button>
+          <Button onClick={() => setShowAdd(true)} className="bg-amber-500 hover:bg-amber-600" data-testid="add-part-btn">
+            <Plus className="w-4 h-4 mr-2" /> Add Part
+          </Button>
+        </div>
       </div>
 
       <div className="relative max-w-md">
@@ -183,6 +190,16 @@ export default function PartsPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <BulkUploadDialog
+        open={showBulk}
+        onOpenChange={setShowBulk}
+        title="Parts & Materials"
+        columns={['name', 'sku', 'category', 'unit', 'stock_qty', 'min_stock', 'price']}
+        templateFilename="parts_template.csv"
+        onUpload={workspaceApi.bulkUploadParts}
+        onSuccess={loadParts}
+      />
     </div>
   );
 }

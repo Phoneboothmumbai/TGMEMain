@@ -10,8 +10,9 @@ import { workspaceApi } from '../../contexts/WorkspaceAuthContext';
 import { toast } from 'sonner';
 import {
   Building2, Plus, MapPin, User, Search, Loader2, Phone,
-  Mail, ChevronDown, ChevronUp, Eye
+  Mail, ChevronDown, ChevronUp, Eye, Upload
 } from 'lucide-react';
+import BulkUploadDialog from './BulkUploadDialog';
 
 export default function ClientsPage() {
   const [clients, setClients] = useState([]);
@@ -23,6 +24,7 @@ export default function ClientsPage() {
   const [showAddLocation, setShowAddLocation] = useState(false);
   const [showAddContact, setShowAddContact] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
 
   const [form, setForm] = useState({ company_name: '', gst_number: '', industry: '', notes: '' });
   const [locationForm, setLocationForm] = useState({ location_name: '', address: '', city: '', state: '', pincode: '' });
@@ -128,9 +130,14 @@ export default function ClientsPage() {
           <h1 className="text-2xl font-bold text-slate-800" data-testid="clients-title">Clients</h1>
           <p className="text-slate-500 text-sm">{clients.length} total clients</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} className="bg-amber-500 hover:bg-amber-600" data-testid="add-client-btn">
-          <Plus className="w-4 h-4 mr-2" /> Add Client
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowBulk(true)} data-testid="bulk-upload-clients-btn">
+            <Upload className="w-4 h-4 mr-2" /> Bulk Upload
+          </Button>
+          <Button onClick={() => setShowAdd(true)} className="bg-amber-500 hover:bg-amber-600" data-testid="add-client-btn">
+            <Plus className="w-4 h-4 mr-2" /> Add Client
+          </Button>
+        </div>
       </div>
 
       {/* Search */}
@@ -392,6 +399,17 @@ export default function ClientsPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Bulk Upload */}
+      <BulkUploadDialog
+        open={showBulk}
+        onOpenChange={setShowBulk}
+        title="Clients"
+        columns={['company_name', 'gst_number', 'industry', 'notes']}
+        templateFilename="clients_template.csv"
+        onUpload={workspaceApi.bulkUploadClients}
+        onSuccess={loadClients}
+      />
     </div>
   );
 }

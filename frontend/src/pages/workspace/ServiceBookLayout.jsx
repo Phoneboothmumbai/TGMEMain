@@ -75,7 +75,7 @@ export default function ServiceBookLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Mobile Header */}
       <div className="lg:hidden bg-slate-800 text-white p-4 flex items-center justify-between sticky top-0 z-50">
         <button onClick={() => setSidebarOpen(true)} className="p-2">
@@ -101,13 +101,14 @@ export default function ServiceBookLayout() {
         ></div>
       )}
 
-      {/* Sidebar */}
-      <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-slate-800 text-white z-50 
-        transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0 lg:static lg:z-0
-      `}>
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside className={`
+          fixed top-0 left-0 h-full w-64 bg-slate-800 text-white z-50 
+          transform transition-transform duration-300 ease-in-out flex flex-col
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0 lg:sticky lg:top-0 lg:z-0 lg:h-screen lg:shrink-0
+        `}>
         {/* Logo */}
         <div className="p-4 border-b border-slate-700 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -173,9 +174,10 @@ export default function ServiceBookLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="lg:ml-64 min-h-screen">
+      <main className="flex-1 min-h-screen overflow-auto">
         <Outlet context={{ stats, refreshStats: loadStats, employee }} />
       </main>
+      </div>
     </div>
   );
 }

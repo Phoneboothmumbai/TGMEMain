@@ -8,7 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { workspaceApi } from '../../contexts/WorkspaceAuthContext';
 import { toast } from 'sonner';
-import { Users, Plus, Search, Loader2, Phone, Mail, Shield } from 'lucide-react';
+import { Users, Plus, Search, Loader2, Phone, Mail, Shield, Upload } from 'lucide-react';
+import BulkUploadDialog from './BulkUploadDialog';
 
 const roleColors = {
   admin: 'bg-red-100 text-red-700',
@@ -23,6 +24,7 @@ export default function EmployeesPage() {
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
   const [form, setForm] = useState({
     employee_id: '', name: '', phone: '', email: '', role: 'engineer', password: '', apps_access: ['servicebook']
   });
@@ -76,9 +78,14 @@ export default function EmployeesPage() {
           <h1 className="text-2xl font-bold text-slate-800" data-testid="employees-title">Employees</h1>
           <p className="text-slate-500 text-sm">{employees.length} total employees</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} className="bg-amber-500 hover:bg-amber-600" data-testid="add-employee-btn">
-          <Plus className="w-4 h-4 mr-2" /> Add Employee
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowBulk(true)} data-testid="bulk-upload-employees-btn">
+            <Upload className="w-4 h-4 mr-2" /> Bulk Upload
+          </Button>
+          <Button onClick={() => setShowAdd(true)} className="bg-amber-500 hover:bg-amber-600" data-testid="add-employee-btn">
+            <Plus className="w-4 h-4 mr-2" /> Add Employee
+          </Button>
+        </div>
       </div>
 
       <div className="relative max-w-md">
@@ -181,6 +188,16 @@ export default function EmployeesPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <BulkUploadDialog
+        open={showBulk}
+        onOpenChange={setShowBulk}
+        title="Employees"
+        columns={['employee_id', 'name', 'phone', 'email', 'role', 'password']}
+        templateFilename="employees_template.csv"
+        onUpload={workspaceApi.bulkUploadEmployees}
+        onSuccess={loadEmployees}
+      />
     </div>
   );
 }
