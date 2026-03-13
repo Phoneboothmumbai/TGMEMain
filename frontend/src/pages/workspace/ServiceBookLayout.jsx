@@ -76,7 +76,7 @@ export default function ServiceBookLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile Header */}
       <div className="lg:hidden bg-slate-800 text-white p-4 flex items-center justify-between sticky top-0 z-50">
         <button onClick={() => setSidebarOpen(true)} className="p-2">

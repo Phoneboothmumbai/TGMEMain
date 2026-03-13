@@ -21,6 +21,20 @@ import KBCategoriesPage from "./pages/admin/KBCategoriesPage";
 import KBArticlesPage from "./pages/admin/KBArticlesPage";
 import KBArticleEditor from "./pages/admin/KBArticleEditor";
 
+// Workspace / ServiceBook
+import { WorkspaceAuthProvider } from "./contexts/WorkspaceAuthContext";
+import WorkspaceLoginPage from "./pages/workspace/WorkspaceLoginPage";
+import ServiceBookLayout from "./pages/workspace/ServiceBookLayout";
+import ServiceBookDashboard from "./pages/workspace/ServiceBookDashboard";
+import ClientsPage from "./pages/workspace/ClientsPage";
+import EmployeesPage from "./pages/workspace/EmployeesPage";
+import PartsPage from "./pages/workspace/PartsPage";
+import TasksPage from "./pages/workspace/TasksPage";
+import ServiceEntriesPage from "./pages/workspace/ServiceEntriesPage";
+import BillingPage from "./pages/workspace/BillingPage";
+import PartsRequestsPage from "./pages/workspace/PartsRequestsPage";
+import ExpensesPage from "./pages/workspace/ExpensesPage";
+
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
   const { token, loading } = useAuth();
@@ -56,20 +70,26 @@ function AppRoutes() {
       <Route path="/kb/category/:categorySlug" element={<KBCategoryPage />} />
       <Route path="/kb/article/:articleSlug" element={<KBArticlePage />} />
 
-      {/* Admin Routes */}
+      {/* KB Admin Routes */}
       <Route path="/kb/admin/login" element={<KBLoginPage />} />
-      <Route path="/kb/admin" element={
-        <ProtectedRoute><KBDashboard /></ProtectedRoute>
-      } />
-      <Route path="/kb/admin/categories" element={
-        <ProtectedRoute><KBCategoriesPage /></ProtectedRoute>
-      } />
-      <Route path="/kb/admin/articles" element={
-        <ProtectedRoute><KBArticlesPage /></ProtectedRoute>
-      } />
-      <Route path="/kb/admin/articles/:articleId" element={
-        <ProtectedRoute><KBArticleEditor /></ProtectedRoute>
-      } />
+      <Route path="/kb/admin" element={<ProtectedRoute><KBDashboard /></ProtectedRoute>} />
+      <Route path="/kb/admin/categories" element={<ProtectedRoute><KBCategoriesPage /></ProtectedRoute>} />
+      <Route path="/kb/admin/articles" element={<ProtectedRoute><KBArticlesPage /></ProtectedRoute>} />
+      <Route path="/kb/admin/articles/:articleId" element={<ProtectedRoute><KBArticleEditor /></ProtectedRoute>} />
+
+      {/* Workspace Routes */}
+      <Route path="/workspace/login" element={<WorkspaceLoginPage />} />
+      <Route path="/workspace/servicebook" element={<ServiceBookLayout />}>
+        <Route index element={<ServiceBookDashboard />} />
+        <Route path="clients" element={<ClientsPage />} />
+        <Route path="employees" element={<EmployeesPage />} />
+        <Route path="parts" element={<PartsPage />} />
+        <Route path="tasks" element={<TasksPage />} />
+        <Route path="service-entries" element={<ServiceEntriesPage />} />
+        <Route path="billing" element={<BillingPage />} />
+        <Route path="parts-requests" element={<PartsRequestsPage />} />
+        <Route path="expenses" element={<ExpensesPage />} />
+      </Route>
     </Routes>
   );
 }
@@ -79,7 +99,9 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
+          <WorkspaceAuthProvider>
+            <AppRoutes />
+          </WorkspaceAuthProvider>
         </AuthProvider>
       </BrowserRouter>
     </div>

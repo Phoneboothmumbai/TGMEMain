@@ -7,7 +7,7 @@ const WorkspaceAuthContext = createContext(null);
 export const useWorkspaceAuth = () => {
   const context = useContext(WorkspaceAuthContext);
   if (!context) {
-    throw new Error('useWorkspaceAuth must be used within WorkspaceAuthProvider');
+    return { employee: null, token: null, section: null, loading: false, login: async () => ({}), logout: async () => {}, isAuthenticated: false };
   }
   return context;
 };
