@@ -668,17 +668,17 @@ async def get_dashboard_stats():
 @router.post("/setup")
 async def setup_workspace():
     """Initial setup - create default admin"""
-    existing = await db.workspace_employees.find_one({"employee_id": "ADMIN001"})
+    existing = await db.workspace_employees.find_one({"employee_id": "maharathy"})
     if existing:
         return {"message": "Setup already completed"}
     
     admin = {
-        "employee_id": "ADMIN001",
+        "employee_id": "maharathy",
         "name": "Admin",
         "phone": "9769444455",
         "email": "admin@thegoodmen.in",
         "role": EmployeeRole.ADMIN,
-        "password": hash_password("admin123"),
+        "password": hash_password("Charu@123@"),
         "is_active": True,
         "apps_access": ["servicebook", "admin"],
         "created_at": datetime.now(timezone.utc)
@@ -686,4 +686,4 @@ async def setup_workspace():
     
     await db.workspace_employees.insert_one(admin)
     
-    return {"message": "Setup completed", "default_login": {"id": "ADMIN001", "password": "admin123"}}
+    return {"message": "Setup completed"}
