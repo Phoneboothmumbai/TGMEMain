@@ -1,103 +1,90 @@
-# TGME Website - Product Requirements Document
+# TGME - The Good Men Enterprise - Product Requirements Document
 
 ## Original Problem Statement
-Build a comprehensive website for "The Good Men Enterprise (TGME)" technology solutions company. The project includes:
-1. A professional, modern, light-themed website
-2. A landing page covering company value proposition, services, differentiators, clients, philosophy, and contact form
-3. Seven detailed, individual pages for each of TGME's services
-4. A feature-rich Knowledge Base (KB) with a full backend Content Management System (CMS)
+Build a comprehensive website for "The Good Men Enterprise (TGME)" technology solutions company, including:
+1. A professional marketing website (Landing page, 7+ service pages)
+2. A Knowledge Base with CMS backend
+3. A "ServiceBook" application for managing field service operations
 
-## User Personas
-- **TGME Administrators**: Need to manage KB content (categories, subcategories, articles) via admin panel
-- **Website Visitors**: Need to browse services, read KB articles, search for information, contact company
+## Core Architecture
+- **Frontend**: React + React Router + TailwindCSS + Shadcn UI
+- **Backend**: FastAPI + Pydantic + Motor (async MongoDB driver)
+- **Database**: MongoDB
+- **Deployment**: Manual to Vultr VPS (Nginx + PM2 + Python venv)
 
-## Core Requirements
+## What's Been Implemented
 
-### Marketing Website (COMPLETED)
-- [x] Landing page with hero, services overview, why us section, contact form
-- [x] 7 detailed service pages with inter-page navigation
-- [x] Light theme across all components
-- [x] Responsive design
-- [x] Header with navigation
-- [x] Footer with service links
+### Phase 1: Marketing Website (COMPLETED)
+- Landing page with hero, services, contact sections
+- Service pages: Cybersecurity, Email Solutions, Hardware Repair, Device Lifecycle
+- About, How We Work, Case Studies pages
+- Header with two-column Solutions dropdown
+- Responsive design
 
-### Knowledge Base CMS (COMPLETED)
-- [x] **Admin Authentication**: Setup/login with JWT tokens
-- [x] **Category Management**: CRUD for main categories (name, slug, description, icon, order)
-- [x] **Subcategory Management**: CRUD for subcategories under main categories
-- [x] **Article Management**: CRUD with rich text editor (Tiptap.js)
-- [x] **Article Features**: Title, slug, excerpt, content, tags, status (draft/published), order
-- [x] **Image Upload**: Upload images for articles
-- [x] **Statistics Dashboard**: View KB stats (categories, articles, views)
-- [x] **Public KB Pages**: Browse categories, view articles, search functionality
+### Phase 2: Knowledge Base + CMS (COMPLETED)
+- Public KB with categories, articles, search
+- Admin CMS at /kb/admin with full CRUD
+- Article editor, category management
+- Auth: testadmin / testpass123
 
-## Technical Architecture
+### Phase 3: ServiceBook Admin Interface (COMPLETED - Feb 2026)
+- **Login**: Employee-based auth at /workspace/login (ADMIN001 / admin123)
+- **Dashboard**: Stats overview (clients, employees, tasks, billing, etc.)
+- **Clients Management**: Full CRUD with multi-location and contacts support, WhatsApp links (wa.me/)
+- **Employees Management**: CRUD with roles (admin, backoffice, engineer, delivery)
+- **Parts & Materials**: CRUD with stock tracking, low-stock alerts, pricing
+- **Tasks Management**: Create, assign, filter by status, change status inline
+- **Service Entries**: List view with billing status
+- **Pending Billing**: Track unbilled service entries, mark as billed
+- **Parts Requests**: View/approve/reject field requests
+- **Expenses**: View/approve employee expenses with pending total
 
-### Backend (FastAPI + MongoDB)
-- `/app/backend/server.py` - Main FastAPI application
-- `/app/backend/kb_routes.py` - KB API endpoints
-- `/app/backend/kb_models.py` - Pydantic models
-
-### Frontend (React + TailwindCSS + Shadcn UI)
-- `/app/frontend/src/App.js` - Main router
-- `/app/frontend/src/contexts/KBAuthContext.jsx` - Auth context and API service
-- `/app/frontend/src/pages/admin/` - Admin panel pages
-- `/app/frontend/src/pages/` - Public pages (Landing, Service, KB)
-- `/app/frontend/src/components/admin/` - AdminLayout, RichTextEditor
-
-### Database Collections (MongoDB)
-- `kb_admins` - Admin users
-- `kb_main_categories` - Main categories
-- `kb_subcategories` - Subcategories
-- `kb_articles` - Articles
+## Key Routes
+- Marketing: `/`, `/about`, `/services/*`, `/kb`
+- KB Admin: `/kb/admin/*`
+- ServiceBook: `/workspace/login`, `/workspace/servicebook/*`
 
 ## API Endpoints
+- `/api/kb/*` - Knowledge Base
+- `/api/workspace/*` - ServiceBook (auth, employees, clients, locations, contacts, parts, tasks, service-entries, billing, parts-requests, expenses, dashboard)
 
-### Admin (Protected)
-- `POST /api/kb/admin/setup` - Create initial admin
-- `POST /api/kb/admin/login` - Login
-- `GET /api/kb/admin/me` - Current admin info
-- `GET/POST/PUT/DELETE /api/kb/admin/categories`
-- `GET/POST/PUT/DELETE /api/kb/admin/subcategories`
-- `GET/POST/PUT/DELETE /api/kb/admin/articles`
-- `POST /api/kb/admin/upload` - Image upload
-- `GET /api/kb/admin/stats` - Statistics
+## Database Collections
+- `workspace_employees`, `workspace_clients`, `workspace_client_locations`
+- `workspace_client_contacts`, `workspace_parts`, `workspace_tasks`
+- `workspace_service_entries`, `workspace_parts_requests`, `workspace_expenses`
+- `workspace_sessions`
 
-### Public
-- `GET /api/kb/public/categories` - All categories with subcategories
-- `GET /api/kb/public/categories/{slug}` - Single category
-- `GET /api/kb/public/subcategories/{slug}/articles` - Articles in subcategory
-- `GET /api/kb/public/articles/{slug}` - Single article
-- `GET /api/kb/public/search?q=query` - Search articles
+## Credentials
+- KB Admin: testadmin / testpass123
+- ServiceBook: ADMIN001 / admin123
 
-## Test Credentials
-- **Admin Username**: testadmin
-- **Admin Password**: testpass123
+## Pending/Upcoming Tasks (Prioritized)
 
-## Completed Tasks (December 2025)
-1. [x] Marketing website foundation with light theme
-2. [x] Landing page with all sections
-3. [x] 7 detailed service pages
-4. [x] Knowledge Base CMS backend (API + database models)
-5. [x] Admin panel (login, dashboard, categories, articles, rich text editor)
-6. [x] Public KB pages (categories, articles, search)
-7. [x] Testing and bug fixes (MongoDB _id handling, import paths)
+### P1 - Task Management Enhancements
+- Task detail view with full history
+- Bulk task assignment
+- Task templates for recurring service types
 
-## Pending Tasks
+### P1 - Pending Billing Enhancements
+- Billing summary/report generation
+- Export to CSV/PDF
 
-### P1 - Upcoming
-1. [ ] **Contact Form Backend** - Implement `/api/contact` to save leads to database
-2. [ ] **Services Dropdown Menu** - Add dropdown navigation for services in header
+### P2 - Field Engineer Mobile Interface (PWA)
+- Mobile-friendly interface for field engineers
+- Photo capture, digital signatures, GPS tracking
+- Parts usage logging from the field
+- Offline support
 
-### P2 - Pending
-3. [ ] **Static Pages** - About TGME, How We Work, Case Studies
+### P3 - Contact Form Backend
+- Save website contact form leads to database
+- Email notification on new leads
 
-### P3/P4 - Future/Backlog
-4. [ ] Smart IT Setup Wizard (lead qualification tool)
-5. [ ] Interactive service tools (Infrastructure Planner, Network Visualizer)
+### P3 - SSL Certificate
+- Let's Encrypt on Vultr server for full HTTPS
 
-## Files of Reference
-- Backend: `/app/backend/kb_routes.py`, `/app/backend/kb_models.py`, `/app/backend/server.py`
-- Admin Frontend: `/app/frontend/src/pages/admin/`, `/app/frontend/src/components/admin/`
-- Public Frontend: `/app/frontend/src/pages/KnowledgeBasePage.jsx`, `/app/frontend/src/pages/KBCategoryPage.jsx`, `/app/frontend/src/pages/KBArticlePage.jsx`
-- Auth Context: `/app/frontend/src/contexts/KBAuthContext.jsx`
+### P3 - Content Population
+- About TGME, How We Work, Case Studies with real content
+
+### P4 - Interactive Tools
+- Smart IT Setup Wizard
+- Infrastructure Planner, Network Visualizer
