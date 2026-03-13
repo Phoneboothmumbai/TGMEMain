@@ -160,10 +160,28 @@ export const workspaceApi = {
     return workspaceApi.fetch(`/tasks${params ? '?' + params : ''}`);
   },
   getMyTasks: (employeeId) => workspaceApi.fetch(`/tasks/my/${employeeId}`),
+  getTask: (id) => workspaceApi.fetch(`/tasks/${id}`),
   createTask: (data) => workspaceApi.fetch('/tasks', { method: 'POST', body: JSON.stringify(data) }),
   updateTask: (id, data) => workspaceApi.fetch(`/tasks/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  startTask: (id, employeeId, lat, lng) => 
-    workspaceApi.fetch(`/tasks/${id}/start?employee_id=${employeeId}&gps_lat=${lat || ''}&gps_lng=${lng || ''}`, { method: 'POST' }),
+  changeTaskStatus: (id, data) => workspaceApi.fetch(`/tasks/${id}/status`, { method: 'POST', body: JSON.stringify(data) }),
+  submitDiagnosis: (id, data) => workspaceApi.fetch(`/tasks/${id}/diagnosis`, { method: 'POST', body: JSON.stringify(data) }),
+  sendEstimate: (id, data) => workspaceApi.fetch(`/tasks/${id}/estimate`, { method: 'POST', body: JSON.stringify(data) }),
+  approveEstimate: (id, data) => workspaceApi.fetch(`/tasks/${id}/estimate-approve`, { method: 'POST', body: JSON.stringify(data) }),
+  assignTask: (id, data) => workspaceApi.fetch(`/tasks/${id}/assign`, { method: 'POST', body: JSON.stringify(data) }),
+  billTask: (id, data) => workspaceApi.fetch(`/tasks/${id}/bill`, { method: 'POST', body: JSON.stringify(data) }),
+
+  // Suppliers
+  getSuppliers: () => workspaceApi.fetch('/suppliers'),
+  createSupplier: (data) => workspaceApi.fetch('/suppliers', { method: 'POST', body: JSON.stringify(data) }),
+  updateSupplier: (id, data) => workspaceApi.fetch(`/suppliers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+
+  // Part Orders
+  getPartOrders: (filters = {}) => {
+    const params = new URLSearchParams(filters).toString();
+    return workspaceApi.fetch(`/part-orders${params ? '?' + params : ''}`);
+  },
+  createPartOrder: (data) => workspaceApi.fetch('/part-orders', { method: 'POST', body: JSON.stringify(data) }),
+  markPartReceived: (id, data) => workspaceApi.fetch(`/part-orders/${id}/received`, { method: 'POST', body: JSON.stringify(data) }),
   
   // Service Entries
   getServiceEntries: (filters = {}) => {

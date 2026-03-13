@@ -1,57 +1,40 @@
-# TGME - The Good Men Enterprise - Product Requirements Document
-
-## Original Problem Statement
-Build a comprehensive website for "The Good Men Enterprise (TGME)" technology solutions company, including:
-1. A professional marketing website (Landing page, 7+ service pages)
-2. A Knowledge Base with CMS backend
-3. A "ServiceBook" application for managing field service operations
+# TGME ServiceBook - Product Requirements Document
 
 ## Live URL
 - Website: https://thegoodmen.in
-- ServiceBook Login: https://thegoodmen.in/workspace/login
+- ServiceBook: https://thegoodmen.in/workspace/login  
 - Credentials: maharathy / Charu@123@
 
-## Core Architecture
-- **Frontend**: React + React Router + TailwindCSS + Shadcn UI
-- **Backend**: FastAPI + Pydantic + Motor (async MongoDB driver)
-- **Database**: MongoDB
-- **Deployment**: Vultr VPS (Ubuntu) + Nginx + PM2 + Let's Encrypt SSL
-- **CDN/Proxy**: Cloudflare
+## Complete Workflow (Feb 2026)
 
-## What's Been Implemented
+### Scenario 1: Known Issue
+Ticket → Create Task (Known Issue) → Order Part from Supplier (WhatsApp) → Part Received → Send Estimate to Customer (WhatsApp) → Estimate Approved → Assign to Engineer (WhatsApp) → Engineer Visits → Start Job → Complete Work + Entry + Signature → End Job → Back Office Reviews → Generate Invoice (Invoice# + Serial#) → Billed
 
-### Phase 1: Marketing Website (COMPLETED)
-- Landing page, service pages, KB, header with "Employee Login" link
+### Scenario 2: Diagnosis Required  
+Ticket → Create Task (Diagnosis Required) → Assign Engineer → Engineer Visits → Diagnoses Issue → Logs Findings + Notes + Signature → Marks "Pending for Part" → Back Office Orders Part (WhatsApp) → Part Received → Send Estimate → Estimate Approved → Reassign → Engineer Visits → Completes → Invoice → Billed
 
-### Phase 2: Knowledge Base + CMS (COMPLETED)
-- Public KB + Admin CMS at /kb/admin (testadmin / testpass123)
+### Task Statuses
+new → part_ordered → part_received → estimate_sent → estimate_approved → assigned → in_progress → pending_for_part (loops) → completed → billed
 
-### Phase 3: ServiceBook Admin Interface (COMPLETED)
-- Dashboard, Clients (multi-location + contacts), Employees, Parts, Tasks, Service Entries, Billing, Parts Requests, Expenses
-- **Bulk Upload** for Clients, Employees, Parts (CSV upload with template download)
+### Auto Job ID: JOB-YYYY-NNN format
 
-### Phase 4: Field Engineer PWA (COMPLETED)
-- My Tasks, Task Detail (start/complete), Service Entry Form, Photo Capture, Digital Signature, GPS Tracking, Parts Used, My Expenses, Request Parts, PWA manifest + service worker
+## Modules Built
+1. **Dashboard** - Workflow stats (New, Pending Parts, Awaiting Estimate, Ready to Assign, etc.)
+2. **Jobs/Tasks** - Create with type selection (Known Issue / Diagnosis Required), filter tabs, click-through to workflow detail
+3. **Task Workflow Detail** - Step-by-step actions: Order Part, Mark Received, Send Estimate, Approve Estimate, Assign Engineer, Bill Task. Full timeline audit trail
+4. **Clients** - CRUD + multi-location + contacts + WhatsApp + bulk upload
+5. **Employees** - CRUD + roles + bulk upload
+6. **Suppliers** - CRUD + WhatsApp ordering
+7. **Parts & Materials** - CRUD + stock tracking + bulk upload
+8. **Part Orders** - Linked to tasks, supplier selection, WhatsApp, mark received
+9. **Service Entries** - Engineer completion forms + billing status
+10. **Parts Requests** - Field requests + approve/reject
+11. **Expenses** - Submit + approve
+12. **Field Engineer PWA** - My Tasks, Task Detail, Photo, Signature, GPS, Parts Used
 
-### Phase 5: Deployment & SSL (COMPLETED)
-- Deployed to Vultr, Let's Encrypt SSL, Nginx configured
-
-### Bug Fixes (Feb 2026)
-- Fixed sidebar/content alignment issue (flexbox layout)
-- Fixed login uppercase conversion for employee IDs
-- Fixed "body stream already read" auth error
-
-## Pending/Upcoming Tasks
-
-### P1 - Cloudflare SSL Mode
-- Switch from "Flexible" to "Full (Strict)"
-
-### P2 - Task Management Enhancements
-- Task detail view with full history, bulk assignment, templates
-
-### P2 - Billing Enhancements
-- Reports, CSV/PDF export, Service Report PDF generator
-
-### P3 - Contact Form Backend, Content Population
-
-### P4 - Interactive Tools (IT Setup Wizard, etc.)
+## Pending/Upcoming
+- P2: Kanban board view for tasks
+- P2: Service Report PDF generator
+- P3: Contact form backend
+- P3: Content population (About, Case Studies)
+- P4: Interactive tools

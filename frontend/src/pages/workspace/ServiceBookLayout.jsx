@@ -45,12 +45,12 @@ export default function ServiceBookLayout() {
 
   const adminMenuItems = [
     { path: '/workspace/servicebook', icon: LayoutDashboard, label: 'Dashboard', exact: true },
-    { path: '/workspace/servicebook/tasks', icon: ClipboardList, label: 'Tasks' },
+    { path: '/workspace/servicebook/tasks', icon: ClipboardList, label: 'Jobs / Tasks' },
     { path: '/workspace/servicebook/clients', icon: Building2, label: 'Clients' },
     { path: '/workspace/servicebook/employees', icon: Users, label: 'Employees' },
+    { path: '/workspace/servicebook/suppliers', icon: Truck, label: 'Suppliers' },
     { path: '/workspace/servicebook/parts', icon: Package, label: 'Parts & Materials' },
     { path: '/workspace/servicebook/service-entries', icon: FileText, label: 'Service Entries' },
-    { path: '/workspace/servicebook/billing', icon: Receipt, label: 'Pending Billing' },
     { path: '/workspace/servicebook/parts-requests', icon: Truck, label: 'Parts Requests' },
     { path: '/workspace/servicebook/expenses', icon: Receipt, label: 'Expenses' },
   ];
