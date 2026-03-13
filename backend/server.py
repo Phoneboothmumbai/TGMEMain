@@ -12,6 +12,7 @@ import uuid
 from datetime import datetime, timezone
 
 from kb_routes import kb_router, set_database
+from workspace_routes import router as workspace_router
 
 
 ROOT_DIR = Path(__file__).parent
