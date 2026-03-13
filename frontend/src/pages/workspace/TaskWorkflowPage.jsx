@@ -89,7 +89,7 @@ export default function TaskWorkflowPage() {
       // Open WhatsApp to supplier
       if (sup?.whatsapp || sup?.phone) {
         const phone = (sup.whatsapp || sup.phone).replace(/\D/g, '');
-        const msg = encodeURIComponent(`Hi ${sup.name}, we need:\n${orderForm.part_name} x${orderForm.quantity}\nFor Job: ${task.job_id}\nClient: ${task.client_name}\n${orderForm.notes ? 'Notes: ' + orderForm.notes : ''}`);
+        const msg = encodeURIComponent(`Hi ${sup.name}, we need:\n${orderForm.part_name} x${orderForm.quantity}\nFor Job: ${task.job_id}\nTicket: ${task.ticket_id || 'N/A'}\nCustomer ID: ${task.client_id || 'N/A'}\n${orderForm.notes ? 'Notes: ' + orderForm.notes : ''}`);
         window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
       }
     } catch (err) { toast.error(err.message); } finally { setSaving(false); }
@@ -168,6 +168,7 @@ export default function TaskWorkflowPage() {
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-mono text-sm text-amber-600 font-bold">{task.job_id}</span>
+            {task.ticket_id && <span className="font-mono text-xs text-slate-500">Ticket: #{task.ticket_id}</span>}
             <Badge className={`text-xs ${sc.color}`}>{sc.label}</Badge>
             <Badge variant="outline" className="text-xs capitalize">{task.task_type?.replace('_', ' ')}</Badge>
           </div>
@@ -286,7 +287,7 @@ export default function TaskWorkflowPage() {
                   <div className="flex items-center gap-2">
                     {supPhone && (
                       <a
-                        href={`https://wa.me/${supPhone}?text=${encodeURIComponent(`Hi ${o.supplier_name}, checking on order:\n${o.part_name} x${o.quantity}\nJob: ${task.job_id}\nClient: ${task.client_name}`)}`}
+                        href={`https://wa.me/${supPhone}?text=${encodeURIComponent(`Hi ${o.supplier_name}, checking on order:\n${o.part_name} x${o.quantity}\nJob: ${task.job_id}\nTicket: ${task.ticket_id || 'N/A'}\nCustomer ID: ${task.client_id || 'N/A'}`)}`}
                         target="_blank" rel="noopener noreferrer"
                         data-testid={`wa-supplier-${o.id}`}
                       >

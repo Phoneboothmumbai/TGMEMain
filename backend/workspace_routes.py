@@ -556,11 +556,11 @@ async def get_tasks(status: Optional[str] = None, assigned_to: Optional[str] = N
     for task in tasks:
         task_data = serialize_doc(task)
 
-        if task_data.get("client_id"):
+        if task_data.get("client_id") and ObjectId.is_valid(task_data["client_id"]):
             c = await db.workspace_clients.find_one({"_id": ObjectId(task_data["client_id"])})
             task_data["client_name"] = c["company_name"] if c else None
 
-        if task_data.get("location_id"):
+        if task_data.get("location_id") and ObjectId.is_valid(task_data["location_id"]):
             loc = await db.workspace_client_locations.find_one({"_id": ObjectId(task_data["location_id"])})
             task_data["location_name"] = loc["location_name"] if loc else None
 
@@ -587,10 +587,10 @@ async def get_task_detail(task_id: str):
     task_data = serialize_doc(task)
 
     # Populate names
-    if task_data.get("client_id"):
+    if task_data.get("client_id") and ObjectId.is_valid(task_data["client_id"]):
         c = await db.workspace_clients.find_one({"_id": ObjectId(task_data["client_id"])})
         task_data["client_name"] = c["company_name"] if c else None
-    if task_data.get("location_id"):
+    if task_data.get("location_id") and ObjectId.is_valid(task_data["location_id"]):
         loc = await db.workspace_client_locations.find_one({"_id": ObjectId(task_data["location_id"])})
         task_data["location_name"] = loc["location_name"] if loc else None
         task_data["location_address"] = loc.get("address", "") if loc else None
@@ -609,7 +609,7 @@ async def get_task_detail(task_id: str):
     task_data["service_entries"] = [serialize_doc(e) for e in entries]
 
     # Get client contacts for WhatsApp
-    if task_data.get("client_id"):
+    if task_data.get("client_id") and ObjectId.is_valid(task_data["client_id"]):
         contacts = await db.workspace_client_contacts.find({"client_id": task_data["client_id"]}).to_list(50)
         task_data["client_contacts"] = [serialize_doc(c) for c in contacts]
 
@@ -618,10 +618,16 @@ async def get_task_detail(task_id: str):
 @router.post("/tasks")
 async def create_task(data: dict):
     """Create new task with auto job ID"""
+    # Validate ticket_id is provided
+    ticket_id = data.get("ticket_id", "").strip()
+    if not ticket_id:
+        raise HTTPException(status_code=400, detail="Ticket ID is mandatory")
+
     job_id = await generate_job_id()
 
     task_dict = {
         "job_id": job_id,
+        "ticket_id": ticket_id,
         "task_type": data.get("task_type", "known_issue"),
         "title": data["title"],
         "description": data.get("description", ""),

@@ -61,7 +61,7 @@ export default function TasksPage() {
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState({
-    task_type: 'known_issue', client_id: '', location_id: '', assigned_to: '',
+    task_type: 'known_issue', ticket_id: '', client_id: '', location_id: '', assigned_to: '',
     service_type: 'service', title: '', description: '', priority: 'medium', due_date: ''
   });
 
@@ -89,7 +89,7 @@ export default function TasksPage() {
     try {
       await workspaceApi.createTask({ ...form, created_by: employee?.employee_id || 'SYSTEM', due_date: form.due_date ? new Date(form.due_date).toISOString() : null });
       toast.success('Task created'); setShowAdd(false);
-      setForm({ task_type: 'known_issue', client_id: '', location_id: '', assigned_to: '', service_type: 'service', title: '', description: '', priority: 'medium', due_date: '' });
+      setForm({ task_type: 'known_issue', ticket_id: '', client_id: '', location_id: '', assigned_to: '', service_type: 'service', title: '', description: '', priority: 'medium', due_date: '' });
       loadData();
     } catch (err) { toast.error(err.message); } finally { setSaving(false); }
   };
@@ -97,7 +97,8 @@ export default function TasksPage() {
   const filtered = tasks.filter(t =>
     t.title?.toLowerCase().includes(search.toLowerCase()) ||
     t.client_name?.toLowerCase().includes(search.toLowerCase()) ||
-    t.job_id?.toLowerCase().includes(search.toLowerCase())
+    t.job_id?.toLowerCase().includes(search.toLowerCase()) ||
+    t.ticket_id?.toLowerCase().includes(search.toLowerCase())
   );
 
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>;
@@ -146,6 +147,7 @@ export default function TasksPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-mono text-xs text-amber-600 font-bold">{task.job_id}</span>
+                      {task.ticket_id && <span className="font-mono text-xs text-slate-500">#{task.ticket_id}</span>}
                       <h3 className="font-semibold text-slate-800 text-sm">{task.title}</h3>
                       <Badge className={`text-xs ${priorityColors[task.priority]}`}>{task.priority}</Badge>
                       <Badge variant="outline" className="text-xs capitalize">{task.task_type?.replace('_', ' ')}</Badge>
@@ -200,6 +202,7 @@ export default function TasksPage() {
               </button>
             </div>
 
+            <div className="space-y-2"><Label>Ticket ID *</Label><Input value={form.ticket_id} onChange={(e) => setForm({...form, ticket_id: e.target.value})} required placeholder="e.g., TKT-12345" data-testid="task-ticket-id-input" /></div>
             <div className="space-y-2"><Label>Title *</Label><Input value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} required data-testid="task-title-input" /></div>
             <div className="space-y-2"><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} rows={2} /></div>
             <div className="grid grid-cols-2 gap-3">

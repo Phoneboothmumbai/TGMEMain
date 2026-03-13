@@ -75,7 +75,7 @@ export default function MyTasksPage() {
                 <Card
                   key={task.id}
                   className="border-slate-200 cursor-pointer hover:shadow-md transition-shadow active:scale-[0.99]"
-                  onClick={() => navigate(`/workspace/servicebook/task/${task.id}`)}
+                  onClick={() => navigate(`/workspace/servicebook/field-task/${task.id}`)}
                   data-testid={`my-task-${task.id}`}
                 >
                   <CardContent className="p-4">
