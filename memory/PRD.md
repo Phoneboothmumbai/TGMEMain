@@ -6,11 +6,17 @@ Build a comprehensive website for "The Good Men Enterprise (TGME)" technology so
 2. A Knowledge Base with CMS backend
 3. A "ServiceBook" application for managing field service operations
 
+## Live URL
+- Website: https://thegoodmen.in
+- ServiceBook Login: https://thegoodmen.in/workspace/login
+- Credentials: ADMIN001 / admin123
+
 ## Core Architecture
 - **Frontend**: React + React Router + TailwindCSS + Shadcn UI
 - **Backend**: FastAPI + Pydantic + Motor (async MongoDB driver)
 - **Database**: MongoDB
-- **Deployment**: Manual to Vultr VPS (Nginx + PM2 + Python venv)
+- **Deployment**: Vultr VPS (Ubuntu) + Nginx + PM2 + Let's Encrypt SSL
+- **CDN/Proxy**: Cloudflare (should be set to "Full" SSL mode)
 
 ## What's Been Implemented
 
@@ -18,13 +24,12 @@ Build a comprehensive website for "The Good Men Enterprise (TGME)" technology so
 - Landing page with hero, services, contact sections
 - Service pages: Cybersecurity, Email Solutions, Hardware Repair, Device Lifecycle
 - About, How We Work, Case Studies pages
-- Header with two-column Solutions dropdown
+- Header with two-column Solutions dropdown + "Employee Login" link
 - Responsive design
 
 ### Phase 2: Knowledge Base + CMS (COMPLETED)
 - Public KB with categories, articles, search
 - Admin CMS at /kb/admin with full CRUD
-- Article editor, category management
 - Auth: testadmin / testpass123
 
 ### Phase 3: ServiceBook Admin Interface (COMPLETED - Feb 2026)
@@ -39,6 +44,24 @@ Build a comprehensive website for "The Good Men Enterprise (TGME)" technology so
 - **Parts Requests**: View/approve/reject field requests
 - **Expenses**: View/approve employee expenses with pending total
 
+### Phase 4: Field Engineer PWA (COMPLETED - Feb 2026)
+- **My Tasks**: Mobile-friendly task list for assigned engineers
+- **Task Detail**: Full task view with Start/Complete workflow
+- **Service Entry Form**: Work description, issues found, remarks
+- **Photo Capture**: Before/after photos via camera
+- **Digital Signature**: Customer sign-off with signature pad
+- **GPS Tracking**: Capture start/end GPS coordinates
+- **Parts Used**: Select parts from inventory with quantities
+- **My Expenses**: Submit travel/food/parts/misc expenses
+- **Request Parts**: Submit parts requests from the field with urgency
+- **PWA**: Service worker + manifest for installable app
+
+### Phase 5: Deployment & SSL (COMPLETED - Feb 2026)
+- Deployed to Vultr VPS at 65.20.81.4
+- Let's Encrypt SSL certificate installed (auto-renewable)
+- Nginx configured for both HTTP and HTTPS (Cloudflare compatible)
+- "Employee Login" link added to homepage navigation
+
 ## Key Routes
 - Marketing: `/`, `/about`, `/services/*`, `/kb`
 - KB Admin: `/kb/admin/*`
@@ -48,39 +71,29 @@ Build a comprehensive website for "The Good Men Enterprise (TGME)" technology so
 - `/api/kb/*` - Knowledge Base
 - `/api/workspace/*` - ServiceBook (auth, employees, clients, locations, contacts, parts, tasks, service-entries, billing, parts-requests, expenses, dashboard)
 
-## Database Collections
-- `workspace_employees`, `workspace_clients`, `workspace_client_locations`
-- `workspace_client_contacts`, `workspace_parts`, `workspace_tasks`
-- `workspace_service_entries`, `workspace_parts_requests`, `workspace_expenses`
-- `workspace_sessions`
-
 ## Credentials
 - KB Admin: testadmin / testpass123
-- ServiceBook: ADMIN001 / admin123
+- ServiceBook Admin: ADMIN001 / admin123
+- Vultr Server: root / iW)35P-m=2W9xQDQ (65.20.81.4)
 
-## Pending/Upcoming Tasks (Prioritized)
+## Pending/Upcoming Tasks
 
-### P1 - Task Management Enhancements
+### P1 - Cloudflare SSL Mode
+- Switch Cloudflare SSL from "Flexible" to "Full (Strict)" since origin server now has valid Let's Encrypt cert
+
+### P2 - Task Management Enhancements
 - Task detail view with full history
 - Bulk task assignment
 - Task templates for recurring service types
 
-### P1 - Pending Billing Enhancements
+### P2 - Billing Enhancements
 - Billing summary/report generation
 - Export to CSV/PDF
-
-### P2 - Field Engineer Mobile Interface (PWA)
-- Mobile-friendly interface for field engineers
-- Photo capture, digital signatures, GPS tracking
-- Parts usage logging from the field
-- Offline support
+- Service Report PDF generator for clients
 
 ### P3 - Contact Form Backend
 - Save website contact form leads to database
 - Email notification on new leads
-
-### P3 - SSL Certificate
-- Let's Encrypt on Vultr server for full HTTPS
 
 ### P3 - Content Population
 - About TGME, How We Work, Case Studies with real content
