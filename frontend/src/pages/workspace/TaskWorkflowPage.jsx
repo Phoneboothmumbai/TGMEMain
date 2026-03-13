@@ -274,17 +274,34 @@ export default function TaskWorkflowPage() {
         <Card className="border-slate-200">
           <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><Package className="w-4 h-4" /> Part Orders</CardTitle></CardHeader>
           <CardContent className="p-4 pt-0 space-y-2">
-            {task.part_orders.map(o => (
-              <div key={o.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg text-sm" data-testid={`order-${o.id}`}>
-                <div>
-                  <p className="font-medium text-slate-800">{o.part_name} x{o.quantity}</p>
-                  <p className="text-xs text-slate-500">From: {o.supplier_name || 'N/A'}</p>
+            {task.part_orders.map(o => {
+              const sup = suppliers.find(s => s.id === o.supplier_id);
+              const supPhone = (sup?.whatsapp || sup?.phone || '').replace(/\D/g, '');
+              return (
+                <div key={o.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg text-sm" data-testid={`order-${o.id}`}>
+                  <div>
+                    <p className="font-medium text-slate-800">{o.part_name} x{o.quantity}</p>
+                    <p className="text-xs text-slate-500">From: {o.supplier_name || 'N/A'}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {supPhone && (
+                      <a
+                        href={`https://wa.me/${supPhone}?text=${encodeURIComponent(`Hi ${o.supplier_name}, checking on order:\n${o.part_name} x${o.quantity}\nJob: ${task.job_id}\nClient: ${task.client_name}`)}`}
+                        target="_blank" rel="noopener noreferrer"
+                        data-testid={`wa-supplier-${o.id}`}
+                      >
+                        <Button size="sm" variant="outline" className="text-green-600 border-green-200 h-7 text-xs">
+                          <MessageCircle className="w-3 h-3 mr-1" /> WA Supplier
+                        </Button>
+                      </a>
+                    )}
+                    <Badge className={o.status === 'received' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}>
+                      {o.status === 'received' ? 'Received' : 'Ordered'}
+                    </Badge>
+                  </div>
                 </div>
-                <Badge className={o.status === 'received' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}>
-                  {o.status === 'received' ? 'Received' : 'Ordered'}
-                </Badge>
-              </div>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
       )}
