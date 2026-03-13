@@ -86,6 +86,9 @@ app.include_router(api_router)
 # Include KB router
 app.include_router(kb_router)
 
+# Include Workspace router (ServiceBook app)
+app.include_router(workspace_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
