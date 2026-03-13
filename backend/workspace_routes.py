@@ -63,8 +63,9 @@ def generate_qr_code(data: str) -> str:
 @router.post("/auth/login")
 async def employee_login(login_data: EmployeeLogin):
     """Employee login with section access"""
+    import re
     employee = await db.workspace_employees.find_one({
-        "employee_id": login_data.employee_id,
+        "employee_id": re.compile(f"^{re.escape(login_data.employee_id)}$", re.IGNORECASE),
         "is_active": True
     })
     
@@ -503,10 +504,11 @@ async def get_tasks(status: Optional[str] = None, assigned_to: Optional[str] = N
             location = await db.workspace_client_locations.find_one({"_id": ObjectId(task_data["location_id"])})
             task_data["location_name"] = location["location_name"] if location else None
         
-        # Populate assigned employee name
+        # Populate assigned employee name and phone
         if task_data.get("assigned_to"):
             employee = await db.workspace_employees.find_one({"employee_id": task_data["assigned_to"]})
             task_data["assigned_to_name"] = employee["name"] if employee else None
+            task_data["assigned_to_phone"] = employee.get("phone", "") if employee else None
         
         result.append(task_data)
     

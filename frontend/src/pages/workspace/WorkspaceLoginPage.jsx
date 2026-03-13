@@ -174,20 +174,6 @@ export default function WorkspaceLoginPage() {
                 )}
               </Button>
             </form>
-
-            {/* Setup Link (for first time) */}
-            <div className="mt-6 pt-4 border-t border-slate-700">
-              <p className="text-slate-500 text-xs text-center mb-2">First time setup?</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSetup}
-                className="w-full border-slate-600 text-slate-400 hover:text-white hover:bg-slate-700"
-                disabled={loading}
-              >
-                Initialize Workspace
-              </Button>
-            </div>
           </CardContent>
         </Card>
 

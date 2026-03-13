@@ -12,7 +12,7 @@ import { workspaceApi } from '../../contexts/WorkspaceAuthContext';
 import { toast } from 'sonner';
 import {
   ClipboardList, Plus, Search, Loader2, Filter, Calendar,
-  User, Building2, MapPin
+  User, Building2, MapPin, MessageCircle
 } from 'lucide-react';
 
 const statusColors = {
@@ -195,6 +195,18 @@ export default function TasksPage() {
                       {task.assigned_to_name && (
                         <span className="flex items-center gap-1">
                           <User className="w-3 h-3" /> {task.assigned_to_name}
+                          {task.assigned_to_phone && (
+                            <a
+                              href={`https://wa.me/${task.assigned_to_phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${task.assigned_to_name}, regarding task: ${task.title} at ${task.client_name || ''} ${task.location_name ? '- ' + task.location_name : ''}`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-0.5 ml-1 text-green-600 hover:text-green-700 font-medium"
+                              data-testid={`whatsapp-employee-${task.id}`}
+                            >
+                              <MessageCircle className="w-3 h-3" /> WA
+                            </a>
+                          )}
                         </span>
                       )}
                       {task.due_date && (
