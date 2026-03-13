@@ -56,8 +56,7 @@ export default function ServiceBookLayout() {
   ];
 
   const fieldMenuItems = [
-    { path: '/workspace/servicebook', icon: LayoutDashboard, label: 'My Tasks', exact: true },
-    { path: '/workspace/servicebook/new-entry', icon: FileText, label: 'New Service Entry' },
+    { path: '/workspace/servicebook/my-tasks', icon: LayoutDashboard, label: 'My Tasks' },
     { path: '/workspace/servicebook/my-expenses', icon: Receipt, label: 'My Expenses' },
     { path: '/workspace/servicebook/request-parts', icon: Truck, label: 'Request Parts' },
   ];

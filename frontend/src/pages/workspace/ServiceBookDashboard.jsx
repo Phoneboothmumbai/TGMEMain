@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useOutletContext, Link } from 'react-router-dom';
+import { useOutletContext, Link, Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { workspaceApi } from '../../contexts/WorkspaceAuthContext';
@@ -12,6 +12,8 @@ export default function ServiceBookDashboard() {
   const { stats, refreshStats, employee } = useOutletContext();
   const [recentTasks, setRecentTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const isFieldStaff = employee?.role === 'engineer' || employee?.role === 'delivery';
 
   useEffect(() => {
     loadData();
@@ -28,6 +30,10 @@ export default function ServiceBookDashboard() {
       setLoading(false);
     }
   };
+
+  if (isFieldStaff) {
+    return <Navigate to="/workspace/servicebook/my-tasks" replace />;
+  }
 
   if (loading) {
     return (

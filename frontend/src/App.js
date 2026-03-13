@@ -34,6 +34,10 @@ import ServiceEntriesPage from "./pages/workspace/ServiceEntriesPage";
 import BillingPage from "./pages/workspace/BillingPage";
 import PartsRequestsPage from "./pages/workspace/PartsRequestsPage";
 import ExpensesPage from "./pages/workspace/ExpensesPage";
+import MyTasksPage from "./pages/workspace/MyTasksPage";
+import TaskDetailPage from "./pages/workspace/TaskDetailPage";
+import MyExpensesPage from "./pages/workspace/MyExpensesPage";
+import RequestPartsPage from "./pages/workspace/RequestPartsPage";
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -89,6 +93,11 @@ function AppRoutes() {
         <Route path="billing" element={<BillingPage />} />
         <Route path="parts-requests" element={<PartsRequestsPage />} />
         <Route path="expenses" element={<ExpensesPage />} />
+        <Route path="task/:taskId" element={<TaskDetailPage />} />
+        <Route path="my-tasks" element={<MyTasksPage />} />
+        <Route path="new-entry" element={<MyTasksPage />} />
+        <Route path="my-expenses" element={<MyExpensesPage />} />
+        <Route path="request-parts" element={<RequestPartsPage />} />
       </Route>
     </Routes>
   );

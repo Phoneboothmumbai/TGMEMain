@@ -35,7 +35,8 @@ export const Header = () => {
     { label: 'About TGME', href: '/about' },
     { label: 'How We Work', href: '/how-we-work' },
     { label: 'Knowledge Base', href: '/kb' },
-    { label: 'Raise a Ticket', href: 'https://support.thegoodmen.in', external: true }
+    { label: 'Raise a Ticket', href: 'https://support.thegoodmen.in', external: true },
+    { label: 'Employee Login', href: '/workspace/login' }
   ];
 
   const handleNavClick = (href, hasDropdown = false) => {
