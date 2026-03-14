@@ -1052,6 +1052,12 @@ async def get_parts_requests(status: Optional[str] = None):
         if req_data.get("employee_id"):
             emp = await db.workspace_employees.find_one({"employee_id": req_data["employee_id"]})
             req_data["employee_name"] = emp["name"] if emp else None
+        if req_data.get("client_id") and ObjectId.is_valid(req_data["client_id"]):
+            c = await db.workspace_clients.find_one({"_id": ObjectId(req_data["client_id"])})
+            req_data["client_name"] = c["company_name"] if c else None
+        if req_data.get("location_id") and ObjectId.is_valid(req_data["location_id"]):
+            loc = await db.workspace_client_locations.find_one({"_id": ObjectId(req_data["location_id"])})
+            req_data["location_name"] = loc["location_name"] if loc else None
         result.append(req_data)
     return result
 
@@ -1059,6 +1065,12 @@ async def get_parts_requests(status: Optional[str] = None):
 async def create_parts_request(data: dict):
     req_dict = {
         "employee_id": data["employee_id"],
+        "client_id": data.get("client_id", ""),
+        "location_id": data.get("location_id", ""),
+        "device_name": data.get("device_name"),
+        "device_model": data.get("device_model"),
+        "device_serial": data.get("device_serial"),
+        "user_name": data.get("user_name"),
         "items": data.get("items", []),
         "urgency": data.get("urgency", "normal"),
         "notes": data.get("notes", ""),

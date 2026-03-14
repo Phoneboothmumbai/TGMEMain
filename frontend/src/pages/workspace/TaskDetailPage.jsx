@@ -48,7 +48,7 @@ export default function TaskDetailPage() {
   const loadTask = async () => {
     try {
       const [taskData, partsData] = await Promise.all([
-        workspaceApi.fetch(`/tasks`).then(tasks => tasks.find(t => t.id === taskId)),
+        workspaceApi.getTask(taskId),
         workspaceApi.getParts()
       ]);
       setTask(taskData);
@@ -82,10 +82,15 @@ export default function TaskDetailPage() {
   };
 
   const handleStartTask = async () => {
-    getGPS();
     try {
-      await workspaceApi.startTask(taskId, employee.employee_id, gpsLocation?.lat, gpsLocation?.lng);
+      await workspaceApi.changeTaskStatus(taskId, {
+        status: 'in_progress',
+        by: employee.employee_id,
+        gps_lat: gpsLocation?.lat || null,
+        gps_lng: gpsLocation?.lng || null
+      });
       toast.success('Task started');
+      getGPS();
       loadTask();
     } catch (error) {
       toast.error(error.message);
