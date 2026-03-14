@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import {
   Loader2, Plus, Check, X, Eye, Trash2, RefreshCw, Sparkles,
   FileText, Clock, CheckCircle2, XCircle, AlertCircle, Settings, Calendar,
-  Zap, Timer
+  Zap, Timer, ShieldCheck, ShieldAlert
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -336,6 +336,21 @@ export default function BlogAdminPage() {
                             <Zap className="w-3 h-3 inline mr-0.5" />Auto
                           </span>
                         )}
+                        {post.fact_check && (
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full border inline-flex items-center gap-0.5 ${
+                            post.fact_check.score >= 7
+                              ? 'text-green-600 bg-green-50 border-green-200'
+                              : post.fact_check.score >= 4
+                              ? 'text-yellow-600 bg-yellow-50 border-yellow-200'
+                              : 'text-red-600 bg-red-50 border-red-200'
+                          }`} data-testid={`fact-check-score-${post.post_id}`}>
+                            {post.fact_check.score >= 7
+                              ? <ShieldCheck className="w-3 h-3 inline" />
+                              : <ShieldAlert className="w-3 h-3 inline" />
+                            }
+                            {post.fact_check.score}/10
+                          </span>
+                        )}
                       </div>
                       <h3 className="font-semibold text-slate-800 text-sm mb-1 line-clamp-1">{post.title}</h3>
                       <p className="text-slate-500 text-xs line-clamp-2">{post.excerpt}</p>
@@ -345,6 +360,36 @@ export default function BlogAdminPage() {
                             <span key={t} className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">{t}</span>
                           ))}
                         </div>
+                      )}
+                      {/* Fact-check report */}
+                      {post.fact_check && (post.fact_check.issues_found?.length > 0 || post.fact_check.changes_made?.length > 0) && (
+                        <details className="mt-2 text-[11px]">
+                          <summary className="cursor-pointer text-slate-400 hover:text-slate-600 flex items-center gap-1">
+                            {post.fact_check.score >= 7
+                              ? <ShieldCheck className="w-3 h-3 text-green-500" />
+                              : <ShieldAlert className="w-3 h-3 text-yellow-500" />
+                            }
+                            Fact-Check Report ({post.fact_check.issues_found?.length || 0} issues, {post.fact_check.changes_made?.length || 0} fixes)
+                          </summary>
+                          <div className="mt-1.5 p-2 bg-slate-50 rounded-lg space-y-1">
+                            {post.fact_check.issues_found?.length > 0 && (
+                              <div>
+                                <p className="font-medium text-slate-600 text-[10px] mb-0.5">Issues Found:</p>
+                                {post.fact_check.issues_found.map((issue, i) => (
+                                  <p key={i} className="text-red-500 text-[10px] pl-2">- {issue}</p>
+                                ))}
+                              </div>
+                            )}
+                            {post.fact_check.changes_made?.length > 0 && (
+                              <div>
+                                <p className="font-medium text-slate-600 text-[10px] mb-0.5">Fixes Applied:</p>
+                                {post.fact_check.changes_made.map((change, i) => (
+                                  <p key={i} className="text-green-600 text-[10px] pl-2">- {change}</p>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </details>
                       )}
                     </div>
                     <div className="flex flex-col gap-1.5 flex-shrink-0">

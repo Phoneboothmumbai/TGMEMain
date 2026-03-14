@@ -345,6 +345,91 @@ Professional quality suitable for a business IT company blog. Wide landscape for
     return None
 
 
+# --- Fact-Check & Verification Layer ---
+
+FACT_CHECK_PROMPT = """You are a strict editorial fact-checker for an IT services company blog. Your job is to catch fake, unverifiable, or misleading content BEFORE it gets published.
+
+Review the article below and:
+
+1. FLAG every claim that includes a specific statistic, percentage, dollar/rupee amount, date, or research finding. For each:
+   - Is it a real, publicly verifiable fact? (e.g., "Windows 11 requires TPM 2.0" = REAL)
+   - Or is it made up / unverifiable? (e.g., "73% of Indian SMBs faced cyberattacks in 2025" = LIKELY FAKE unless citing a named report)
+   
+2. FLAG any fake case studies, fictional company names, invented quotes, or simulated scenarios.
+
+3. FLAG AI-sounding filler phrases like "In today's rapidly evolving landscape", "Let's dive in", "In this comprehensive guide", "As we move through 2026".
+
+4. For each issue found: REMOVE the fake/unverifiable claim from the content entirely, or replace it with honest, general language. Never leave a fake stat in.
+
+5. Verify that key takeaways and FAQ answers don't contain fabricated data either.
+
+Return ONLY raw JSON (no markdown, no code blocks):
+{
+  "trust_score": 8,
+  "issues_found": ["Description of issue 1", "Description of issue 2"],
+  "changes_made": ["Removed fake stat about X", "Replaced unverifiable claim about Y"],
+  "cleaned_content": "The full HTML article with all fixes applied. Keep the structure, just fix the problems.",
+  "cleaned_takeaways": ["Fixed takeaway 1", "Fixed takeaway 2", "Fixed takeaway 3"],
+  "cleaned_faq": [{"question": "Q1", "answer": "Verified A1"}, {"question": "Q2", "answer": "Verified A2"}, {"question": "Q3", "answer": "Verified A3"}]
+}
+
+trust_score: 1-10 where 10 = perfectly clean, 1 = full of fabrications.
+If the article is already clean, return it unchanged with a high trust_score and empty issues_found."""
+
+
+async def fact_check_article(title: str, content: str, takeaways: list, faq: list) -> dict:
+    """Run a second AI pass to fact-check and verify the generated article."""
+    if not DEEPSEEK_API_KEY:
+        return None
+
+    article_for_review = f"""TITLE: {title}
+
+KEY TAKEAWAYS:
+{json.dumps(takeaways, indent=2)}
+
+ARTICLE CONTENT:
+{content}
+
+FAQ:
+{json.dumps(faq, indent=2)}"""
+
+    try:
+        async with httpx.AsyncClient(timeout=90.0) as client:
+            response = await client.post(
+                DEEPSEEK_API_URL,
+                headers={"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"},
+                json={
+                    "model": DEEPSEEK_MODEL,
+                    "messages": [
+                        {"role": "system", "content": FACT_CHECK_PROMPT},
+                        {"role": "user", "content": article_for_review},
+                    ],
+                    "temperature": 0.2,
+                    "max_tokens": 3500,
+                },
+            )
+
+        if response.status_code != 200:
+            logger.warning(f"[FactCheck] API error: {response.status_code}")
+            return None
+
+        text = response.json()["choices"][0]["message"]["content"].strip()
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"):
+            text = text.rsplit("```", 1)[0]
+
+        result = json.loads(text.strip())
+        return result
+
+    except json.JSONDecodeError as e:
+        logger.warning(f"[FactCheck] Failed to parse response: {e}")
+        return None
+    except Exception as e:
+        logger.warning(f"[FactCheck] Verification failed: {e}")
+        return None
+
+
 async def generate_blog_post(category: str, topic_hint: str = None):
     """Generate a full blog post using DeepSeek API with trend research and image generation."""
     if not DEEPSEEK_API_KEY:
@@ -464,10 +549,30 @@ Return ONLY raw JSON (no markdown, no code blocks):
             slug = f"{slug}-{uuid.uuid4().hex[:6]}"
 
         html_content = data.get("content", "")
+
+        # Step 3: FACT-CHECK & VERIFY — second AI pass
+        logger.info(f"[FactCheck] Verifying article: {title}")
+        verification = await fact_check_article(title, html_content, data.get("key_takeaways", []), data.get("faq", []))
+
+        # Apply verified content
+        if verification:
+            html_content = verification.get("cleaned_content", html_content)
+            data["key_takeaways"] = verification.get("cleaned_takeaways", data.get("key_takeaways", []))
+            data["faq"] = verification.get("cleaned_faq", data.get("faq", []))
+            fact_check_report = {
+                "score": verification.get("trust_score", 0),
+                "issues_found": verification.get("issues_found", []),
+                "changes_made": verification.get("changes_made", []),
+                "verified_at": datetime.now(timezone.utc).isoformat(),
+            }
+            logger.info(f"[FactCheck] Score: {verification.get('trust_score', '?')}/10, Issues: {len(verification.get('issues_found', []))}")
+        else:
+            fact_check_report = {"score": 0, "issues_found": ["Verification unavailable"], "changes_made": [], "verified_at": datetime.now(timezone.utc).isoformat()}
+
         word_count = len(html_content.split())
         reading_time = max(1, word_count // 250)
 
-        # Step 3: Generate featured image
+        # Step 4: Generate featured image
         featured_image = await generate_featured_image(title, category)
 
         post = {
@@ -483,6 +588,7 @@ Return ONLY raw JSON (no markdown, no code blocks):
             "key_takeaways": data.get("key_takeaways", []),
             "faq": data.get("faq", []),
             "featured_image": featured_image,
+            "fact_check": fact_check_report,
             "status": "pending",
             "word_count": word_count,
             "reading_time": reading_time,
