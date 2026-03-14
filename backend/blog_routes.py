@@ -256,11 +256,35 @@ User search intent: {research.get('search_intent', '')}"""
 
 IMPORTANT: The current date is {current_date}. Write as if you are publishing TODAY. Reference current year {datetime.now().year} developments, not past years.
 
+CONTENT STRUCTURE RULES:
+1. Start with an engaging introduction paragraph (2-3 sentences max).
+2. The HTML content MUST have proper spacing — use <br> or margin between sections.
+3. Use <h2> for main sections, <h3> for subsections. Make headings descriptive and SEO-friendly.
+4. After every 2-3 sections, insert a contextual CTA box using this exact HTML format:
+   <div class="blog-cta"><p><strong>Need help with [topic]?</strong> TGME provides [relevant service]. <a href="/support">Get Expert Support</a> or <a href="/amc">View AMC Plans</a></p></div>
+   Choose the CTA text and links that are MOST relevant to the surrounding content. Available pages:
+   - /support — for IT support requests
+   - /amc — for Annual Maintenance Contracts
+   - /services/hardware-repair — for hardware repair services
+   - /services/cyber-security — for cybersecurity services
+   - /services/email-solutions — for email/cloud setup
+   - /knowledge-base — for more guides and articles
+5. Use <strong> liberally for key terms and important phrases.
+6. Use <ul> or <ol> lists for steps, tips, and comparisons.
+7. End with a strong conclusion that includes a final CTA.
+
 Return your response in EXACTLY this JSON format (no markdown, no code blocks, just raw JSON):
 {{
   "title": "SEO-optimized title (60-70 chars ideal, must include {datetime.now().year} if relevant)",
   "excerpt": "Compelling 150-160 char meta description for Google",
-  "content": "Full article in HTML format. Use <h2>, <h3> for headings, <p> for paragraphs, <ul>/<ol> for lists, <strong> for emphasis. Write 1500-2500 words. Include an introduction referencing current {datetime.now().year} context, 4-6 main sections with subheadings, practical tips for Indian businesses, and a conclusion. Add a section mentioning how TGME can help.",
+  "key_takeaways": [
+    "First key point — the most important takeaway from this article",
+    "Second key point — another critical insight for the reader",
+    "Third key point — practical actionable advice",
+    "Fourth key point — why this matters for Indian businesses",
+    "Fifth key point — what to do next"
+  ],
+  "content": "Full article in HTML format following the structure rules above. Write 1500-2500 words. Include 4-6 main sections with subheadings, practical tips, inline CTAs, and a conclusion.",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
   "faq": [
     {{"question": "Common question 1?", "answer": "Detailed factual answer"}},
@@ -331,6 +355,7 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
             "meta_keywords": data.get("meta_keywords", ""),
             "category": category,
             "tags": data.get("tags", []),
+            "key_takeaways": data.get("key_takeaways", []),
             "faq": data.get("faq", []),
             "featured_image": featured_image,
             "status": "pending",
