@@ -8,6 +8,7 @@ export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
+  const [isCompanyOpen, setIsCompanyOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,15 +30,17 @@ export const Header = () => {
     { label: 'Hardware Repair & Service', href: '/services/repair' }
   ];
 
-  const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Solutions', href: '#', hasDropdown: true },
-    { label: 'AMC Plans', href: '/amc' },
+  const companyLinks = [
     { label: 'About TGME', href: '/about' },
     { label: 'How We Work', href: '/how-we-work' },
     { label: 'Knowledge Base', href: '/kb' },
-    { label: 'Raise a Ticket', href: 'https://support.thegoodmen.in', external: true },
-    { label: 'Employee Login', href: '/workspace/login' }
+  ];
+
+  const navLinks = [
+    { label: 'Solutions', href: '#', hasDropdown: 'solutions' },
+    { label: 'AMC Plans', href: '/amc' },
+    { label: 'Support', href: 'https://support.thegoodmen.in', external: true },
+    { label: 'Company', href: '#', hasDropdown: 'company' },
   ];
 
   const handleNavClick = (href, hasDropdown = false) => {
@@ -87,37 +90,27 @@ export const Header = () => {
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-7">
             {navLinks.map((link) => (
               <div key={link.label} className="relative">
-                {link.hasDropdown ? (
+                {link.hasDropdown === 'solutions' ? (
                   <div 
                     className="relative group"
-                    onMouseEnter={() => setIsSolutionsOpen(true)}
+                    onMouseEnter={() => { setIsSolutionsOpen(true); setIsCompanyOpen(false); }}
                     onMouseLeave={() => setIsSolutionsOpen(false)}
                   >
-                    <button
-                      className="flex items-center gap-1 text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium py-2"
-                    >
+                    <button className="flex items-center gap-1 text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium py-2">
                       {link.label}
-                      <ChevronDown size={16} className={`transition-transform ${isSolutionsOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown size={14} className={`transition-transform ${isSolutionsOpen ? 'rotate-180' : ''}`} />
                     </button>
-                    
-                    {/* Mega Menu Dropdown */}
                     {isSolutionsOpen && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
-                        {/* Invisible bridge to prevent hover gap */}
                         <div className="absolute top-0 left-0 w-full h-2 bg-transparent"></div>
                         <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-6 min-w-[500px]">
                           <div className="grid grid-cols-2 gap-x-8 gap-y-1">
                             {solutions.map((solution) => (
-                              <a
-                                key={solution.href}
-                                href={solution.href}
-                                target={solution.external ? "_blank" : undefined}
-                                rel={solution.external ? "noopener noreferrer" : undefined}
-                                className="block px-3 py-2.5 text-sm text-slate-600 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors"
-                              >
+                              <a key={solution.href} href={solution.href}
+                                className="block px-3 py-2.5 text-sm text-slate-600 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors">
                                 {solution.label}
                               </a>
                             ))}
@@ -126,20 +119,38 @@ export const Header = () => {
                       </div>
                     )}
                   </div>
-                ) : link.external ? (
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium"
+                ) : link.hasDropdown === 'company' ? (
+                  <div 
+                    className="relative group"
+                    onMouseEnter={() => { setIsCompanyOpen(true); setIsSolutionsOpen(false); }}
+                    onMouseLeave={() => setIsCompanyOpen(false)}
                   >
+                    <button className="flex items-center gap-1 text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium py-2">
+                      {link.label}
+                      <ChevronDown size={14} className={`transition-transform ${isCompanyOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isCompanyOpen && (
+                      <div className="absolute top-full right-0 pt-2 z-50">
+                        <div className="absolute top-0 left-0 w-full h-2 bg-transparent"></div>
+                        <div className="bg-white rounded-xl shadow-xl border border-slate-200 p-3 min-w-[200px]">
+                          {companyLinks.map((item) => (
+                            <a key={item.href} href={item.href}
+                              className="block px-3 py-2.5 text-sm text-slate-600 hover:bg-amber-50 hover:text-amber-600 rounded-lg transition-colors">
+                              {item.label}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : link.external ? (
+                  <a href={link.href} target="_blank" rel="noopener noreferrer"
+                    className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium">
                     {link.label}
                   </a>
                 ) : (
-                  <button
-                    onClick={() => handleNavClick(link.href)}
-                    className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium"
-                  >
+                  <button onClick={() => handleNavClick(link.href)}
+                    className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-sm font-medium">
                     {link.label}
                   </button>
                 )}
@@ -148,7 +159,10 @@ export const Header = () => {
           </nav>
 
           {/* CTA Button */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
+            <a href="/workspace/login" className="text-slate-500 hover:text-amber-600 transition-colors text-xs font-medium">
+              Employee Login
+            </a>
             <Button
               onClick={() => handleNavClick('/#contact')}
               className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25"
@@ -172,54 +186,64 @@ export const Header = () => {
             <nav className="flex flex-col p-6 gap-2">
               {navLinks.map((link) => (
                 <div key={link.label}>
-                  {link.hasDropdown ? (
+                  {link.hasDropdown === 'solutions' ? (
                     <div>
-                      <button
-                        onClick={() => setIsSolutionsOpen(!isSolutionsOpen)}
-                        className="flex items-center justify-between w-full text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg font-medium"
-                      >
+                      <button onClick={() => { setIsSolutionsOpen(!isSolutionsOpen); setIsCompanyOpen(false); }}
+                        className="flex items-center justify-between w-full text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg font-medium">
                         {link.label}
                         <ChevronDown size={20} className={`transition-transform ${isSolutionsOpen ? 'rotate-180' : ''}`} />
                       </button>
                       {isSolutionsOpen && (
                         <div className="pl-4 pb-2 space-y-1">
                           {solutions.map((solution) => (
-                            <a
-                              key={solution.href}
-                              href={solution.href}
+                            <a key={solution.href} href={solution.href}
                               className="block py-2 text-slate-500 hover:text-amber-600 transition-colors text-base"
-                              onClick={() => setIsMobileMenuOpen(false)}
-                            >
+                              onClick={() => setIsMobileMenuOpen(false)}>
                               {solution.label}
                             </a>
                           ))}
                         </div>
                       )}
                     </div>
+                  ) : link.hasDropdown === 'company' ? (
+                    <div>
+                      <button onClick={() => { setIsCompanyOpen(!isCompanyOpen); setIsSolutionsOpen(false); }}
+                        className="flex items-center justify-between w-full text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg font-medium">
+                        {link.label}
+                        <ChevronDown size={20} className={`transition-transform ${isCompanyOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {isCompanyOpen && (
+                        <div className="pl-4 pb-2 space-y-1">
+                          {companyLinks.map((item) => (
+                            <a key={item.href} href={item.href}
+                              className="block py-2 text-slate-500 hover:text-amber-600 transition-colors text-base"
+                              onClick={() => setIsMobileMenuOpen(false)}>
+                              {item.label}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ) : link.external ? (
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <a href={link.href} target="_blank" rel="noopener noreferrer"
                       className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg block"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
+                      onClick={() => setIsMobileMenuOpen(false)}>
                       {link.label}
                     </a>
                   ) : (
-                    <button
-                      onClick={() => handleNavClick(link.href)}
-                      className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg w-full"
-                    >
+                    <button onClick={() => handleNavClick(link.href)}
+                      className="text-slate-600 hover:text-amber-600 transition-colors duration-200 text-left py-3 text-lg w-full">
                       {link.label}
                     </button>
                   )}
                 </div>
               ))}
-              <Button
-                onClick={() => handleNavClick('/#contact')}
-                className="bg-amber-500 hover:bg-amber-600 text-white font-semibold mt-4"
-              >
+              <a href="/workspace/login" onClick={() => setIsMobileMenuOpen(false)}
+                className="text-slate-500 hover:text-amber-600 transition-colors text-sm py-2">
+                Employee Login
+              </a>
+              <Button onClick={() => handleNavClick('/#contact')}
+                className="bg-amber-500 hover:bg-amber-600 text-white font-semibold mt-2">
                 Get in Touch
               </Button>
             </nav>
