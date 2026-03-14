@@ -11,11 +11,14 @@ import uuid
 import base64
 import logging
 import random
+import asyncio
 from datetime import datetime, timezone
 from typing import Optional
 from pathlib import Path
 
 import httpx
+import feedparser
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
@@ -41,6 +44,93 @@ SITE_URL = "https://thegoodmen.in"
 # Blog image uploads directory
 BLOG_UPLOADS_DIR = Path(__file__).parent / "uploads" / "blog"
 BLOG_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+
+# --- Tech News Sources for Topic Research ---
+RSS_FEEDS = [
+    ("TechCrunch", "https://techcrunch.com/feed/"),
+    ("The Verge", "https://www.theverge.com/rss/index.xml"),
+    ("ZDNet", "https://www.zdnet.com/news/rss.xml"),
+    ("VentureBeat", "https://venturebeat.com/feed/"),
+    ("Ars Technica", "https://feeds.arstechnica.com/arstechnica/index"),
+    ("TechRadar", "https://www.techradar.com/rss"),
+    ("Tom's Hardware", "https://www.tomshardware.com/feeds/all"),
+    ("Wired", "https://www.wired.com/feed/rss"),
+    ("CNET", "https://www.cnet.com/rss/news/"),
+    ("The Next Web", "https://thenextweb.com/feed"),
+]
+
+SCRAPE_SITES = [
+    ("Gadgets360", "https://www.gadgets360.com/news"),
+    ("Digit.in", "https://www.digit.in/news/"),
+    ("HT Tech", "https://tech.hindustantimes.com/"),
+    ("9to5Google", "https://9to5google.com/"),
+    ("9to5Mac", "https://9to5mac.com/"),
+    ("Android Authority", "https://www.androidauthority.com/news/"),
+    ("Engadget", "https://www.engadget.com/"),
+    ("GSMArena", "https://www.gsmarena.com/news.php3"),
+]
+
+
+async def fetch_rss_headlines(feed_url: str, limit: int = 8) -> list:
+    """Fetch headlines from an RSS feed."""
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(feed_url, headers={"User-Agent": "TGME-BlogBot/1.0"})
+        if resp.status_code != 200:
+            return []
+        feed = feedparser.parse(resp.text)
+        return [entry.title for entry in feed.entries[:limit] if hasattr(entry, 'title')]
+    except Exception:
+        return []
+
+
+async def scrape_headlines(url: str, limit: int = 8) -> list:
+    """Scrape headlines from a news website homepage."""
+    try:
+        async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+            resp = await client.get(url, headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            })
+        if resp.status_code != 200:
+            return []
+        soup = BeautifulSoup(resp.text, "html.parser")
+        headlines = []
+        for tag in soup.find_all(["h1", "h2", "h3", "h4", "a"]):
+            text = tag.get_text(strip=True)
+            if len(text) > 25 and len(text) < 200:
+                headlines.append(text)
+            if len(headlines) >= limit:
+                break
+        return headlines
+    except Exception:
+        return []
+
+
+async def gather_trending_news(count: int = 4) -> str:
+    """Fetch real trending headlines from tech news sources."""
+    # Pick random sources from both RSS and scrape lists
+    rss_picks = random.sample(RSS_FEEDS, min(count, len(RSS_FEEDS)))
+    scrape_picks = random.sample(SCRAPE_SITES, min(2, len(SCRAPE_SITES)))
+
+    tasks = []
+    for name, url in rss_picks:
+        tasks.append((name, fetch_rss_headlines(url)))
+    for name, url in scrape_picks:
+        tasks.append((name, scrape_headlines(url)))
+
+    results = await asyncio.gather(*[t[1] for t in tasks], return_exceptions=True)
+
+    all_headlines = []
+    for i, (name, _) in enumerate(tasks):
+        if isinstance(results[i], list) and results[i]:
+            for h in results[i][:6]:
+                all_headlines.append(f"[{name}] {h}")
+
+    random.shuffle(all_headlines)
+    if not all_headlines:
+        return ""
+
+    return "\n".join(all_headlines[:30])
 
 BLOG_CATEGORIES = [
     "How-To Guides",
@@ -154,7 +244,7 @@ async def get_recent_titles(days=45):
 
 
 async def research_trending_topic(category: str):
-    """Step 1: Ask DeepSeek to research and suggest a specific, trending topic for 2026."""
+    """Step 1: Scrape real tech news + ask DeepSeek to suggest a unique, trending topic."""
     # Fetch existing topics to avoid duplicates
     recent = await get_recent_titles(45)
     existing_titles = [p["title"] for p in recent]
@@ -168,7 +258,23 @@ CRITICAL — DO NOT repeat or overlap with these existing articles (written in t
 
 Your suggested topic MUST be completely different from all of the above. Different subject matter, different angle, different focus area. No variations or rewrites of existing titles."""
 
+    # Fetch real trending news from tech sites
+    logger.info("[TopicResearch] Fetching trending headlines from tech news sources...")
+    trending_news = await gather_trending_news(count=4)
+    news_block = ""
+    if trending_news:
+        news_block = f"""
+
+HERE ARE REAL TRENDING HEADLINES FROM MAJOR TECH NEWS SOURCES RIGHT NOW (use these as inspiration for picking a relevant, timely topic):
+{trending_news}
+
+Pick a topic INSPIRED by these real current news trends but tailored to Indian businesses and TGME's IT services. The topic should feel timely and newsworthy."""
+        logger.info(f"[TopicResearch] Got {len(trending_news.splitlines())} headlines from tech news")
+    else:
+        logger.warning("[TopicResearch] Could not fetch trending news, using AI knowledge only")
+
     research_prompt = f"""You are an IT industry trend researcher. The current date is {datetime.now().strftime('%B %Y')}.
+{news_block}
 
 Research and identify ONE specific, high-search-volume, trending topic in the category "{category}" that is:
 1. Highly relevant to Indian businesses RIGHT NOW in 2026
