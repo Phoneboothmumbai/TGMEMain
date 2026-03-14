@@ -19,67 +19,63 @@ const plans = [
     color: 'from-slate-400 to-slate-500', border: 'border-slate-700 hover:border-slate-500',
     badge: null,
     features: [
-      'Response within 48 hours',
-      '2 on-site visits per year',
-      'Remote support (business hours)',
+      'Response within 48 business hours',
+      'Up to 2 on-site visits/year (if required)',
+      'Remote support (Mon\u2013Fri, 11 AM \u2013 6 PM)',
       'Labor charges included',
-      'Parts charged at actuals',
-      'Annual preventive checkup',
+      'Annual preventive maintenance',
       'Email & phone support',
+      'Parts, replacements & consumables billed separately',
     ],
-    notIncluded: ['Parts not included', 'No dedicated manager'],
   },
   {
     id: 'gold', name: 'Gold', price: 3000, icon: Star,
     color: 'from-amber-400 to-amber-500', border: 'border-amber-500/30 hover:border-amber-400',
     badge: 'Most Popular',
     features: [
-      'Response within 24 hours',
-      '4 on-site visits per year',
-      'Remote support (extended hours)',
+      'Response within 24 business hours',
+      'Up to 4 on-site visits/year (if required)',
+      'Remote support (Mon\u2013Sat, 11 AM \u2013 8 PM)',
       'Labor charges included',
-      'Parts at discounted rates',
       'Quarterly preventive maintenance',
-      'Priority email, phone & WhatsApp',
-      'Monthly health reports',
+      'Priority email, phone & WhatsApp support',
+      'Basic device health report',
+      'Parts, replacements & consumables billed separately',
     ],
-    notIncluded: ['Parts at discounted cost'],
   },
   {
     id: 'platinum', name: 'Platinum', price: 4000, icon: Zap,
     color: 'from-violet-400 to-violet-500', border: 'border-violet-500/30 hover:border-violet-500',
     badge: null,
     features: [
-      'Response within 8 hours',
-      '6 on-site visits per year',
-      'Remote support (extended hours)',
+      'Response within 8 business hours',
+      'Up to 6 on-site visits/year (if required)',
+      'Remote support (Mon\u2013Sat, 11 AM \u2013 9 PM)',
       'Labor charges included',
-      'Parts at cost price',
       'Bi-monthly preventive maintenance',
       'Priority WhatsApp & phone support',
-      'Quarterly health reports',
+      'Quarterly IT health reports',
       'Backup & recovery assistance',
+      'Parts, replacements & consumables billed separately',
     ],
-    notIncluded: [],
   },
   {
     id: 'diamond', name: 'Diamond', price: 6500, icon: Crown,
     color: 'from-cyan-400 to-teal-500', border: 'border-teal-500/30 hover:border-teal-400',
     badge: 'Premium',
     features: [
-      'Response within 4 hours (Priority)',
-      'Unlimited on-site visits',
-      '24/7 remote support',
-      'Labor + Parts fully included',
+      'Response within 4 business hours (priority)',
+      'Up to 12 on-site visits/year (if required)',
+      'Remote support (Mon\u2013Sat, 11 AM \u2013 10 PM)',
+      'Labor charges included',
       'Monthly preventive maintenance',
-      'Dedicated Account Manager',
-      'Asset tracking & inventory',
+      'Dedicated priority support contact',
+      'Asset inventory tracking',
       'Quarterly IT audit & reports',
-      'Data backup & disaster recovery',
-      'Network monitoring & alerts',
-      'Replacement device during repair',
+      'Network monitoring alerts',
+      'Backup monitoring assistance',
+      'Parts, replacements & consumables billed separately',
     ],
-    notIncluded: [],
   },
 ];
 
@@ -288,11 +284,6 @@ export default function AMCPage() {
                     {plan.features.map((f, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
                         <CheckCircle2 className="w-3.5 h-3.5 text-green-400 mt-0.5 flex-shrink-0" />{f}
-                      </li>
-                    ))}
-                    {plan.notIncluded.map((f, i) => (
-                      <li key={`no-${i}`} className="flex items-start gap-2 text-sm text-slate-500">
-                        <X className="w-3.5 h-3.5 text-slate-600 mt-0.5 flex-shrink-0" />{f}
                       </li>
                     ))}
                   </ul>

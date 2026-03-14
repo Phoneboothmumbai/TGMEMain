@@ -30,10 +30,10 @@ DEVICE_PRICING = {
 }
 
 PLAN_FEATURES = {
-    "Silver": {"price": 2500, "features": "Response: 48hrs | 2 on-site visits/yr | Remote support (business hrs) | Labor included | Parts at actuals | Annual preventive checkup | Email & phone support"},
-    "Gold": {"price": 3000, "features": "Response: 24hrs | 4 on-site visits/yr | Remote support (extended hrs) | Labor included | Parts at discounted rates | Quarterly preventive maintenance | Priority email, phone & WhatsApp | Monthly health reports"},
-    "Platinum": {"price": 4000, "features": "Response: 8hrs | 6 on-site visits/yr | Remote support (extended hrs) | Labor included | Parts at cost price | Bi-monthly preventive maintenance | Priority WhatsApp & phone | Quarterly health reports | Backup & recovery assistance"},
-    "Diamond": {"price": 6500, "features": "Response: 4hrs (Priority) | Unlimited on-site visits | 24/7 remote support | Labor + Parts fully included | Monthly preventive maintenance | Dedicated Account Manager | Asset tracking & inventory | Quarterly IT audit & reports | Data backup & disaster recovery | Network monitoring & alerts | Replacement device during repair"},
+    "Silver": {"price": 2500, "features": "Response: 48 business hrs | Up to 2 on-site visits/yr | Remote support (Mon-Fri, 11AM-6PM) | Labor included | Annual preventive maintenance | Email & phone support | Parts, replacements & consumables billed separately"},
+    "Gold": {"price": 3000, "features": "Response: 24 business hrs | Up to 4 on-site visits/yr | Remote support (Mon-Sat, 11AM-8PM) | Labor included | Quarterly preventive maintenance | Priority email, phone & WhatsApp | Basic device health report | Parts, replacements & consumables billed separately"},
+    "Platinum": {"price": 4000, "features": "Response: 8 business hrs | Up to 6 on-site visits/yr | Remote support (Mon-Sat, 11AM-9PM) | Labor included | Bi-monthly preventive maintenance | Priority WhatsApp & phone | Quarterly IT health reports | Backup & recovery assistance | Parts, replacements & consumables billed separately"},
+    "Diamond": {"price": 6500, "features": "Response: 4 business hrs (priority) | Up to 12 on-site visits/yr | Remote support (Mon-Sat, 11AM-10PM) | Labor included | Monthly preventive maintenance | Dedicated priority support contact | Asset inventory tracking | Quarterly IT audit & reports | Network monitoring alerts | Backup monitoring assistance | Parts, replacements & consumables billed separately"},
 }
 
 

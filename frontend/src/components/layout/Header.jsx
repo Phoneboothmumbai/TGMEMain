@@ -37,10 +37,10 @@ export const Header = () => {
   ];
 
   const navLinks = [
+    { label: 'Company', href: '#', hasDropdown: 'company' },
     { label: 'Solutions', href: '#', hasDropdown: 'solutions' },
     { label: 'AMC Plans', href: '/amc' },
     { label: 'Support', href: 'https://support.thegoodmen.in', external: true },
-    { label: 'Company', href: '#', hasDropdown: 'company' },
   ];
 
   const handleNavClick = (href, hasDropdown = false) => {
@@ -160,8 +160,8 @@ export const Header = () => {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-3">
-            <a href="/workspace/login" className="text-slate-500 hover:text-amber-600 transition-colors text-xs font-medium">
-              Employee Login
+            <a href="/workspace/login" className="text-slate-500 hover:text-amber-600 transition-colors text-sm font-medium">
+              Login
             </a>
             <Button
               onClick={() => handleNavClick('/#contact')}
