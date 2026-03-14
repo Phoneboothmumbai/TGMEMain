@@ -1,29 +1,34 @@
 """
 AI Blog System — Auto-generates SEO-optimized articles with approval workflow
+Uses DeepSeek API for content generation and APScheduler for periodic auto-generation.
 """
 
 import os
 import re
 import json
 import uuid
-import asyncio
 import logging
+import random
 from datetime import datetime, timezone
 from typing import Optional
 
+import httpx
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
-from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/blog", tags=["blog"])
 
-EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY")
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
+DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
+DEEPSEEK_MODEL = "deepseek-chat"
+
 APPROVAL_EMAIL = "ckmotta@thegoodmen.in"
 SITE_URL = "https://thegoodmen.in"
 
@@ -40,7 +45,16 @@ BLOG_CATEGORIES = [
     "Hardware & Devices",
 ]
 
+DEFAULT_SETTINGS = {
+    "auto_generate_enabled": False,
+    "posts_per_week": 2,
+    "preferred_days": ["monday", "thursday"],
+    "preferred_hour": 9,
+}
+
 db = None
+scheduler = AsyncIOScheduler()
+
 
 def set_blog_db(database):
     global db
@@ -64,16 +78,28 @@ def serialize_doc(doc):
     return d
 
 
-# --- AI Content Generation ---
+# --- Blog Settings ---
 
-async def generate_blog_post(category: str, topic_hint: str = None):
-    """Generate a full blog post using GPT-5.2"""
-    from emergentintegrations.llm.chat import LlmChat, UserMessage
+async def get_settings():
+    """Get blog settings from DB, or return defaults."""
+    settings = await db.blog_settings.find_one({"_id": "blog_config"}, {"_id": 0})
+    if not settings:
+        return dict(DEFAULT_SETTINGS)
+    return settings
 
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=f"blog-gen-{uuid.uuid4().hex[:8]}",
-        system_message="""You are an expert IT content writer for The Good Men Enterprise (TGME), 
+
+async def save_settings(settings: dict):
+    """Upsert blog settings."""
+    await db.blog_settings.update_one(
+        {"_id": "blog_config"},
+        {"$set": settings},
+        upsert=True,
+    )
+
+
+# --- AI Content Generation via DeepSeek ---
+
+SYSTEM_PROMPT = """You are an expert IT content writer for The Good Men Enterprise (TGME), 
 a professional IT solutions company based in India. You write authoritative, SEO-optimized blog articles.
 
 STRICT RULES:
@@ -85,7 +111,12 @@ STRICT RULES:
 - Include practical, actionable advice.
 - Naturally mention TGME's services where relevant (IT support, AMC, networking, CCTV, email setup, etc.) without being overly promotional.
 - Optimize for Google search and AI/LLM platforms."""
-    ).with_model("openai", "gpt-5.2")
+
+
+async def generate_blog_post(category: str, topic_hint: str = None):
+    """Generate a full blog post using DeepSeek API"""
+    if not DEEPSEEK_API_KEY:
+        raise HTTPException(status_code=500, detail="DEEPSEEK_API_KEY not configured")
 
     prompt = f"""Write a comprehensive blog article for the category: "{category}"
 {f'Topic hint: {topic_hint}' if topic_hint else 'Choose a trending, high-search-volume topic in this category relevant to Indian businesses in 2025-2026.'}
@@ -106,9 +137,33 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
 }}"""
 
     try:
-        response = await chat.send_message(UserMessage(text=prompt))
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            response = await client.post(
+                DEEPSEEK_API_URL,
+                headers={
+                    "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": DEEPSEEK_MODEL,
+                    "messages": [
+                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "user", "content": prompt},
+                    ],
+                    "temperature": 0.8,
+                    "max_tokens": 4096,
+                },
+            )
+
+        if response.status_code != 200:
+            logger.error(f"DeepSeek API error {response.status_code}: {response.text}")
+            raise HTTPException(status_code=502, detail=f"DeepSeek API returned {response.status_code}")
+
+        result = response.json()
+        content_text = result["choices"][0]["message"]["content"]
+
         # Clean response — remove markdown code blocks if present
-        cleaned = response.strip()
+        cleaned = content_text.strip()
         if cleaned.startswith("```"):
             cleaned = cleaned.split("\n", 1)[1] if "\n" in cleaned else cleaned[3:]
         if cleaned.endswith("```"):
@@ -119,8 +174,13 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
 
         title = data.get("title", "Untitled")
         slug = slugify(title)
-        content = data.get("content", "")
-        word_count = len(content.split())
+        # Ensure slug uniqueness
+        existing = await db.blog_posts.find_one({"slug": slug})
+        if existing:
+            slug = f"{slug}-{uuid.uuid4().hex[:6]}"
+
+        html_content = data.get("content", "")
+        word_count = len(html_content.split())
         reading_time = max(1, word_count // 250)
 
         post = {
@@ -128,7 +188,7 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
             "title": title,
             "slug": slug,
             "excerpt": data.get("excerpt", ""),
-            "content": content,
+            "content": html_content,
             "meta_description": data.get("excerpt", ""),
             "meta_keywords": data.get("meta_keywords", ""),
             "category": category,
@@ -138,6 +198,7 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
             "status": "pending",
             "word_count": word_count,
             "reading_time": reading_time,
+            "auto_generated": True,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "published_at": None,
             "rejected_reason": None,
@@ -147,69 +208,74 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
         post["id"] = str(result.inserted_id)
         del post["_id"]
 
-        # Send approval email
-        await send_approval_email(post)
-
+        logger.info(f"Blog post generated: {title} [{category}]")
         return post
 
     except json.JSONDecodeError as e:
         logger.error(f"Failed to parse AI response: {e}")
         raise HTTPException(status_code=500, detail="AI generated invalid response format")
+    except httpx.TimeoutException:
+        logger.error("DeepSeek API request timed out")
+        raise HTTPException(status_code=504, detail="AI generation timed out — please try again")
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Blog generation failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# --- Email Notification ---
+# --- Scheduled Auto-Generation ---
 
-async def send_approval_email(post):
-    """Send approval email with Accept/Reject links"""
-    if not RESEND_API_KEY:
-        logger.warning("RESEND_API_KEY not set, skipping email notification")
-        return
-
+async def scheduled_generate():
+    """Called by APScheduler to auto-generate a blog post."""
     try:
-        import resend
-        resend.api_key = RESEND_API_KEY
+        settings = await get_settings()
+        if not settings.get("auto_generate_enabled"):
+            return
 
-        approve_url = f"{SITE_URL}/api/blog/approve/{post['post_id']}?action=approve"
-        reject_url = f"{SITE_URL}/api/blog/approve/{post['post_id']}?action=reject"
-        preview_url = f"{SITE_URL}/blog/preview/{post['post_id']}"
-
-        html = f"""
-<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f8fafc;padding:24px;">
-  <div style="background:#1e293b;color:white;padding:20px 24px;border-radius:12px 12px 0 0;">
-    <h1 style="margin:0;font-size:20px;">New Blog Post for Review</h1>
-    <p style="margin:4px 0 0;color:#94a3b8;font-size:13px;">AI-Generated Content — Needs Your Approval</p>
-  </div>
-  <div style="background:white;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;">
-    <h2 style="color:#1e293b;font-size:18px;margin:0 0 8px;">{post['title']}</h2>
-    <p style="color:#64748b;font-size:13px;margin:0 0 4px;"><strong>Category:</strong> {post['category']}</p>
-    <p style="color:#64748b;font-size:13px;margin:0 0 4px;"><strong>Words:</strong> {post['word_count']} ({post['reading_time']} min read)</p>
-    <p style="color:#64748b;font-size:13px;margin:0 0 16px;"><strong>Tags:</strong> {', '.join(post.get('tags', []))}</p>
-    <p style="color:#475569;font-size:14px;margin:0 0 20px;line-height:1.5;">{post['excerpt']}</p>
-    <div style="margin-bottom:20px;">
-      <a href="{preview_url}" style="color:#d97706;font-size:13px;text-decoration:underline;">Read Full Article</a>
-    </div>
-    <div style="text-align:center;">
-      <a href="{approve_url}" style="display:inline-block;background:#22c55e;color:white;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:15px;margin:0 8px;">Approve & Publish</a>
-      <a href="{reject_url}" style="display:inline-block;background:#ef4444;color:white;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:15px;margin:0 8px;">Reject</a>
-    </div>
-    <p style="color:#94a3b8;font-size:11px;text-align:center;margin:16px 0 0;">You can also manage posts from the <a href="{SITE_URL}/workspace/servicebook/blog-admin" style="color:#d97706;">ServiceBook Admin Panel</a></p>
-  </div>
-</div>"""
-
-        params = {
-            "from": os.environ.get("SENDER_EMAIL", "blog@thegoodmen.in"),
-            "to": [APPROVAL_EMAIL],
-            "subject": f"Blog Review: {post['title']}",
-            "html": html,
-        }
-
-        await asyncio.to_thread(resend.Emails.send, params)
-        logger.info(f"Approval email sent for post: {post['title']}")
+        category = random.choice(BLOG_CATEGORIES)
+        post = await generate_blog_post(category)
+        logger.info(f"[Scheduler] Auto-generated blog post: {post['title']}")
     except Exception as e:
-        logger.error(f"Failed to send approval email: {e}")
+        logger.error(f"[Scheduler] Auto-generation failed: {e}")
+
+
+def build_cron_trigger(settings: dict) -> CronTrigger:
+    """Build a cron trigger based on settings."""
+    days = settings.get("preferred_days", DEFAULT_SETTINGS["preferred_days"])
+    hour = settings.get("preferred_hour", DEFAULT_SETTINGS["preferred_hour"])
+    day_of_week = ",".join(d[:3] for d in days)
+    return CronTrigger(day_of_week=day_of_week, hour=hour, minute=0)
+
+
+async def sync_scheduler():
+    """Sync the scheduler with current settings."""
+    settings = await get_settings()
+
+    # Remove existing job if any
+    existing = scheduler.get_job("blog_auto_gen")
+    if existing:
+        scheduler.remove_job("blog_auto_gen")
+
+    if settings.get("auto_generate_enabled"):
+        trigger = build_cron_trigger(settings)
+        scheduler.add_job(
+            scheduled_generate,
+            trigger=trigger,
+            id="blog_auto_gen",
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+        logger.info(f"[Scheduler] Blog auto-gen scheduled: days={settings.get('preferred_days')}, hour={settings.get('preferred_hour')}")
+    else:
+        logger.info("[Scheduler] Blog auto-gen disabled")
+
+
+def start_scheduler():
+    """Start APScheduler. Called once from server.py on startup."""
+    if not scheduler.running:
+        scheduler.start()
+        logger.info("[Scheduler] APScheduler started")
 
 
 # --- API Routes ---
@@ -272,12 +338,55 @@ async def get_sitemap():
     return [{"slug": p["slug"], "published_at": p.get("published_at"), "category": p.get("category")} for p in posts]
 
 
+# --- Settings Routes ---
+
+@router.get("/settings")
+async def get_blog_settings():
+    return await get_settings()
+
+
+@router.put("/settings")
+async def update_blog_settings(data: dict):
+    allowed = {"auto_generate_enabled", "posts_per_week", "preferred_days", "preferred_hour"}
+    update = {k: v for k, v in data.items() if k in allowed}
+
+    # Validate posts_per_week
+    ppw = update.get("posts_per_week")
+    if ppw is not None and (not isinstance(ppw, int) or ppw < 1 or ppw > 7):
+        raise HTTPException(status_code=400, detail="posts_per_week must be 1-7")
+
+    # Validate preferred_days
+    valid_days = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}
+    days = update.get("preferred_days")
+    if days is not None:
+        if not isinstance(days, list) or not all(d in valid_days for d in days):
+            raise HTTPException(status_code=400, detail="Invalid preferred_days")
+
+    hour = update.get("preferred_hour")
+    if hour is not None and (not isinstance(hour, int) or hour < 0 or hour > 23):
+        raise HTTPException(status_code=400, detail="preferred_hour must be 0-23")
+
+    current = await get_settings()
+    current.update(update)
+
+    # Auto-derive preferred_days from posts_per_week
+    ppw_final = current.get("posts_per_week", 2)
+    if "preferred_days" not in update:
+        day_options = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        step = max(1, 7 // ppw_final)
+        current["preferred_days"] = [day_options[i * step % 7] for i in range(ppw_final)]
+
+    await save_settings(current)
+    await sync_scheduler()
+
+    return {"message": "Settings updated", "settings": current}
+
+
 # --- Admin Routes ---
 
 @router.post("/generate")
 async def trigger_generation(category: str = None, topic: str = None):
     """Manually trigger AI blog generation"""
-    import random
     cat = category or random.choice(BLOG_CATEGORIES)
     post = await generate_blog_post(cat, topic)
     return {"message": "Post generated", "post": post}
@@ -286,7 +395,6 @@ async def trigger_generation(category: str = None, topic: str = None):
 @router.post("/generate-batch")
 async def trigger_batch_generation(count: int = 1):
     """Generate multiple posts across categories"""
-    import random
     cats = random.sample(BLOG_CATEGORIES, min(count, len(BLOG_CATEGORIES)))
     results = []
     for cat in cats:
@@ -364,3 +472,17 @@ async def update_post(post_id: str, data: dict):
 async def delete_post(post_id: str):
     await db.blog_posts.delete_one({"post_id": post_id})
     return {"message": "Post deleted"}
+
+
+# --- Scheduler Status ---
+
+@router.get("/scheduler-status")
+async def get_scheduler_status():
+    job = scheduler.get_job("blog_auto_gen")
+    settings = await get_settings()
+    return {
+        "scheduler_running": scheduler.running,
+        "job_active": job is not None,
+        "next_run": str(job.next_run_time) if job else None,
+        "settings": settings,
+    }

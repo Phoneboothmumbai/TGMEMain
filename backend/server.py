@@ -15,7 +15,7 @@ from kb_routes import kb_router, set_database
 from workspace_routes import router as workspace_router
 from amc_routes import router as amc_router
 from support_form_routes import router as support_form_router
-from blog_routes import router as blog_router, set_blog_db
+from blog_routes import router as blog_router, set_blog_db, start_scheduler, sync_scheduler
 
 
 ROOT_DIR = Path(__file__).parent
@@ -116,6 +116,11 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+@app.on_event("startup")
+async def startup_event():
+    start_scheduler()
+    await sync_scheduler()
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
