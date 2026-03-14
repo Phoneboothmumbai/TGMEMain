@@ -26,16 +26,18 @@ new → part_ordered → part_received → estimate_sent → estimate_approved �
 5. **Employees** - CRUD + roles + bulk upload
 6. **Suppliers** - CRUD + WhatsApp ordering
 7. **Parts & Materials** - CRUD + stock tracking + bulk upload
-8. **Part Orders** - Linked to tasks, supplier selection, WhatsApp (uses Ticket ID + Customer ID, not client name), mark received
+8. **Part Orders** - Linked to tasks, supplier selection, WhatsApp (uses Ticket ID + Customer ID), mark received
 9. **Service Entries** - Engineer completion forms + billing status
-10. **Parts Requests** - Field requests + approve/reject
+10. **Parts Requests** - Field requests with Company, Location, Device Details (Name/Model/Serial), optional User Name + approve/reject
 11. **Expenses** - Submit + approve
-12. **Field Engineer PWA** - My Tasks → Field Task Detail (separate from admin workflow), Photo, Signature, GPS, Parts Used. Role-based routing (engineer/delivery → field menu; admin/backoffice → admin menu)
+12. **Field Engineer PWA** - My Tasks → Field Task Detail (Start Task → Complete + Photo + Signature + GPS + Parts Used). Role-based routing.
 
 ## Bug Fixes Completed (Mar 2026)
-- **P0**: Fixed broken field engineer panel - restored role-based navigation. Field engineers now see My Tasks/My Expenses/Request Parts menu and navigate to /field-task/{id} detail page (not admin workflow page)
-- **P1**: Fixed WhatsApp messages for part orders - now use Ticket ID and Customer ID instead of client name
-- **P1**: Made Ticket ID mandatory in task creation - backend validation + frontend required field + display in task list and workflow detail
+- **P0**: Fixed broken field engineer panel - restored role-based navigation
+- **P1**: Fixed WhatsApp messages for part orders - now use Ticket ID and Customer ID
+- **P1**: Made Ticket ID mandatory in task creation
+- **P1**: Fixed Start Task button - was calling non-existent API, now uses changeTaskStatus
+- **Enhancement**: Request Parts page - added Company/Location (mandatory), Device Details (3 separate fields), User Name (optional)
 
 ## Pending/Upcoming
 - P2: Pending Billing feature - auto-list completed jobs, generate invoices, mark as billed
