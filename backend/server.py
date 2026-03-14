@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 
 from kb_routes import kb_router, set_database
 from workspace_routes import router as workspace_router
+from amc_routes import router as amc_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -88,6 +89,9 @@ app.include_router(kb_router)
 
 # Include Workspace router (ServiceBook app)
 app.include_router(workspace_router)
+
+# Include AMC router
+app.include_router(amc_router)
 
 app.add_middleware(
     CORSMiddleware,

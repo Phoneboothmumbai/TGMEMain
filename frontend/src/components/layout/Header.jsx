@@ -32,6 +32,7 @@ export const Header = () => {
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Solutions', href: '#', hasDropdown: true },
+    { label: 'AMC Plans', href: '/amc' },
     { label: 'About TGME', href: '/about' },
     { label: 'How We Work', href: '/how-we-work' },
     { label: 'Knowledge Base', href: '/kb' },

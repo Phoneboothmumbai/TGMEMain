@@ -2,7 +2,9 @@
 
 ## Live URL
 - Website: https://thegoodmen.in
+- AMC Plans: https://thegoodmen.in/amc
 - ServiceBook: https://thegoodmen.in/workspace/login  
+- Support Portal: https://support.thegoodmen.in
 - Credentials: maharathy / Charu@123@
 
 ## Complete Workflow (Feb 2026)
@@ -31,13 +33,19 @@ new → part_ordered → part_received → estimate_sent → estimate_approved �
 10. **Parts Requests** - Field requests with Company, Location, Device Details (Name/Model/Serial), optional User Name + approve/reject
 11. **Expenses** - Submit + approve
 12. **Field Engineer PWA** - My Tasks → Field Task Detail (Start Task → Complete + Photo + Signature + GPS + Parts Used). Role-based routing.
+13. **AMC Plans Page** - Public-facing page with 4 plans (Silver ₹2,500, Gold ₹3,000, Platinum ₹4,000, Diamond ₹6,500). Form captures company details + device inventory. Submits to osTicket (support.thegoodmen.in) as "AMC Request" ticket.
+
+## 3rd Party Integrations
+- **osTicket** - Ticket creation via REST API (X-API-Key: 0D5F5BDE6501B6BB9A6567683D40357D, whitelisted for IP 65.20.81.4)
+- **Cloudflare** - DNS and SSL proxy
+- **WhatsApp** - Manual wa.me links for supplier/engineer messaging
 
 ## Bug Fixes Completed (Mar 2026)
-- **P0**: Fixed broken field engineer panel - restored role-based navigation
-- **P1**: Fixed WhatsApp messages for part orders - now use Ticket ID and Customer ID
-- **P1**: Made Ticket ID mandatory in task creation
-- **P1**: Fixed Start Task button - was calling non-existent API, now uses changeTaskStatus
-- **Enhancement**: Request Parts page - added Company/Location (mandatory), Device Details (3 separate fields), User Name (optional)
+- P0: Fixed broken field engineer panel - restored role-based navigation
+- P1: Fixed WhatsApp messages for part orders - now use Ticket ID and Customer ID
+- P1: Made Ticket ID mandatory in task creation
+- P1: Fixed Start Task button - was calling non-existent API, now uses changeTaskStatus
+- Enhancement: Request Parts page - added Company/Location (mandatory), Device Details (3 separate fields), User Name (optional)
 
 ## Pending/Upcoming
 - P2: Pending Billing feature - auto-list completed jobs, generate invoices, mark as billed
