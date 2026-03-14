@@ -33,18 +33,22 @@ Computer/Laptop, Printer/Scanner, Network/Internet, Email, Server, CCTV, UPS, So
 Each sub-topic has specific dynamic fields (device make/model, OS, error messages, quantities, etc.) + osTicket integration.
 
 ## AI Blog System (Completed Mar 2026)
-- **Engine**: DeepSeek API (`deepseek-chat` model) for content generation
+- **Content Engine**: DeepSeek API (`deepseek-chat`) with 2-step process:
+  1. **Trend Research**: AI researches current 2026 trending topics relevant to TGME's business before writing
+  2. **Article Generation**: Writes 1500-2500 word SEO-optimized article with HTML formatting, FAQs, meta tags
+- **Image Generation**: OpenAI GPT Image 1 (via Emergent LLM Key) auto-generates professional featured images stored at `/api/blog/uploads/`
 - **Categories**: 10 (How-To Guides, Cybersecurity, Troubleshooting, Product Reviews, Web Hosting, Business IT, Cloud Tools, Networking, Backup & DR, Hardware)
-- **Workflow**: Generate → Pending Review → Approve/Reject → Published
-- **Admin**: ServiceBook > Blog Manager (generate, approve, reject, delete, view)
+- **Workflow**: Generate (research → write → image) → Pending Review → Approve/Reject → Published
+- **Admin**: ServiceBook > Blog Manager (generate, approve, reject, delete, view, settings)
 - **Settings**: Posts per week (1-7), preferred days, generation hour, auto-generate toggle
 - **Scheduler**: APScheduler with cron trigger for automatic post generation
-- **SEO**: Schema.org Article + FAQPage markup, meta tags, canonical URLs, FAQ sections
+- **SEO**: Schema.org Article + FAQPage markup, meta tags, canonical URLs, FAQ sections, og:image
 - **Email**: Disabled (requires Resend API key)
 
 ## 3rd Party Integrations
 - **osTicket** — REST API for AMC + Support ticket creation (key whitelisted for IP 65.20.81.4)
-- **DeepSeek** — AI blog content generation (API key in backend/.env)
+- **DeepSeek** — AI blog content generation + trend research (API key in backend/.env)
+- **OpenAI GPT Image 1** — Featured image generation via Emergent LLM Key
 - **Cloudflare** — DNS and SSL proxy
 - **WhatsApp** — wa.me links for supplier/engineer messaging
 
@@ -52,7 +56,7 @@ Each sub-topic has specific dynamic fields (device make/model, OS, error message
 1-12. ServiceBook (Dashboard, Tasks, Clients, Employees, Suppliers, Parts, Orders, Entries, Requests, Expenses, Field PWA)
 13. AMC Plans Page (4 plans, per-device-type pricing, osTicket)
 14. Support Form (Quote + Support, 94 sub-topics, dynamic forms, osTicket)
-15. AI Blog System (DeepSeek generation, admin approval, scheduler, SEO, public blog)
+15. AI Blog System (DeepSeek generation, trend research, GPT Image 1 featured images, admin approval, scheduler, SEO, public blog)
 
 ## Pending/Upcoming
 - P1: Finalize email approval system (needs Resend API key)
