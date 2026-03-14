@@ -15,6 +15,7 @@ from kb_routes import kb_router, set_database
 from workspace_routes import router as workspace_router
 from amc_routes import router as amc_router
 from support_form_routes import router as support_form_router
+from blog_routes import router as blog_router, set_blog_db
 
 
 ROOT_DIR = Path(__file__).parent
@@ -27,6 +28,7 @@ db = client[os.environ['DB_NAME']]
 
 # Set database for KB routes
 set_database(db)
+set_blog_db(db)
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -96,6 +98,9 @@ app.include_router(amc_router)
 
 # Include Support Form router
 app.include_router(support_form_router)
+
+# Include Blog router
+app.include_router(blog_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -14,6 +14,8 @@ import CyberSecurityPage from "./pages/CyberSecurityPage";
 import HardwareRepairPage from "./pages/HardwareRepairPage";
 import AMCPage from "./pages/AMCPage";
 import SupportFormPage from "./pages/SupportFormPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
 
 // Admin pages
 import { AuthProvider, useAuth } from "./contexts/KBAuthContext";
@@ -36,6 +38,7 @@ import ServiceEntriesPage from "./pages/workspace/ServiceEntriesPage";
 import BillingPage from "./pages/workspace/BillingPage";
 import PartsRequestsPage from "./pages/workspace/PartsRequestsPage";
 import ExpensesPage from "./pages/workspace/ExpensesPage";
+import BlogAdminPage from "./pages/workspace/BlogAdminPage";
 import MyTasksPage from "./pages/workspace/MyTasksPage";
 import TaskDetailPage from "./pages/workspace/TaskDetailPage";
 import TaskWorkflowPage from "./pages/workspace/TaskWorkflowPage";
@@ -76,6 +79,9 @@ function AppRoutes() {
       <Route path="/services/repair" element={<HardwareRepairPage />} />
       <Route path="/amc" element={<AMCPage />} />
       <Route path="/support" element={<SupportFormPage />} />
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/blog/preview/:slug" element={<BlogPostPage />} />
+      <Route path="/blog/:slug" element={<BlogPostPage />} />
       <Route path="/kb" element={<KnowledgeBasePage />} />
       <Route path="/kb/category/:categorySlug" element={<KBCategoryPage />} />
       <Route path="/kb/article/:articleSlug" element={<KBArticlePage />} />
@@ -100,6 +106,7 @@ function AppRoutes() {
         <Route path="billing" element={<BillingPage />} />
         <Route path="parts-requests" element={<PartsRequestsPage />} />
         <Route path="expenses" element={<ExpensesPage />} />
+        <Route path="blog-admin" element={<BlogAdminPage />} />
         <Route path="task/:taskId" element={<TaskWorkflowPage />} />
         <Route path="my-tasks" element={<MyTasksPage />} />
         <Route path="field-task/:taskId" element={<TaskDetailPage />} />
