@@ -357,6 +357,82 @@ class TestBlogSitemap:
             assert "category" in entry, "Sitemap entry should have category"
 
 
+class TestFeaturedImages:
+    """Test featured_image field and blog uploads static file serving"""
+    
+    def test_published_posts_have_featured_image_field(self):
+        """GET /api/blog/posts?status=published returns posts with featured_image field"""
+        response = requests.get(f"{BASE_URL}/api/blog/posts", params={"status": "published"})
+        assert response.status_code == 200
+        
+        data = response.json()
+        posts = data.get("posts", [])
+        
+        # All posts should have featured_image field (can be null or a path)
+        for post in posts:
+            assert "featured_image" in post, f"Post {post.get('post_id')} missing featured_image field"
+    
+    def test_post_with_featured_image_has_valid_path(self):
+        """Posts with featured_image have a valid /api/blog/uploads/ path"""
+        response = requests.get(f"{BASE_URL}/api/blog/posts", params={"status": "published", "limit": 20})
+        posts = response.json().get("posts", [])
+        
+        posts_with_images = [p for p in posts if p.get("featured_image")]
+        
+        if posts_with_images:
+            for post in posts_with_images:
+                featured_image = post["featured_image"]
+                assert featured_image.startswith("/api/blog/uploads/"), \
+                    f"featured_image should start with /api/blog/uploads/, got: {featured_image}"
+                assert featured_image.endswith(".png"), f"featured_image should be PNG, got: {featured_image}"
+        else:
+            pytest.skip("No posts with featured images found")
+    
+    def test_blog_uploads_static_file_serving(self):
+        """GET /api/blog/uploads/{filename} serves image files correctly"""
+        # Find a post with a featured image
+        response = requests.get(f"{BASE_URL}/api/blog/posts", params={"status": "published", "limit": 20})
+        posts = response.json().get("posts", [])
+        
+        posts_with_images = [p for p in posts if p.get("featured_image")]
+        
+        if posts_with_images:
+            featured_image = posts_with_images[0]["featured_image"]
+            # featured_image is like "/api/blog/uploads/07011d528ec4.png"
+            # Fetch the image
+            image_url = f"{BASE_URL}{featured_image}"
+            img_response = requests.get(image_url)
+            
+            assert img_response.status_code == 200, f"Image request failed with {img_response.status_code}"
+            assert "image/png" in img_response.headers.get("content-type", ""), \
+                f"Content-Type should be image/png, got: {img_response.headers.get('content-type')}"
+            assert len(img_response.content) > 1000, "Image content seems too small"
+        else:
+            pytest.skip("No posts with featured images found")
+    
+    def test_full_post_includes_featured_image(self):
+        """GET /api/blog/posts/{slug_or_id} includes featured_image in response"""
+        # Get post with featured image
+        response = requests.get(f"{BASE_URL}/api/blog/posts", params={"status": "published", "limit": 20})
+        posts = response.json().get("posts", [])
+        
+        posts_with_images = [p for p in posts if p.get("featured_image")]
+        
+        if posts_with_images:
+            post_id = posts_with_images[0]["post_id"]
+            
+            # Fetch full post
+            full_post_response = requests.get(f"{BASE_URL}/api/blog/posts/{post_id}")
+            assert full_post_response.status_code == 200
+            
+            full_post = full_post_response.json()
+            assert "featured_image" in full_post, "Full post should have featured_image field"
+            assert full_post["featured_image"] is not None, "This post should have a featured_image"
+            assert full_post["featured_image"].startswith("/api/blog/uploads/")
+        else:
+            pytest.skip("No posts with featured images found")
+
+
 class TestBlogPostDelete:
     """Test DELETE /api/blog/posts/{post_id}"""
     

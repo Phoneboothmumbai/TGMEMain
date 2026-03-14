@@ -1,20 +1,24 @@
 """
 AI Blog System — Auto-generates SEO-optimized articles with approval workflow
-Uses DeepSeek API for content generation and APScheduler for periodic auto-generation.
+Uses DeepSeek API for content generation, OpenAI GPT Image 1 for featured images,
+and APScheduler for periodic auto-generation.
 """
 
 import os
 import re
 import json
 import uuid
+import base64
 import logging
 import random
 from datetime import datetime, timezone
 from typing import Optional
+from pathlib import Path
 
 import httpx
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorClient
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -29,8 +33,14 @@ DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
 DEEPSEEK_API_URL = "https://api.deepseek.com/chat/completions"
 DEEPSEEK_MODEL = "deepseek-chat"
 
+EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY")
+
 APPROVAL_EMAIL = "ckmotta@thegoodmen.in"
 SITE_URL = "https://thegoodmen.in"
+
+# Blog image uploads directory
+BLOG_UPLOADS_DIR = Path(__file__).parent / "uploads" / "blog"
+BLOG_UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 BLOG_CATEGORIES = [
     "How-To Guides",
@@ -99,33 +109,158 @@ async def save_settings(settings: dict):
 
 # --- AI Content Generation via DeepSeek ---
 
-SYSTEM_PROMPT = """You are an expert IT content writer for The Good Men Enterprise (TGME), 
-a professional IT solutions company based in India. You write authoritative, SEO-optimized blog articles.
+TGME_BUSINESS_CONTEXT = """
+THE GOOD MEN ENTERPRISE (TGME) — Business Context:
+TGME is a professional IT solutions company based in India, serving SMBs and enterprises. Their services include:
+- Annual Maintenance Contracts (AMC) for computers, printers, networking equipment, CCTV, UPS, servers
+- IT infrastructure setup: LAN/WAN networking, firewall configuration, server deployment
+- CCTV & surveillance system installation and maintenance
+- Business email setup (Microsoft 365, Google Workspace)
+- Web hosting, domain management, SSL certificates
+- Cybersecurity: endpoint protection, firewall management, data backup & disaster recovery
+- Hardware repair & device servicing (laptops, desktops, printers, Apple devices)
+- Cloud migration & business tools implementation
+- Remote & on-site IT support for businesses across India
+Target audience: Indian SMBs, startups, mid-size companies, and enterprises looking for reliable IT support.
+"""
 
-STRICT RULES:
+SYSTEM_PROMPT = f"""You are an expert IT content writer for The Good Men Enterprise (TGME).
+You write authoritative, SEO-optimized blog articles that are current, trending, and deeply relevant.
+
+{TGME_BUSINESS_CONTEXT}
+
+CRITICAL RULES:
+- The current year is 2026. NEVER write about 2024 or 2025 as if they are the present. Reference them only as past years.
+- Focus on what is happening NOW in 2026 — current trends, recent developments, new product launches, evolving regulations.
 - Write ONLY factual, verified information. No fabricated stories, fake case studies, or simulated scenarios.
 - Use real product names, real technologies, and current best practices.
-- Every technical claim must be accurate and verifiable.
 - Target audience: Indian SMBs and businesses looking for IT solutions.
 - Write in professional but accessible English.
-- Include practical, actionable advice.
-- Naturally mention TGME's services where relevant (IT support, AMC, networking, CCTV, email setup, etc.) without being overly promotional.
-- Optimize for Google search and AI/LLM platforms."""
+- Include practical, actionable advice that businesses can implement today.
+- Naturally mention TGME's services where relevant without being overly promotional.
+- Optimize for Google search and AI/LLM platforms (use structured content, clear headings, answer common questions).
+- Reference Indian context: GST compliance, DPDP Act, RBI digital payment regulations, Make in India, Digital India initiatives where relevant."""
+
+
+async def research_trending_topic(category: str):
+    """Step 1: Ask DeepSeek to research and suggest a specific, trending topic for 2026."""
+    research_prompt = f"""You are an IT industry trend researcher. The current date is {datetime.now().strftime('%B %Y')}.
+
+Research and identify ONE specific, high-search-volume, trending topic in the category "{category}" that is:
+1. Highly relevant to Indian businesses RIGHT NOW in 2026
+2. Related to TGME's IT services (AMC, networking, cybersecurity, cloud, hardware, CCTV, servers, email, web hosting)
+3. Something businesses are actively searching for or concerned about
+4. NOT a generic/evergreen topic — it should reference specific 2026 developments, products, regulations, or trends
+
+Think about:
+- New product launches or major updates in 2026
+- Recent cybersecurity threats or data breaches affecting Indian businesses
+- New Indian government regulations (DPDP Act enforcement, digital compliance)
+- Technology shifts (AI integration in business operations, cloud migration trends)
+- Cost optimization strategies businesses are adopting in 2026
+- New tools, platforms, or services gaining traction in India
+
+Return ONLY a JSON object (no markdown, no code blocks):
+{{"topic": "Specific trending topic title", "why_trending": "Brief explanation of why this is relevant now in 2026", "search_intent": "What users are searching for"}}"""
+
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        response = await client.post(
+            DEEPSEEK_API_URL,
+            headers={"Authorization": f"Bearer {DEEPSEEK_API_KEY}", "Content-Type": "application/json"},
+            json={
+                "model": DEEPSEEK_MODEL,
+                "messages": [{"role": "user", "content": research_prompt}],
+                "temperature": 0.9,
+                "max_tokens": 500,
+            },
+        )
+
+    if response.status_code != 200:
+        logger.warning(f"Topic research failed: {response.status_code}")
+        return None
+
+    try:
+        text = response.json()["choices"][0]["message"]["content"].strip()
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+        if text.endswith("```"):
+            text = text.rsplit("```", 1)[0]
+        return json.loads(text.strip())
+    except Exception as e:
+        logger.warning(f"Failed to parse topic research: {e}")
+        return None
+
+
+async def generate_featured_image(title: str, category: str) -> str:
+    """Generate a featured image for the blog post using OpenAI GPT Image 1."""
+    if not EMERGENT_LLM_KEY:
+        logger.warning("EMERGENT_LLM_KEY not set, skipping image generation")
+        return None
+
+    try:
+        from emergentintegrations.llm.openai.image_generation import OpenAIImageGeneration
+
+        image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
+
+        image_prompt = f"""Professional, modern tech blog hero image for an article titled "{title}" in the "{category}" category. 
+Style: Clean, corporate, minimal flat illustration with subtle gradients. Use a dark blue (#1e293b) to deep teal color palette with amber (#f59e0b) accents. 
+Show abstract tech elements related to the topic — no text, no words, no letters in the image. 
+Professional quality suitable for a business IT company blog. Wide landscape format."""
+
+        images = await image_gen.generate_images(
+            prompt=image_prompt,
+            model="gpt-image-1",
+            number_of_images=1,
+        )
+
+        if images and len(images) > 0:
+            # Save to disk
+            filename = f"{uuid.uuid4().hex[:12]}.png"
+            filepath = BLOG_UPLOADS_DIR / filename
+            with open(filepath, "wb") as f:
+                f.write(images[0])
+
+            image_url = f"/api/blog/uploads/{filename}"
+            logger.info(f"Featured image generated: {image_url}")
+            return image_url
+
+    except Exception as e:
+        logger.error(f"Image generation failed: {e}")
+
+    return None
 
 
 async def generate_blog_post(category: str, topic_hint: str = None):
-    """Generate a full blog post using DeepSeek API"""
+    """Generate a full blog post using DeepSeek API with trend research and image generation."""
     if not DEEPSEEK_API_KEY:
         raise HTTPException(status_code=500, detail="DEEPSEEK_API_KEY not configured")
 
+    # Step 1: Research trending topic if no hint provided
+    topic_context = ""
+    if topic_hint:
+        topic_context = f'Write about this specific topic: {topic_hint}'
+    else:
+        research = await research_trending_topic(category)
+        if research:
+            topic_context = f"""Write about this trending topic: {research.get('topic', '')}
+Context: {research.get('why_trending', '')}
+User search intent: {research.get('search_intent', '')}"""
+            logger.info(f"Topic researched: {research.get('topic', 'N/A')}")
+        else:
+            topic_context = f"Choose a specific, trending topic in this category that is highly relevant to Indian businesses in {datetime.now().year}."
+
+    # Step 2: Generate the article
+    current_date = datetime.now().strftime('%B %Y')
     prompt = f"""Write a comprehensive blog article for the category: "{category}"
-{f'Topic hint: {topic_hint}' if topic_hint else 'Choose a trending, high-search-volume topic in this category relevant to Indian businesses in 2025-2026.'}
+{topic_context}
+
+IMPORTANT: The current date is {current_date}. Write as if you are publishing TODAY. Reference current year {datetime.now().year} developments, not past years.
 
 Return your response in EXACTLY this JSON format (no markdown, no code blocks, just raw JSON):
 {{
-  "title": "SEO-optimized title (60-70 chars ideal)",
+  "title": "SEO-optimized title (60-70 chars ideal, must include {datetime.now().year} if relevant)",
   "excerpt": "Compelling 150-160 char meta description for Google",
-  "content": "Full article in HTML format. Use <h2>, <h3> for headings, <p> for paragraphs, <ul>/<ol> for lists, <strong> for emphasis. Write 1500-2500 words. Include an introduction, 4-6 main sections with subheadings, practical tips, and a conclusion. Add a section mentioning how TGME can help.",
+  "content": "Full article in HTML format. Use <h2>, <h3> for headings, <p> for paragraphs, <ul>/<ol> for lists, <strong> for emphasis. Write 1500-2500 words. Include an introduction referencing current {datetime.now().year} context, 4-6 main sections with subheadings, practical tips for Indian businesses, and a conclusion. Add a section mentioning how TGME can help.",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
   "faq": [
     {{"question": "Common question 1?", "answer": "Detailed factual answer"}},
@@ -183,6 +318,9 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
         word_count = len(html_content.split())
         reading_time = max(1, word_count // 250)
 
+        # Step 3: Generate featured image
+        featured_image = await generate_featured_image(title, category)
+
         post = {
             "post_id": uuid.uuid4().hex[:12],
             "title": title,
@@ -194,7 +332,7 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
             "category": category,
             "tags": data.get("tags", []),
             "faq": data.get("faq", []),
-            "featured_image": None,
+            "featured_image": featured_image,
             "status": "pending",
             "word_count": word_count,
             "reading_time": reading_time,
