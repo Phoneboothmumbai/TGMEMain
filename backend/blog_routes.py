@@ -142,8 +142,32 @@ CRITICAL RULES:
 - Reference Indian context: GST compliance, DPDP Act, RBI digital payment regulations, Make in India, Digital India initiatives where relevant."""
 
 
+async def get_recent_titles(days=45):
+    """Fetch titles of posts created in the last N days to avoid duplicates."""
+    from datetime import timedelta
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    posts = await db.blog_posts.find(
+        {"created_at": {"$gte": cutoff}},
+        {"title": 1, "category": 1, "tags": 1, "_id": 0}
+    ).to_list(200)
+    return posts
+
+
 async def research_trending_topic(category: str):
     """Step 1: Ask DeepSeek to research and suggest a specific, trending topic for 2026."""
+    # Fetch existing topics to avoid duplicates
+    recent = await get_recent_titles(45)
+    existing_titles = [p["title"] for p in recent]
+    existing_block = ""
+    if existing_titles:
+        titles_list = "\n".join(f"- {t}" for t in existing_titles)
+        existing_block = f"""
+
+CRITICAL — DO NOT repeat or overlap with these existing articles (written in the last 45 days):
+{titles_list}
+
+Your suggested topic MUST be completely different from all of the above. Different subject matter, different angle, different focus area. No variations or rewrites of existing titles."""
+
     research_prompt = f"""You are an IT industry trend researcher. The current date is {datetime.now().strftime('%B %Y')}.
 
 Research and identify ONE specific, high-search-volume, trending topic in the category "{category}" that is:
@@ -151,6 +175,8 @@ Research and identify ONE specific, high-search-volume, trending topic in the ca
 2. Related to TGME's IT services (AMC, networking, cybersecurity, cloud, hardware, CCTV, servers, email, web hosting)
 3. Something businesses are actively searching for or concerned about
 4. NOT a generic/evergreen topic — it should reference specific 2026 developments, products, regulations, or trends
+5. COMPLETELY UNIQUE — never covered before on this blog
+{existing_block}
 
 Think about:
 - New product launches or major updates in 2026
@@ -159,6 +185,10 @@ Think about:
 - Technology shifts (AI integration in business operations, cloud migration trends)
 - Cost optimization strategies businesses are adopting in 2026
 - New tools, platforms, or services gaining traction in India
+- Hardware refresh cycles, Windows upgrades, printer/networking trends
+- CCTV/surveillance technology advances, smart office trends
+- UPS and power management for Indian businesses
+- Backup solutions, disaster recovery planning
 
 Return ONLY a JSON object (no markdown, no code blocks):
 {{"topic": "Specific trending topic title", "why_trending": "Brief explanation of why this is relevant now in 2026", "search_intent": "What users are searching for"}}"""
@@ -235,6 +265,18 @@ async def generate_blog_post(category: str, topic_hint: str = None):
     if not DEEPSEEK_API_KEY:
         raise HTTPException(status_code=500, detail="DEEPSEEK_API_KEY not configured")
 
+    # Fetch existing titles for uniqueness enforcement
+    recent = await get_recent_titles(45)
+    existing_titles = [p["title"] for p in recent]
+    uniqueness_block = ""
+    if existing_titles:
+        titles_list = "\n".join(f"- {t}" for t in existing_titles)
+        uniqueness_block = f"""
+
+UNIQUENESS REQUIREMENT — These articles already exist on our blog (last 45 days). Your article MUST cover a COMPLETELY DIFFERENT topic:
+{titles_list}
+Do NOT write about the same subject, do NOT rephrase an existing title, do NOT cover similar ground. Pick an entirely new angle and subject."""
+
     # Step 1: Research trending topic if no hint provided
     topic_context = ""
     if topic_hint:
@@ -255,6 +297,7 @@ User search intent: {research.get('search_intent', '')}"""
 {topic_context}
 
 IMPORTANT: The current date is {current_date}. Write as if you are publishing TODAY. Reference current year {datetime.now().year} developments, not past years.
+{uniqueness_block}
 
 CONTENT STRUCTURE RULES:
 1. Start with an engaging introduction paragraph (2-3 sentences max).
