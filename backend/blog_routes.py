@@ -199,37 +199,29 @@ async def save_settings(settings: dict):
 
 # --- AI Content Generation via DeepSeek ---
 
-TGME_BUSINESS_CONTEXT = """
-THE GOOD MEN ENTERPRISE (TGME) — Business Context:
-TGME is a professional IT solutions company based in India, serving SMBs and enterprises. Their services include:
-- Annual Maintenance Contracts (AMC) for computers, printers, networking equipment, CCTV, UPS, servers
-- IT infrastructure setup: LAN/WAN networking, firewall configuration, server deployment
-- CCTV & surveillance system installation and maintenance
-- Business email setup (Microsoft 365, Google Workspace)
-- Web hosting, domain management, SSL certificates
-- Cybersecurity: endpoint protection, firewall management, data backup & disaster recovery
-- Hardware repair & device servicing (laptops, desktops, printers, Apple devices)
-- Cloud migration & business tools implementation
-- Remote & on-site IT support for businesses across India
-Target audience: Indian SMBs, startups, mid-size companies, and enterprises looking for reliable IT support.
-"""
+TGME_SERVICES = "AMC, networking, cybersecurity, CCTV, hardware repair, email/cloud setup, web hosting, servers, UPS, backup & disaster recovery"
 
-SYSTEM_PROMPT = f"""You are an expert IT content writer for The Good Men Enterprise (TGME).
-You write authoritative, SEO-optimized blog articles that are current, trending, and deeply relevant.
+SYSTEM_PROMPT = f"""You are a senior IT journalist writing for The Good Men Enterprise (TGME), an Indian IT services company.
 
-{TGME_BUSINESS_CONTEXT}
+ABSOLUTE RULES — VIOLATION MEANS THE ARTICLE IS REJECTED:
 
-CRITICAL RULES:
-- The current year is 2026. NEVER write about 2024 or 2025 as if they are the present. Reference them only as past years.
-- Focus on what is happening NOW in 2026 — current trends, recent developments, new product launches, evolving regulations.
-- Write ONLY factual, verified information. No fabricated stories, fake case studies, or simulated scenarios.
-- Use real product names, real technologies, and current best practices.
-- Target audience: Indian SMBs and businesses looking for IT solutions.
-- Write in professional but accessible English.
-- Include practical, actionable advice that businesses can implement today.
-- Naturally mention TGME's services where relevant without being overly promotional.
-- Optimize for Google search and AI/LLM platforms (use structured content, clear headings, answer common questions).
-- Reference Indian context: GST compliance, DPDP Act, RBI digital payment regulations, Make in India, Digital India initiatives where relevant."""
+1. NEVER FABRICATE DATA. No made-up statistics, percentages, survey results, market sizes, growth rates, or research findings. If you don't know the exact number, DON'T include one. Say "many businesses" not "73% of businesses".
+
+2. NEVER INVENT CASE STUDIES. No fictional companies, no imaginary success stories, no "Company X saved Y%" narratives. Only reference well-known, verifiable companies (Google, Microsoft, Infosys, etc.) and only for publicly known facts.
+
+3. NEVER MAKE UP QUOTES. No attributed quotes from unnamed experts, CEOs, or analysts.
+
+4. KEEP IT SHORT. Target 600-900 words. Every sentence must earn its place. No filler paragraphs, no restating the same point, no generic conclusions like "In today's rapidly evolving digital landscape...".
+
+5. BE SPECIFIC AND PRACTICAL. Tell the reader exactly what to do, what tool to use, what setting to change. Vague advice like "invest in cybersecurity" is useless.
+
+6. WRITE LIKE A HUMAN. Use conversational, direct language. Short paragraphs. No corporate jargon. No AI-sounding phrases like "In this comprehensive guide" or "Let's dive in" or "In conclusion".
+
+7. ONLY REAL PRODUCTS AND PRICES. Only mention products that actually exist. If referencing pricing, only use publicly listed prices from official websites.
+
+TGME provides: {TGME_SERVICES}. Mention TGME's services naturally where relevant — one or two lines max, not a whole section.
+
+Target audience: Indian business owners and IT managers at SMBs who need practical, trustworthy advice."""
 
 
 async def get_recent_titles(days=45):
@@ -273,31 +265,18 @@ Pick a topic INSPIRED by these real current news trends but tailored to Indian b
     else:
         logger.warning("[TopicResearch] Could not fetch trending news, using AI knowledge only")
 
-    research_prompt = f"""You are an IT industry trend researcher. The current date is {datetime.now().strftime('%B %Y')}.
+    research_prompt = f"""You are a tech news editor. The current date is {datetime.now().strftime('%B %Y')}.
 {news_block}
 
-Research and identify ONE specific, high-search-volume, trending topic in the category "{category}" that is:
-1. Highly relevant to Indian businesses RIGHT NOW in 2026
-2. Related to TGME's IT services (AMC, networking, cybersecurity, cloud, hardware, CCTV, servers, email, web hosting)
-3. Something businesses are actively searching for or concerned about
-4. NOT a generic/evergreen topic — it should reference specific 2026 developments, products, regulations, or trends
-5. COMPLETELY UNIQUE — never covered before on this blog
+Based on the real headlines above, suggest ONE specific blog topic for the category "{category}" that:
+1. Is relevant to Indian businesses who use IT services (hardware, networking, cybersecurity, cloud, email, CCTV, servers)
+2. Is inspired by actual current news — not generic advice
+3. Is specific enough that a reader knows exactly what the article will cover from the title alone
+4. Has NOT been covered already on this blog
 {existing_block}
 
-Think about:
-- New product launches or major updates in 2026
-- Recent cybersecurity threats or data breaches affecting Indian businesses
-- New Indian government regulations (DPDP Act enforcement, digital compliance)
-- Technology shifts (AI integration in business operations, cloud migration trends)
-- Cost optimization strategies businesses are adopting in 2026
-- New tools, platforms, or services gaining traction in India
-- Hardware refresh cycles, Windows upgrades, printer/networking trends
-- CCTV/surveillance technology advances, smart office trends
-- UPS and power management for Indian businesses
-- Backup solutions, disaster recovery planning
-
 Return ONLY a JSON object (no markdown, no code blocks):
-{{"topic": "Specific trending topic title", "why_trending": "Brief explanation of why this is relevant now in 2026", "search_intent": "What users are searching for"}}"""
+{{"topic": "Specific topic title under 65 chars", "why_trending": "One sentence on why this matters now", "search_intent": "What someone would Google to find this"}}"""
 
     async with httpx.AsyncClient(timeout=60.0) as client:
         response = await client.post(
@@ -306,7 +285,7 @@ Return ONLY a JSON object (no markdown, no code blocks):
             json={
                 "model": DEEPSEEK_MODEL,
                 "messages": [{"role": "user", "content": research_prompt}],
-                "temperature": 0.9,
+                "temperature": 0.6,
                 "max_tokens": 500,
             },
         )
@@ -399,49 +378,46 @@ User search intent: {research.get('search_intent', '')}"""
 
     # Step 2: Generate the article
     current_date = datetime.now().strftime('%B %Y')
-    prompt = f"""Write a comprehensive blog article for the category: "{category}"
+    prompt = f"""Category: "{category}"
 {topic_context}
 
-IMPORTANT: The current date is {current_date}. Write as if you are publishing TODAY. Reference current year {datetime.now().year} developments, not past years.
+Current date: {current_date}. Write for {datetime.now().year}. Reference past years only as history.
 {uniqueness_block}
 
-CONTENT STRUCTURE RULES:
-1. Start with an engaging introduction paragraph (2-3 sentences max).
-2. The HTML content MUST have proper spacing — use <br> or margin between sections.
-3. Use <h2> for main sections, <h3> for subsections. Make headings descriptive and SEO-friendly.
-4. After every 2-3 sections, insert a contextual CTA box using this exact HTML format:
-   <div class="blog-cta"><p><strong>Need help with [topic]?</strong> TGME provides [relevant service]. <a href="/support">Get Expert Support</a> or <a href="/amc">View AMC Plans</a></p></div>
-   Choose the CTA text and links that are MOST relevant to the surrounding content. Available pages:
-   - /support — for IT support requests
-   - /amc — for Annual Maintenance Contracts
-   - /services/hardware-repair — for hardware repair services
-   - /services/cyber-security — for cybersecurity services
-   - /services/email-solutions — for email/cloud setup
-   - /knowledge-base — for more guides and articles
-5. Use <strong> liberally for key terms and important phrases.
-6. Use <ul> or <ol> lists for steps, tips, and comparisons.
-7. End with a strong conclusion that includes a final CTA.
+ARTICLE FORMAT:
+- 600-900 words MAXIMUM. Not a word more. Quality over quantity.
+- 3-4 sections with <h2> headings. No more.
+- Short paragraphs (2-3 sentences each).
+- Use <ul>/<ol> for actionable steps or comparisons.
+- Bold (<strong>) only for genuinely important terms.
+- ONE CTA box using: <div class="blog-cta"><p><strong>[Relevant hook]</strong> <a href="/support">Get Support</a> | <a href="/amc">AMC Plans</a></p></div>
+  Place it after the most relevant section, not at the start.
 
-Return your response in EXACTLY this JSON format (no markdown, no code blocks, just raw JSON):
+AUTHENTICITY RULES:
+- NO fabricated statistics or percentages
+- NO made-up case studies or company stories
+- NO invented quotes or expert opinions
+- NO phrases like "studies show", "research indicates", "experts predict" unless citing a real, named source
+- If comparing products, use only real features from their official websites
+- If mentioning pricing, use real publicly available prices only
+
+Return ONLY raw JSON (no markdown, no code blocks):
 {{
-  "title": "SEO-optimized title (60-70 chars ideal, must include {datetime.now().year} if relevant)",
-  "excerpt": "Compelling 150-160 char meta description for Google",
+  "title": "Clear, specific title under 65 characters",
+  "excerpt": "One-sentence summary under 155 characters",
   "key_takeaways": [
-    "First key point — the most important takeaway from this article",
-    "Second key point — another critical insight for the reader",
-    "Third key point — practical actionable advice",
-    "Fourth key point — why this matters for Indian businesses",
-    "Fifth key point — what to do next"
+    "Specific, actionable point 1",
+    "Specific, actionable point 2",
+    "Specific, actionable point 3"
   ],
-  "content": "Full article in HTML format following the structure rules above. Write 1500-2500 words. Include 4-6 main sections with subheadings, practical tips, inline CTAs, and a conclusion.",
-  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+  "content": "HTML article. 600-900 words. Practical, honest, no fluff.",
+  "tags": ["tag1", "tag2", "tag3", "tag4"],
   "faq": [
-    {{"question": "Common question 1?", "answer": "Detailed factual answer"}},
-    {{"question": "Common question 2?", "answer": "Detailed factual answer"}},
-    {{"question": "Common question 3?", "answer": "Detailed factual answer"}},
-    {{"question": "Common question 4?", "answer": "Detailed factual answer"}}
+    {{"question": "Practical question a business owner would actually ask", "answer": "Direct, honest answer in 1-2 sentences. No padding."}},
+    {{"question": "Another real question", "answer": "Another direct answer."}},
+    {{"question": "Third question", "answer": "Third answer."}}
   ],
-  "meta_keywords": "comma, separated, seo, keywords"
+  "meta_keywords": "keyword1, keyword2, keyword3, keyword4"
 }}"""
 
     try:
@@ -458,8 +434,8 @@ Return your response in EXACTLY this JSON format (no markdown, no code blocks, j
                         {"role": "system", "content": SYSTEM_PROMPT},
                         {"role": "user", "content": prompt},
                     ],
-                    "temperature": 0.8,
-                    "max_tokens": 4096,
+                    "temperature": 0.5,
+                    "max_tokens": 3000,
                 },
             )
 
