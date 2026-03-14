@@ -13,6 +13,7 @@ import EmailSolutionsPage from "./pages/EmailSolutionsPage";
 import CyberSecurityPage from "./pages/CyberSecurityPage";
 import HardwareRepairPage from "./pages/HardwareRepairPage";
 import AMCPage from "./pages/AMCPage";
+import SupportFormPage from "./pages/SupportFormPage";
 
 // Admin pages
 import { AuthProvider, useAuth } from "./contexts/KBAuthContext";
@@ -74,6 +75,7 @@ function AppRoutes() {
       <Route path="/services/cybersecurity" element={<CyberSecurityPage />} />
       <Route path="/services/repair" element={<HardwareRepairPage />} />
       <Route path="/amc" element={<AMCPage />} />
+      <Route path="/support" element={<SupportFormPage />} />
       <Route path="/kb" element={<KnowledgeBasePage />} />
       <Route path="/kb/category/:categorySlug" element={<KBCategoryPage />} />
       <Route path="/kb/article/:articleSlug" element={<KBArticlePage />} />

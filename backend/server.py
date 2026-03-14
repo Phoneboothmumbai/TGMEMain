@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from kb_routes import kb_router, set_database
 from workspace_routes import router as workspace_router
 from amc_routes import router as amc_router
+from support_form_routes import router as support_form_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -92,6 +93,9 @@ app.include_router(workspace_router)
 
 # Include AMC router
 app.include_router(amc_router)
+
+# Include Support Form router
+app.include_router(support_form_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -40,7 +40,7 @@ export const Header = () => {
     { label: 'Company', href: '#', hasDropdown: 'company' },
     { label: 'Solutions', href: '#', hasDropdown: 'solutions' },
     { label: 'AMC Plans', href: '/amc' },
-    { label: 'Support', href: 'https://support.thegoodmen.in', external: true },
+    { label: 'Support', href: '/support' },
   ];
 
   const handleNavClick = (href, hasDropdown = false) => {
