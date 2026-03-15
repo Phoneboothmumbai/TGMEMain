@@ -34,7 +34,6 @@ export const Header = () => {
     { label: 'About TGME', href: '/about' },
     { label: 'How We Work', href: '/how-we-work' },
     { label: 'Knowledge Base', href: '/kb' },
-    { label: 'Blog', href: '/blog' },
   ];
 
   const navLinks = [
