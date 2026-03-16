@@ -2,6 +2,7 @@ import React from 'react';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Card, CardContent } from '../components/ui/card';
+import { SEO, breadcrumbSchema } from '../components/SEO';
 import { 
   Target, Eye, Heart, Users, Award, CheckCircle, 
   Building2, Globe, Handshake, TrendingUp
@@ -49,6 +50,13 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <SEO
+        title="About Us — IT Solutions Company in Mumbai"
+        description="The Good Men Enterprise is a trusted IT solutions company in Mumbai, providing hardware repair, AMC, CCTV, cybersecurity, and networking services to businesses since establishment."
+        keywords="about TGME, IT company Mumbai, IT solutions Mulund West, The Good Men Enterprise, IT services provider Mumbai"
+        path="/about"
+        schema={breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])}
+      />
       <Header />
       
       <main className="pt-20">

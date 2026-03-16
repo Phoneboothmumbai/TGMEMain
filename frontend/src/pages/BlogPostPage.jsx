@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Loader2, Clock, Calendar, Tag, ChevronLeft, ChevronRight, CheckCircle2, ArrowRight } from 'lucide-react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 

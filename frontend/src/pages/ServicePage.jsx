@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Toaster } from '../components/ui/sonner';
 import { servicePages, serviceOrder } from '../data/servicePages';
+import { SEO, serviceSchema } from '../components/SEO';
 import {
   Server, Shield, Laptop, Cloud, Package, Headphones, Code,
   ArrowLeft, ArrowRight, CheckCircle2, Target, Users, Wrench, Zap, X, Lightbulb,
@@ -99,6 +100,13 @@ export default function ServicePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title={`${service.title} — IT Services Mumbai`}
+        description={`${service.description} Professional IT services by The Good Men Enterprise in Mumbai.`}
+        keywords={`${service.title} Mumbai, ${service.title.toLowerCase()}, IT services Mumbai, TGME ${service.title.toLowerCase()}`}
+        path={`/services/${serviceId}`}
+        schema={serviceSchema({ name: service.title, description: service.description, url: `/services/${serviceId}` })}
+      />
       <Toaster position="top-right" richColors />
       <Header />
       

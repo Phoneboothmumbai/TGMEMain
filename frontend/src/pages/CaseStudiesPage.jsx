@@ -3,6 +3,7 @@ import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { SEO } from '../components/SEO';
 import { 
   Building2, Users, TrendingUp, Clock, CheckCircle, 
   ArrowRight, Quote, Filter, Server, Shield, Cloud,
@@ -153,6 +154,12 @@ export default function CaseStudiesPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <SEO
+        title="Case Studies — IT Projects & Success Stories Mumbai"
+        description="See how TGME has helped businesses in Mumbai with IT infrastructure, CCTV installation, network setup, and cybersecurity projects. Real results from real clients."
+        keywords="IT case studies Mumbai, IT project success stories, CCTV installation project, network setup case study, TGME projects"
+        path="/case-studies"
+      />
       <Header />
       
       <main className="pt-20">

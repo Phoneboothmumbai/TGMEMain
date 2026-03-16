@@ -3,6 +3,7 @@ import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { SEO, serviceSchema } from '../components/SEO';
 import { 
   Shield, Lock, Eye, AlertTriangle, CheckCircle2, 
   Server, Globe, Smartphone, Cloud, FileSearch, Code,
@@ -85,6 +86,13 @@ export default function CyberSecurityPage() {
 
   return (
     <div className="min-h-screen bg-slate-900">
+      <SEO
+        title="Cybersecurity Services — Network Security & Data Protection Mumbai"
+        description="Protect your business with TGME's cybersecurity services in Mumbai. Firewall setup, endpoint protection, data backup, vulnerability assessment, and 24/7 threat monitoring."
+        keywords="cybersecurity services Mumbai, network security Mumbai, firewall setup Mumbai, data protection Mumbai, endpoint security, IT security company Mumbai, ransomware protection, TGME cybersecurity"
+        path="/services/cybersecurity"
+        schema={serviceSchema({ name: 'Cybersecurity Services', description: 'Firewall setup, endpoint protection, data backup, vulnerability assessment, and threat monitoring for Mumbai businesses.', url: '/services/cybersecurity' })}
+      />
       <Header />
       
       <main className="pt-20">

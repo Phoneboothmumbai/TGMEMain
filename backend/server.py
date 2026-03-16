@@ -17,6 +17,7 @@ from amc_routes import router as amc_router
 from support_form_routes import router as support_form_router
 from blog_routes import router as blog_router, set_blog_db, start_scheduler, sync_scheduler
 from contact_routes import router as contact_router
+from seo_routes import router as seo_router, set_seo_db
 
 
 ROOT_DIR = Path(__file__).parent
@@ -30,6 +31,7 @@ db = client[os.environ['DB_NAME']]
 # Set database for KB routes
 set_database(db)
 set_blog_db(db)
+set_seo_db(db)
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -108,6 +110,9 @@ app.include_router(blog_router)
 
 # Include Contact router
 app.include_router(contact_router)
+
+# Include SEO router
+app.include_router(seo_router)
 
 app.add_middleware(
     CORSMiddleware,

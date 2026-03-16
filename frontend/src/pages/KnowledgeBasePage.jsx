@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Card, CardContent } from '../components/ui/card';
+import { SEO } from '../components/SEO';
 import { Input } from '../components/ui/input';
 import { Toaster } from '../components/ui/sonner';
 import axios from 'axios';
@@ -61,6 +62,12 @@ export default function KnowledgeBasePage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <SEO
+        title="IT Knowledge Base — Guides, Tutorials & Troubleshooting"
+        description="Free IT knowledge base with guides, tutorials, and troubleshooting articles for businesses. Learn about networking, cybersecurity, hardware, and cloud solutions from TGME."
+        keywords="IT knowledge base, IT guides Mumbai, tech tutorials, troubleshooting guide, IT help articles, TGME knowledge base"
+        path="/kb"
+      />
       <Toaster position="top-right" richColors />
       <Header />
       

@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import LandingPage from "./pages/LandingPage";
 import ServicePage from "./pages/ServicePage";
 import KnowledgeBasePage from "./pages/KnowledgeBasePage";
@@ -119,6 +120,7 @@ function AppRoutes() {
 
 function App() {
   return (
+    <HelmetProvider>
     <div className="App">
       <BrowserRouter>
         <AuthProvider>
@@ -128,6 +130,7 @@ function App() {
         </AuthProvider>
       </BrowserRouter>
     </div>
+    </HelmetProvider>
   );
 }
 

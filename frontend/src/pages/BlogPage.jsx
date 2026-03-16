@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
+import { SEO } from '../components/SEO';
 import { Search, Clock, ArrowRight, Tag, Loader2 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -69,6 +70,12 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-slate-900">
+      <SEO
+        title="IT Blog — Tech Tips, Guides & Industry Insights"
+        description="Read the latest IT tips, cybersecurity advice, hardware guides, and technology insights for Indian businesses. Expert articles from The Good Men Enterprise."
+        keywords="IT blog Mumbai, tech tips for business, cybersecurity blog, hardware guides, IT industry insights India, TGME blog"
+        path="/blog"
+      />
       <Header />
 
       {/* Hero */}

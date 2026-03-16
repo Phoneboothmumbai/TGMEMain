@@ -2,6 +2,7 @@ import React from 'react';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Card, CardContent } from '../components/ui/card';
+import { SEO, serviceSchema, breadcrumbSchema } from '../components/SEO';
 import { 
   Laptop, Monitor, Printer, Smartphone, Server, Cpu,
   CheckCircle2, Clock, Shield, Wrench, ArrowRight,
@@ -83,6 +84,13 @@ export default function HardwareRepairPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <SEO
+        title="Hardware Repair Services — Laptop, Desktop & Printer Repair Mumbai"
+        description="Professional laptop, desktop, printer, and IT hardware repair services in Mumbai. Same-day service, genuine parts, certified technicians. TGME — trusted by 500+ businesses."
+        keywords="laptop repair Mumbai, desktop repair Mumbai, printer repair Mumbai, hardware repair Mulund, computer service center Mumbai, IT hardware repair, Apple repair Mumbai, TGME repair"
+        path="/services/repair"
+        schema={serviceSchema({ name: 'Hardware Repair Services', description: 'Professional laptop, desktop, printer, and IT hardware repair in Mumbai. Same-day service with genuine parts.', url: '/services/repair' })}
+      />
       <Header />
       
       <main className="pt-20">

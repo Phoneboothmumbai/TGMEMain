@@ -3,6 +3,7 @@ import { Header } from '../components/layout/Header';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { SEO, serviceSchema } from '../components/SEO';
 import { Textarea } from '../components/ui/textarea';
 import { toast } from 'sonner';
 import {
@@ -198,6 +199,13 @@ export default function AMCPage() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-slate-900">
+        <SEO
+          title="AMC Plans — Annual Maintenance Contract for IT Equipment Mumbai"
+          description="Get Annual Maintenance Contracts for computers, printers, CCTV, servers, UPS, and networking equipment in Mumbai. Plans starting at Rs 2,500/year. 24/7 IT support by TGME."
+          keywords="AMC Mumbai, annual maintenance contract computers, IT AMC plans, computer maintenance Mumbai, CCTV AMC, server AMC, printer AMC Mumbai, UPS maintenance contract, TGME AMC"
+          path="/amc"
+          schema={serviceSchema({ name: 'Annual Maintenance Contract (AMC)', description: 'Comprehensive AMC plans for computers, printers, CCTV, servers, UPS, and networking equipment. Starting Rs 2,500/year.', url: '/amc' })}
+        />
         <Header />
         <div className="pt-32 pb-20 px-6 max-w-2xl mx-auto text-center">
           <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">

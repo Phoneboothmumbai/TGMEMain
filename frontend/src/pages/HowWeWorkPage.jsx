@@ -2,6 +2,7 @@ import React from 'react';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Card, CardContent } from '../components/ui/card';
+import { SEO, breadcrumbSchema } from '../components/SEO';
 import { 
   MessageSquare, Search, FileText, Settings, 
   Rocket, HeartHandshake, ArrowRight, CheckCircle,
@@ -109,6 +110,13 @@ export default function HowWeWorkPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <SEO
+        title="How We Work — Our IT Service Process"
+        description="Learn how TGME delivers IT services — from initial consultation to ongoing support. Our transparent, step-by-step process ensures reliable IT solutions for your business in Mumbai."
+        keywords="TGME process, how IT support works, IT service delivery Mumbai, TGME methodology"
+        path="/how-we-work"
+        schema={breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'How We Work', path: '/how-we-work' }])}
+      />
       <Header />
       
       <main className="pt-20">

@@ -3,6 +3,7 @@ import { Header } from '../components/layout/Header';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { SEO } from '../components/SEO';
 import { Textarea } from '../components/ui/textarea';
 import { toast } from 'sonner';
 import {
@@ -78,6 +79,12 @@ export default function SupportFormPage() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-slate-900"><Header />
+        <SEO
+          title="IT Support Request — Computer & Network Help Mumbai"
+          description="Request IT support, computer repair, network troubleshooting, or get a quote for IT services in Mumbai. Fast response from TGME's certified technicians."
+          keywords="IT support request Mumbai, computer repair help, network troubleshooting Mumbai, IT helpdesk Mumbai, tech support Mumbai, TGME support"
+          path="/support"
+        />
         <div className="pt-32 pb-20 px-6 max-w-2xl mx-auto text-center">
           <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-green-400" />

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /workspace/
+Disallow: /kb/admin/
+
+Sitemap: https://thegoodmen.in/sitemap.xml

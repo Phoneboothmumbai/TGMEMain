@@ -3,6 +3,7 @@ import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { SEO, serviceSchema } from '../components/SEO';
 import { 
   Mail, CheckCircle2, ExternalLink, Shield, Clock, Users,
   Smartphone, Calendar, Cloud, Lock, Globe, Zap, ArrowRight
@@ -129,6 +130,13 @@ export default function EmailSolutionsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <SEO
+        title="Business Email Setup — Microsoft 365 & Google Workspace Mumbai"
+        description="Professional business email setup with Microsoft 365 and Google Workspace in Mumbai. Domain email, migration, SPF/DKIM/DMARC configuration. TGME — certified email solutions partner."
+        keywords="business email setup Mumbai, Microsoft 365 Mumbai, Google Workspace setup Mumbai, corporate email migration, SPF DKIM setup, email solutions Mumbai, TGME email"
+        path="/services/email"
+        schema={serviceSchema({ name: 'Business Email & Cloud Solutions', description: 'Microsoft 365 and Google Workspace setup, migration, and management for Mumbai businesses.', url: '/services/email' })}
+      />
       <Header />
       
       <main className="pt-20">
