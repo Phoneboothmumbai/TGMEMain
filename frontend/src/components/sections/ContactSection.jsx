@@ -27,18 +27,28 @@ export const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission (mock for now)
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    toast.success('Message sent successfully! We\'ll get back to you soon.');
-
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setFormData({ name: '', email: '', company: '', phone: '', message: '' });
-      setIsSubmitted(false);
-    }, 3000);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/contact/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setIsSubmitted(true);
+        toast.success(data.message || 'Message sent successfully!');
+        setTimeout(() => {
+          setFormData({ name: '', email: '', company: '', phone: '', message: '' });
+          setIsSubmitted(false);
+        }, 3000);
+      } else {
+        toast.error(data.detail || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      toast.error('Could not send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

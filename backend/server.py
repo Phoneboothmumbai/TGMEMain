@@ -16,6 +16,7 @@ from workspace_routes import router as workspace_router
 from amc_routes import router as amc_router
 from support_form_routes import router as support_form_router
 from blog_routes import router as blog_router, set_blog_db, start_scheduler, sync_scheduler
+from contact_routes import router as contact_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -104,6 +105,9 @@ app.include_router(support_form_router)
 
 # Include Blog router
 app.include_router(blog_router)
+
+# Include Contact router
+app.include_router(contact_router)
 
 app.add_middleware(
     CORSMiddleware,
