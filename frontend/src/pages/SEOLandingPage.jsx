@@ -97,9 +97,9 @@ export default function SEOLandingPage({ type = 'service', slug: propSlug }) {
                 <a href="tel:+919769444455" className="inline-flex items-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-semibold transition-colors text-sm" data-testid="hero-call-btn">
                   <Phone className="w-4 h-4" /> Call +91 97694 44455
                 </a>
-                <a href="#get-quote" className="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/15 text-white rounded-lg font-semibold transition-colors border border-white/20 text-sm" data-testid="hero-quote-btn">
+                <button onClick={() => document.getElementById('get-quote-cta')?.scrollIntoView({ behavior: 'smooth' })} className="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/15 text-white rounded-lg font-semibold transition-colors border border-white/20 text-sm cursor-pointer" data-testid="hero-quote-btn">
                   Get Free Quote <ArrowRight className="w-4 h-4" />
-                </a>
+                </button>
               </div>
               <div className="flex items-center gap-2 text-slate-400 text-sm">
                 <MapPin className="w-4 h-4" />
@@ -156,7 +156,7 @@ export default function SEOLandingPage({ type = 'service', slug: propSlug }) {
       ))}
 
       {/* Mobile Lead Form (shown only on mobile, below content) */}
-      <section className="lg:hidden bg-slate-900 py-12 px-4" id="get-quote" data-testid="mobile-lead-form">
+      <section className="lg:hidden bg-slate-900 py-12 px-4" id="get-quote-mobile" data-testid="mobile-lead-form">
         <div className="max-w-md mx-auto">
           <LeadCaptureForm
             service={data.serviceLabel}
@@ -215,7 +215,7 @@ export default function SEOLandingPage({ type = 'service', slug: propSlug }) {
       )}
 
       {/* Final CTA */}
-      <section className="bg-slate-900 py-14 sm:py-16" id="get-quote" data-testid="final-cta">
+      <section className="bg-slate-900 py-14 sm:py-16" id="get-quote-cta" data-testid="final-cta">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div>
