@@ -76,7 +76,6 @@ export default function SEOLandingPage({ type = 'service', slug: propSlug }) {
         schema={[seoServiceSchema, faqSchemaData, bcSchema].filter(Boolean)}
       />
       <Toaster position="top-right" richColors />
-      <LeadCaptureBanner service={data.serviceLabel} />
       <Header />
 
       {/* Hero */}
