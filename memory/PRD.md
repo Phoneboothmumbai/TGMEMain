@@ -1,60 +1,123 @@
-# TGME ServiceBook - Product Requirements Document
+# The Good Men Enterprise (TGME) — Product Requirements Document
 
-## Live URL
-- Website: https://thegoodmen.in
-- AMC Plans: https://thegoodmen.in/amc
-- Support Form: https://thegoodmen.in/support
-- Blog: Hidden (admin only at /workspace/servicebook/blog-admin)
-- ServiceBook: https://thegoodmen.in/workspace/login  
-- Support Portal: https://support.thegoodmen.in
-- Sitemap: https://thegoodmen.in/sitemap.xml
-- Robots: https://thegoodmen.in/robots.txt
-- Credentials: maharathy / Charu@123@
+## Original Problem Statement
+Build a comprehensive digital platform for The Good Men Enterprise (TGME), an IT support company based in Mumbai. The platform includes a marketing website, knowledge base, ServiceBook field service app, dynamic AMC pricing, multi-step support form integrated with osTicket, AI-driven blog, and a complete SEO + lead generation funnel.
 
-## SEO Implementation (Completed Mar 2026)
-- **react-helmet-async** on every page with unique title, description, keywords
-- **Open Graph + Twitter Cards** on all pages for social sharing
-- **Schema.org**: LocalBusiness (every page), Service (service pages), BreadcrumbList, FAQPage
-- **Dynamic sitemap.xml**: Auto-includes all pages, blog posts, KB articles
-- **robots.txt**: Allows crawling, blocks /workspace/ and /kb/admin/
-- **Canonical URLs** on every page
-- **Geo tags**: Mumbai, Maharashtra, India
-- **Target keywords**: IT support Mumbai, computer AMC Mumbai, CCTV installation Mumbai, hardware repair Mumbai, cybersecurity services Mumbai, email setup Mumbai, network setup Mumbai
+## User Personas
+- **Business Owners/IT Managers**: Looking for IT support services in Mumbai
+- **TGME Admin/Staff**: Managing service entries, clients, employees, parts, billing
+- **Website Visitors**: Potential leads finding TGME through search or referrals
 
-## AI Blog System (Completed Mar 2026, Hidden from public)
-- **Engine**: DeepSeek API with 4-step pipeline: News Scraping → Topic Research → Article Generation → Fact-Check Verification
-- **News Sources**: RSS feeds from TechCrunch, The Verge, ZDNet, VentureBeat, Ars Technica + scraping Gadgets360, Digit.in, HT Tech, etc.
-- **Fact-Check Layer**: Second AI pass verifies claims, removes fake stats, trust score 1-10
-- **Image Generation**: OpenAI GPT Image 1 for featured images
-- **Uniqueness**: Checks last 45 days of posts, feeds existing titles to AI to prevent duplicates
-- **Settings**: Posts per week (1-7), preferred days, generation hour, auto-generate toggle
-- **Admin**: Blog Manager with fact-check reports, trust score badges, approve/reject workflow
+## Core Requirements
+1. Professional marketing website with SEO
+2. Knowledge Base with CMS
+3. ServiceBook application for service management
+4. AMC page with complex pricing → osTicket tickets
+5. Dynamic multi-step support form → osTicket tickets
+6. AI-driven blog (feature complete, currently hidden)
+7. Comprehensive Mumbai-targeted SEO strategy
+8. Lead generation funnel (landing pages, WhatsApp widget, lead capture forms → osTicket)
+9. IT Health Check interactive tool (upcoming)
+10. Lead Dashboard in ServiceBook (upcoming)
 
-## Contact Form → osTicket (Completed Mar 2026)
-- `/api/contact/submit` creates ticket in osTicket with name, email, company, phone, message
+## Architecture
+- **Frontend**: React (CRA) with Tailwind CSS + Shadcn/UI
+- **Backend**: FastAPI + MongoDB (Motor async driver)
+- **Integrations**: osTicket, DeepSeek (blog), OpenAI GPT Image 1 (blog images), WhatsApp
+- **Deployment**: Vultr server (manual scp/ssh)
 
-## 3rd Party Integrations
-- **osTicket** — AMC + Support + Contact form tickets (key whitelisted for IP 65.20.81.4)
-- **DeepSeek** — Blog content generation + trend research
-- **OpenAI GPT Image 1** — Blog featured image generation via Emergent LLM Key
-- **Cloudflare** — DNS, SSL, robots.txt management
+## What's Been Implemented
 
-## Modules Built
-1-12. ServiceBook (Dashboard, Tasks, Clients, Employees, Suppliers, Parts, Orders, Entries, Requests, Expenses, Field PWA)
-13. AMC Plans Page (4 plans, per-device-type pricing, osTicket)
-14. Support Form (Quote + Support, 94 sub-topics, dynamic forms, osTicket)
-15. AI Blog System (hidden — DeepSeek + fact-check + image gen + scheduler)
-16. Contact Form → osTicket integration
-17. Full SEO (meta tags, OG, Schema.org, sitemap, robots.txt, canonical URLs)
+### Marketing Website (COMPLETE)
+- Landing page with hero, services, why-us, clients, contact sections
+- Service pages (email, cybersecurity, repair, etc.)
+- About, How We Work, Case Studies pages
+- Header with dropdowns, Footer with links
 
-## Pending/Upcoming
-- P1: Fix remaining blog content quality issues before making public
-- P1: Email approval system for blog (needs Resend API key)
-- P2: Pending Billing / Invoice feature in ServiceBook
-- P2: Website tools (speed test, password checker, email checker, etc.)
-- P3: Client Portal for tickets, AMCs, invoices
-- P3: Payment gateway (Razorpay)
-- P4: AI Chatbot
-- P4: Live chat widget
-- P4: Case Studies content
-- P4: Automated notifications
+### Knowledge Base (COMPLETE)
+- Public KB with categories and articles
+- Admin panel for CRUD operations
+- Auth-protected admin routes
+
+### ServiceBook (COMPLETE)
+- Employee login with role-based access
+- Clients, Employees, Parts, Tasks management
+- Service entries, billing, expenses
+- Task workflow with field task detail
+- Parts requests, suppliers management
+
+### AMC Page (COMPLETE)
+- Complex pricing tiers
+- Form submission → osTicket ticket
+
+### Support Form (COMPLETE)
+- Multi-step dynamic form
+- osTicket integration
+
+### AI Blog (COMPLETE — HIDDEN)
+- DeepSeek for content generation
+- Web scraping for topic research
+- AI fact-checking with trust scores
+- AI image generation (GPT Image 1)
+- Content uniqueness checks
+- Scheduler for auto-generation
+- Admin UI in ServiceBook
+- **Status**: Hidden from public navigation at user's request
+
+### SEO Implementation (COMPLETE)
+- react-helmet-async for dynamic metadata
+- Mumbai-focused titles, descriptions, keywords on every page
+- Schema.org markup (Organization, Service, FAQ, Breadcrumb)
+- Dynamic sitemap.xml and robots.txt
+- **12 SEO Landing Pages** (8 service + 4 location) — COMPLETE
+
+### Lead Generation Funnel (PHASE 2 COMPLETE)
+- Global WhatsApp widget with page-specific messages
+- Reusable LeadCaptureForm component (card + inline + banner variants)
+- Backend /api/leads/submit → saves to DB + creates osTicket ticket
+- Lead status management API (/api/leads/list, /api/leads/{phone}/status)
+- **12 hyper-targeted SEO landing pages** with:
+  - Hero section with CTA
+  - Lead capture form (card variant on desktop)
+  - Trust bar (500+ businesses, same-day, 14+ years, 4.8/5)
+  - Rich content sections
+  - FAQ with accordion + Schema.org markup
+  - Final CTA section with second lead form
+  - Mobile-optimized lead form
+  - LeadCaptureBanner at top
+  - WhatsApp widget
+
+### Contact Form → osTicket (COMPLETE)
+
+## P0/P1/P2 Features Remaining
+
+### P1 — IT Health Check Tool
+Interactive assessment tool as lead magnet on landing pages. Users answer questions about their IT setup and get a score + recommendations. Captures leads.
+
+### P2 — Lead Dashboard in ServiceBook
+Internal dashboard for viewing/managing captured leads. Filter by status, source, date. Update lead status (new → contacted → converted → lost).
+
+### P2 — Un-hide AI Blog
+Re-add blog link to Header navigation and uncomment routes when user approves.
+
+### P3 — Pending Billing & Invoices
+Invoice generation feature in ServiceBook.
+
+### P3 — Client Portal
+Customers can view tickets, AMCs, and invoices.
+
+### P3 — Payment Gateway (Razorpay)
+Online payment for invoices.
+
+### P4 — Live Chat Widget
+Real-time chat on the website.
+
+### P4 — Static Pages Content
+Populate About Us and Case Studies with real content.
+
+## Key Technical Details
+- osTicket API Key: stored in backend .env
+- DeepSeek API Key: stored in backend .env
+- Emergent LLM Key: used for blog image generation
+- ServiceBook credentials: maharathy / Charu@123@
+- Production server: 65.20.81.4 (Vultr)
