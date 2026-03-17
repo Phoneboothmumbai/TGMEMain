@@ -29,6 +29,20 @@ STATIC_PAGES = [
     ("/kb", "0.7", "weekly"),
     ("/blog", "0.8", "daily"),
     ("/case-studies", "0.5", "monthly"),
+    # SEO Service Landing Pages
+    ("/services/cctv-installation", "0.9", "monthly"),
+    ("/services/networking", "0.9", "monthly"),
+    ("/services/server-solutions", "0.9", "monthly"),
+    ("/services/printer-repair", "0.9", "monthly"),
+    ("/services/ups-solutions", "0.9", "monthly"),
+    ("/services/data-backup", "0.9", "monthly"),
+    ("/services/apple-repair", "0.9", "monthly"),
+    ("/services/firewall-security", "0.9", "monthly"),
+    # SEO Location Landing Pages
+    ("/it-support-mumbai", "0.9", "monthly"),
+    ("/computer-repair-mumbai", "0.9", "monthly"),
+    ("/it-support-small-business", "0.9", "monthly"),
+    ("/it-services-mulund-thane", "0.9", "monthly"),
 ]
 
 

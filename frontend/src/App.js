@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { WhatsAppWidget } from "./components/WhatsAppWidget";
 import LandingPage from "./pages/LandingPage";
 import ServicePage from "./pages/ServicePage";
 import KnowledgeBasePage from "./pages/KnowledgeBasePage";
@@ -17,6 +18,7 @@ import AMCPage from "./pages/AMCPage";
 import SupportFormPage from "./pages/SupportFormPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
+import SEOLandingPage from "./pages/SEOLandingPage";
 
 // Admin pages
 import { AuthProvider, useAuth } from "./contexts/KBAuthContext";
@@ -72,6 +74,22 @@ function AppRoutes() {
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/services/:serviceId" element={<ServicePage />} />
+
+      {/* SEO Service Landing Pages */}
+      <Route path="/services/cctv-installation" element={<SEOLandingPage type="service" slug="cctv-installation" />} />
+      <Route path="/services/networking" element={<SEOLandingPage type="service" slug="networking" />} />
+      <Route path="/services/server-solutions" element={<SEOLandingPage type="service" slug="server-solutions" />} />
+      <Route path="/services/printer-repair" element={<SEOLandingPage type="service" slug="printer-repair" />} />
+      <Route path="/services/ups-solutions" element={<SEOLandingPage type="service" slug="ups-solutions" />} />
+      <Route path="/services/data-backup" element={<SEOLandingPage type="service" slug="data-backup" />} />
+      <Route path="/services/apple-repair" element={<SEOLandingPage type="service" slug="apple-repair" />} />
+      <Route path="/services/firewall-security" element={<SEOLandingPage type="service" slug="firewall-security" />} />
+
+      {/* SEO Location Landing Pages */}
+      <Route path="/it-support-mumbai" element={<SEOLandingPage type="location" slug="it-support-mumbai" />} />
+      <Route path="/computer-repair-mumbai" element={<SEOLandingPage type="location" slug="computer-repair-mumbai" />} />
+      <Route path="/it-support-small-business" element={<SEOLandingPage type="location" slug="it-support-small-business" />} />
+      <Route path="/it-services-mulund-thane" element={<SEOLandingPage type="location" slug="it-services-mulund-thane" />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/how-we-work" element={<HowWeWorkPage />} />
       <Route path="/case-studies" element={<CaseStudiesPage />} />
@@ -126,6 +144,7 @@ function App() {
         <AuthProvider>
           <WorkspaceAuthProvider>
             <AppRoutes />
+            <WhatsAppWidget />
           </WorkspaceAuthProvider>
         </AuthProvider>
       </BrowserRouter>
