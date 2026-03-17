@@ -14,6 +14,7 @@ const PAGE_MESSAGES = {
   '/services/ups-solutions': 'Hi TGME, I need UPS installation for my office.',
   '/services/data-backup': 'Hi TGME, I need data backup solutions for my business.',
   '/services/apple-repair': 'Hi TGME, I need Apple MacBook/iMac repair service.',
+  '/services/apple-mac-ipad-bulk': 'Hi TGME, I want bulk pricing for Apple Mac and iPad for my business.',
   '/services/firewall-security': 'Hi TGME, I need firewall and network security setup.',
   '/services/email': 'Hi TGME, I need help setting up business email.',
   '/services/cybersecurity': 'Hi TGME, I need cybersecurity solutions for my business.',

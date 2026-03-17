@@ -38,6 +38,7 @@ STATIC_PAGES = [
     ("/services/data-backup", "0.9", "monthly"),
     ("/services/apple-repair", "0.9", "monthly"),
     ("/services/firewall-security", "0.9", "monthly"),
+    ("/services/apple-mac-ipad-bulk", "0.9", "monthly"),
     # SEO Location Landing Pages
     ("/it-support-mumbai", "0.9", "monthly"),
     ("/computer-repair-mumbai", "0.9", "monthly"),

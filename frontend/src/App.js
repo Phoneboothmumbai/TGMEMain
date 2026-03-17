@@ -84,6 +84,7 @@ function AppRoutes() {
       <Route path="/services/data-backup" element={<SEOLandingPage type="service" slug="data-backup" />} />
       <Route path="/services/apple-repair" element={<SEOLandingPage type="service" slug="apple-repair" />} />
       <Route path="/services/firewall-security" element={<SEOLandingPage type="service" slug="firewall-security" />} />
+      <Route path="/services/apple-mac-ipad-bulk" element={<SEOLandingPage type="service" slug="apple-mac-ipad-bulk" />} />
 
       {/* SEO Location Landing Pages */}
       <Route path="/it-support-mumbai" element={<SEOLandingPage type="location" slug="it-support-mumbai" />} />

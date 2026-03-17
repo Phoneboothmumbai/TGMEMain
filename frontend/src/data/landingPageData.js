@@ -145,9 +145,32 @@ export const landingPages = {
       { q: 'What is the best firewall for a Mumbai office?', a: 'For small offices (5-20 users), pfSense or FortiGate 40F. For medium offices (20-100 users), FortiGate 60F-100F or Sophos XGS. We recommend based on your specific needs.' },
     ],
   },
+  'apple-mac-ipad-bulk': {
+    title: 'Apple Mac & iPad — Best Bulk Prices in Mumbai',
+    metaTitle: 'Buy Apple Mac & iPad in Bulk Mumbai — Best Prices for Business',
+    metaDesc: 'Best prices on Apple MacBook, iMac, Mac Mini, iPad for businesses in Mumbai. Bulk orders for offices, schools, studios. Apple Authorised. Setup, MDM, AMC included. TGME.',
+    keywords: 'buy Apple Mac bulk Mumbai, MacBook bulk price, iPad bulk order Mumbai, Apple for business Mumbai, MacBook Pro bulk, iMac office setup, Mac Mini bulk, iPad school bulk, Apple MDM setup, Apple AMC Mumbai, TGME Apple',
+    hero: 'Apple Mac & iPad at the Best Bulk Prices in Mumbai',
+    subtitle: 'MacBook, iMac, Mac Mini, iPad — unbeatable pricing for businesses, schools, and studios. Setup, deployment, and AMC included.',
+    serviceLabel: 'Apple Bulk Orders',
+    sections: [
+      { heading: 'Why Buy Apple in Bulk from TGME?', content: '<p>When you buy Apple devices in bulk from TGME, you don\'t just get <strong>the best prices in Mumbai</strong> — you get a <strong>complete deployment partner</strong>. We handle everything from procurement to setup, so your team is productive from day one.</p><ul><li><strong>Lowest bulk pricing</strong> — direct channel access for competitive rates on all Apple products</li><li><strong>Zero setup hassle</strong> — we configure every device before delivery (email, apps, security, printing)</li><li><strong>MDM deployment</strong> — Apple Business Manager + Jamf/Mosyle for centralized device management</li><li><strong>Trade-in & upgrade programs</strong> — get value for your old devices when upgrading</li><li><strong>AMC included</strong> — optional annual maintenance starting Rs 3,000/device/year</li></ul>' },
+      { heading: 'Apple Products We Supply', content: '<ul><li><strong>MacBook Air (M3/M4)</strong> — Perfect for general office use, lightweight, all-day battery. Starting Rs 99,900</li><li><strong>MacBook Pro 14" & 16" (M3 Pro/Max/M4 Pro/Max)</strong> — For creative professionals, developers, video editors. Starting Rs 1,69,900</li><li><strong>iMac 24" (M3/M4)</strong> — Stunning all-in-one desktop for offices and reception. Starting Rs 1,34,900</li><li><strong>Mac Mini (M3/M4)</strong> — Compact powerhouse for desks and server rooms. Starting Rs 59,900</li><li><strong>Mac Studio & Mac Pro</strong> — For studios, post-production houses, and heavy computing</li><li><strong>iPad (10th Gen)</strong> — Ideal for field workers, schools, and POS systems. Starting Rs 34,900</li><li><strong>iPad Air (M2/M3)</strong> — For designers, architects, and mobile professionals. Starting Rs 59,900</li><li><strong>iPad Pro (M4)</strong> — Pro-grade tablet for creative studios and enterprises. Starting Rs 99,900</li></ul><p><em>Prices are indicative and vary based on configuration and quantity. Contact us for a custom quote.</em></p>' },
+      { heading: 'Bulk Orders for Every Sector', content: '<ul><li><strong>Corporate Offices</strong> — MacBook Air/Pro for employees, iMac for workstations, Mac Mini for shared desks</li><li><strong>Schools & Colleges</strong> — iPad classroom setups with Apple School Manager, Managed Apple IDs, and MDM</li><li><strong>Creative Studios</strong> — MacBook Pro, Mac Studio, iPad Pro for design, video, and music production</li><li><strong>Startups</strong> — MacBook Air fleet with standard configuration, deployed in under 48 hours</li><li><strong>Retail & Hospitality</strong> — iPad POS systems with stands, cases, and payment terminal integration</li><li><strong>Healthcare</strong> — iPad for patient intake, doctor rounds, and telemedicine</li></ul>' },
+      { heading: 'What\'s Included with Every Bulk Order', content: '<ul><li><strong>Pre-configuration</strong> — Email, WiFi, apps, printers set up on every device before delivery</li><li><strong>Apple Business Manager</strong> — Device enrollment for zero-touch deployment</li><li><strong>MDM Setup</strong> — Jamf, Mosyle, or Microsoft Intune for remote management, app deployment, and security</li><li><strong>Data Migration</strong> — Transfer files, settings, and profiles from old devices (Windows or Mac)</li><li><strong>On-site Delivery & Setup</strong> — We deliver and set up at your office across Mumbai</li><li><strong>Training Session</strong> — Basic orientation for teams switching from Windows to Mac</li><li><strong>Warranty & AMC</strong> — Full Apple warranty + optional TGME AMC for extended support</li></ul>' },
+    ],
+    faq: [
+      { q: 'What is the minimum order for bulk Apple pricing?', a: 'We offer bulk pricing starting from 5 devices. The more you order, the better the price. For 20+ devices, we can negotiate special channel pricing.' },
+      { q: 'How much cheaper is bulk Apple pricing vs retail?', a: 'Bulk pricing can save you 5-15% compared to Apple Store retail pricing, depending on the product and quantity. For 50+ devices, savings can be even higher. Contact us for an exact quote.' },
+      { q: 'Can you set up all MacBooks before delivery?', a: 'Yes. We pre-configure every device with your company email, WiFi, apps, printer drivers, VPN, and security policies. Your team can start working the moment they receive the device.' },
+      { q: 'Do you provide Apple device management (MDM)?', a: 'Yes. We set up Apple Business Manager and MDM solutions like Jamf or Mosyle. This allows you to remotely manage, update, lock, and wipe devices — essential for businesses with 10+ Apple devices.' },
+      { q: 'Can you supply iPads for our school?', a: 'Yes. We specialize in iPad deployments for schools and colleges. This includes Apple School Manager, Managed Apple IDs, classroom app setup, and rugged cases. We also provide teacher training.' },
+      { q: 'Do you offer trade-in for old devices?', a: 'Yes. We evaluate and offer trade-in value for your existing devices (Mac or Windows). This can offset the cost of your new Apple purchase significantly.' },
+      { q: 'What warranty and support do we get?', a: 'All Apple devices come with 1-year Apple warranty. We also offer TGME AMC plans starting Rs 3,000/device/year that cover hardware support, software troubleshooting, and priority on-site service.' },
+      { q: 'How fast can you deliver a bulk order?', a: 'Standard configurations are typically delivered within 3-5 business days. Custom configurations (specific RAM, storage) may take 7-10 days. For urgent needs, we maintain ready stock of popular models.' },
+    ],
+  },
 };
-
-// Location-specific pages
 export const locationPages = {
   'it-support-mumbai': {
     title: 'IT Support Company in Mumbai',
