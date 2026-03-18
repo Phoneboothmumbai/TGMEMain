@@ -681,6 +681,30 @@ function ExpandedAssetDetail({ data, onAddAccessory }) {
 
       {data.notes && <div><span className="text-slate-400 text-xs block">Notes</span><p className="text-sm">{data.notes}</p></div>}
 
+      {/* Assignment History */}
+      {data.assignment_history?.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="w-4 h-4 text-slate-500" />
+            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Assignment History</span>
+          </div>
+          <div className="space-y-1.5">
+            {data.assignment_history.map((h, i) => (
+              <div key={i} className="flex items-center gap-3 bg-white border rounded-lg px-3 py-2 text-sm">
+                <div className="w-2 h-2 rounded-full bg-slate-300 flex-shrink-0" />
+                <div className="flex-1">
+                  <span className="font-medium text-slate-700">{h.assigned_to}</span>
+                  <span className="text-slate-400 text-xs ml-2">
+                    {h.assigned_from?.slice(0, 10) || '?'} &rarr; {h.unassigned_date?.slice(0, 10) || '?'}
+                  </span>
+                </div>
+                {h.client_name && <span className="text-xs text-slate-400">{h.client_name}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Accessories */}
       <div>
         <div className="flex items-center justify-between mb-2">

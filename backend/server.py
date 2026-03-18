@@ -20,6 +20,7 @@ from contact_routes import router as contact_router
 from seo_routes import router as seo_router, set_seo_db
 from leads_routes import router as leads_router, set_leads_db
 from asset_routes import router as asset_router
+from subscription_routes import router as subscription_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -122,6 +123,9 @@ app.include_router(leads_router)
 
 # Include Asset router
 app.include_router(asset_router)
+
+# Include Subscription router (AMC, Licenses)
+app.include_router(subscription_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -275,6 +275,10 @@ async def get_asset(asset_id: str):
         accessories.append(serialize(acc))
     asset["accessories"] = accessories
 
+    # Get assignment history
+    asset["assignment_history"] = asset.get("assignment_history", [])
+    asset["status_history"] = asset.get("status_history", [])
+
     # Get maintenance history from service entries
     history = await db.workspace_service_entries.find(
         {"$or": [
@@ -291,10 +295,45 @@ async def get_asset(asset_id: str):
 
 @router.put("/{asset_id}")
 async def update_asset(asset_id: str, data: AssetUpdate):
-    """Update an existing asset."""
+    """Update an existing asset. Tracks assignment changes in history."""
     updates = {k: v for k, v in data.model_dump().items() if v is not None}
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
+
+    # Get current asset for change tracking
+    current = await db.assets.find_one({"_id": ObjectId(asset_id)})
+    if not current:
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    # Track assignment change
+    now = datetime.now(timezone.utc).isoformat()
+    if "assigned_to" in updates and updates["assigned_to"] != current.get("assigned_to", ""):
+        old_assignee = current.get("assigned_to", "")
+        if old_assignee:
+            history_entry = {
+                "assigned_to": old_assignee,
+                "assigned_from": current.get("assignment_date", current.get("created_at", "")),
+                "unassigned_date": now,
+                "client_name": current.get("client_name", ""),
+                "location_name": current.get("location_name", ""),
+            }
+            await db.assets.update_one(
+                {"_id": ObjectId(asset_id)},
+                {"$push": {"assignment_history": history_entry}}
+            )
+        updates["assignment_date"] = now
+
+    # Track status change
+    if "status" in updates and updates["status"] != current.get("status", ""):
+        status_entry = {
+            "from_status": current.get("status", ""),
+            "to_status": updates["status"],
+            "changed_at": now,
+        }
+        await db.assets.update_one(
+            {"_id": ObjectId(asset_id)},
+            {"$push": {"status_history": status_entry}}
+        )
 
     # Re-resolve names if client/location changed
     if "client_id" in updates:
@@ -306,7 +345,7 @@ async def update_asset(asset_id: str, data: AssetUpdate):
         if loc:
             updates["location_name"] = loc.get("location_name", "")
 
-    updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+    updates["updated_at"] = now
     await db.assets.update_one({"_id": ObjectId(asset_id)}, {"$set": updates})
 
     updated = await db.assets.find_one({"_id": ObjectId(asset_id)})

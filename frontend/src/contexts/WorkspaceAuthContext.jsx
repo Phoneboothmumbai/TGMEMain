@@ -238,6 +238,28 @@ export const workspaceApi = {
   getAssetStats: (clientId) => workspaceApi.fetch(`/assets/stats${clientId ? '?client_id=' + clientId : ''}`),
   getClientsAssetSummary: () => workspaceApi.fetch('/assets/clients-summary'),
   bulkUploadAssets: (rows) => workspaceApi.fetch('/assets/bulk', { method: 'POST', body: JSON.stringify({ rows }) }),
+
+  // AMC Contracts
+  getAMCs: (filters = {}) => {
+    const params = new URLSearchParams(filters).toString();
+    return workspaceApi.fetch(`/subscriptions/amc${params ? '?' + params : ''}`);
+  },
+  getAMC: (id) => workspaceApi.fetch(`/subscriptions/amc/${id}`),
+  createAMC: (data) => workspaceApi.fetch('/subscriptions/amc', { method: 'POST', body: JSON.stringify(data) }),
+  updateAMC: (id, data) => workspaceApi.fetch(`/subscriptions/amc/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteAMC: (id) => workspaceApi.fetch(`/subscriptions/amc/${id}`, { method: 'DELETE' }),
+  getAMCStats: (clientId) => workspaceApi.fetch(`/subscriptions/amc/stats${clientId ? '?client_id=' + clientId : ''}`),
+
+  // Licenses
+  getLicenses: (filters = {}) => {
+    const params = new URLSearchParams(filters).toString();
+    return workspaceApi.fetch(`/subscriptions/licenses${params ? '?' + params : ''}`);
+  },
+  getLicense: (id) => workspaceApi.fetch(`/subscriptions/licenses/${id}`),
+  createLicense: (data) => workspaceApi.fetch('/subscriptions/licenses', { method: 'POST', body: JSON.stringify(data) }),
+  updateLicense: (id, data) => workspaceApi.fetch(`/subscriptions/licenses/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteLicense: (id) => workspaceApi.fetch(`/subscriptions/licenses/${id}`, { method: 'DELETE' }),
+  getLicenseStats: (clientId) => workspaceApi.fetch(`/subscriptions/licenses/stats${clientId ? '?client_id=' + clientId : ''}`),
 };
 
 export default WorkspaceAuthContext;

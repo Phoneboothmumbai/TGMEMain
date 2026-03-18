@@ -1,77 +1,54 @@
 # The Good Men Enterprise (TGME) — Product Requirements Document
 
 ## Original Problem Statement
-Build a comprehensive MSP (Managed Service Provider) digital platform for The Good Men Enterprise (TGME). The platform includes a marketing website, knowledge base, ServiceBook field service app, dynamic AMC pricing, multi-step support form integrated with osTicket, AI-driven blog, SEO + lead generation funnel, and a complete IT asset management system.
+Build a comprehensive MSP platform for TGME — an IT support company in Mumbai providing AMC, sales, support, repair, warranty claims, email/domain services, and complete IT infrastructure management for businesses.
 
-## Business Model
-TGME is an MSP providing:
-- AMC (Annual Maintenance Contracts) for clients
-- Sales & support with/without AMC
-- One-time chargeable support
-- Device repair services
-- Warranty claim assistance for sold devices
-- Email services (GWS, Microsoft 365, Titan)
-- Domain registration and management
-- Complete IT infrastructure management
+## What's Been Implemented (This Session)
 
-## What's Been Implemented
+### 1. SEO Landing Pages (13 pages) — COMPLETE
+### 2. Asset Management — COMPLETE
+- Dynamic device-specific forms (22 types: CCTV, Router, Laptop, Server, Switch, Printer, etc.)
+- Bulk CSV upload with downloadable templates per type
+- QR code generation, accessory grouping
+- **Asset reassignment history** — when employee changes, old assignment logged with dates
+- **Status change history** — tracks every status change with timestamps
+- Service history display in expanded view
 
-### Asset Management Module — Phase 1 (COMPLETE)
-- **Dynamic Device Forms**: 22 device types with type-specific configuration fields
-  - Laptop: Processor, RAM, Storage, OS, Screen Size, Battery Health
-  - CCTV: Camera Type, Resolution, Night Vision, Placement, PoE, IP, Storage Device, Position
-  - Router: WAN/LAN Ports, WiFi Standard, Throughput, VPN, IP, ISP
-  - Printer: Type, Color, Connectivity, Duplex, Scanner, Paper Size, Toner, IP
-  - Server: Processor, RAM, Storage, RAID, OS, Rack Unit, IP, Roles, Remote Access
-  - Switch: Ports, Type, Speed, PoE, Budget, SFP, IP
-  - Firewall: Throughput, VPN Tunnels, Users, UTM, Ports, IP, License Expiry
-  - UPS: KVA, Phase, Type, Battery, Backup Time
-  - NVR/DVR: Type, Channels, Storage, Cameras, PoE, IP, Remote Access
-  - Access Point: WiFi Standard, Max Clients, PoE, Placement, IP, SSIDs
-  - And 12 more types (monitor, NAS, phone, tablet, scanner, projector, webcam, headset, keyboard, mouse, other)
-- **Bulk CSV Upload**: Upload dialog with downloadable templates per device type, CSV parsing, spec extraction
-- **Service History**: Displayed in expanded asset detail view with repair info, parts used, technician
-- **QR Code Generation**: Per-asset with download
-- **Accessory Grouping**: Keyboard/mouse/webcam linked to parent assets
-- **Data Isolation**: Per-client filtering
-- **Testing**: 100% pass rate (36/36 backend, all frontend verified)
+### 3. AMC Contract Management — COMPLETE
+- Full CRUD for AMC contracts per client
+- Fields: contract name, start/end dates, coverage type (comprehensive/non-comprehensive/labor only), amount, billing cycle, devices covered, visit frequency, includes parts/on-site
+- Stats dashboard: total, active, expiring/expired, pending renewal, annual revenue
+- Filter by client and status
 
-### SEO Landing Pages (COMPLETE)
-- 13 hyper-targeted pages (8 service + 4 location + 1 Apple bulk pricing)
+### 4. License & Subscription Management — COMPLETE
+- Full CRUD for licenses and subscriptions
+- Supports: GWS, Microsoft 365, Titan, antivirus, OS, backup, remote access, accounting, domains
+- License types: Subscription (monthly/yearly/multi-year), Perpetual, One-time, Trial, Open Source
+- Tracks: seats (used/total), license keys, expiry dates, costs, billing cycles, auto-renew
+- Categories: Email & Productivity, Security, OS, Backup, Productivity, Domain & Hosting, Remote Access, Accounting
+- Stats: total, active, expiring, seats used/total, annual cost
 
-### Previous Features (COMPLETE)
-- Marketing website, Knowledge Base, ServiceBook, AMC Page, Support Form
-- AI Blog (hidden), SEO implementation, Lead generation funnel, WhatsApp widget
+## Key Files
+- `/app/backend/asset_routes.py` — Asset CRUD, bulk upload, QR, history
+- `/app/backend/subscription_routes.py` — AMC + License CRUD
+- `/app/frontend/src/pages/workspace/AssetsPage.jsx` — Asset management UI
+- `/app/frontend/src/pages/workspace/AMCManagementPage.jsx` — AMC contracts UI
+- `/app/frontend/src/pages/workspace/LicensesPage.jsx` — Licenses UI
+- `/app/frontend/src/data/assetTypeConfigs.js` — 22 device type configs
 
 ## Upcoming — MSP Platform Roadmap
 
-### Phase 2 — AMC, Licenses & Subscriptions (NEXT)
-- AMC Management per client (start/end, coverage, renewals, linked assets)
-- License & Subscription Tracker (GWS, M365, Titan, antivirus — perpetual/subscription/one-time)
-- Domain Management (registrar, expiry, DNS)
-- Warranty Tracker per asset (expiry alerts, claim history)
+### Phase 3 — Client Portal (NEXT)
+- Client login (separate auth)
+- Dashboard: see employees, assigned devices, device details
+- Raise ticket → osTicket (select device, describe issue)
+- View service history per device
 
-### Phase 3 — Client Portal
-- Client login (separate from employee login)
-- Client dashboard (employees, devices, device details)
-- Raise ticket from portal (select device → osTicket)
-- View service history
-
-### Phase 4 — Projects & Reporting
-- Bulk Deployment Projects (new office setup, track deployment)
+### Phase 4 — Projects & Bulk Operations
+- Bulk Deployment Projects (new office setup tracking)
 - Bulk Employee Upload (CSV)
 - Bulk Asset Assignment (CSV mapping employees ↔ assets)
-- Reports Dashboard (asset health, warranty, AMC renewals, revenue)
 
-### Phase 5 — Advanced MSP Features
-- SLA Tracking (response & resolution time)
-- Vendor Management (purchase history)
-- Remote Access Links (AnyDesk/TeamViewer IDs per device)
-- Asset Audit Trail (change log)
-- Recurring Billing (auto-generate invoices)
-- Knowledge Base per Client (network diagrams, passwords vault)
-
-## Key Files
-- `/app/backend/asset_routes.py` — Asset CRUD, bulk upload, QR, stats
-- `/app/frontend/src/pages/workspace/AssetsPage.jsx` — Asset management UI
-- `/app/frontend/src/data/assetTypeConfigs.js` — 22 device type configurations
+### Phase 5 — Reports & Advanced
+- Reports Dashboard (asset health, warranty expiring, AMC renewals, revenue per client)
+- SLA Tracking, Vendor Management, Remote Access Links, Asset Audit Trail, Recurring Billing
