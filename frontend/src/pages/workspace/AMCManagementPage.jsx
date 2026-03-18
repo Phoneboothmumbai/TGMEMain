@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { workspaceApi } from '../../contexts/WorkspaceAuthContext';
 import { useWorkspaceAuth } from '../../contexts/WorkspaceAuthContext';
 import { toast } from 'sonner';
-import { FileText, Plus, Search, Loader2, Pencil, Trash2, CheckCircle2, AlertTriangle, Clock, XCircle, IndianRupee } from 'lucide-react';
+import { FileText, Plus, Search, Loader2, Pencil, Trash2, CheckCircle2, AlertTriangle, Clock, XCircle, IndianRupee, Monitor, X as XIcon, Link2 } from 'lucide-react';
 
 const COVERAGE_OPTS = [
   { value: 'comprehensive', label: 'Comprehensive (Parts + Labor)' },
@@ -35,7 +35,8 @@ function StatusBadge({ status }) {
 const EMPTY = {
   client_id: '', contract_name: '', start_date: '', end_date: '',
   coverage_type: 'comprehensive', amount: 0, billing_cycle: 'annual',
-  devices_covered: 0, includes_parts: true, includes_onsite: true,
+  devices_covered: 0, number_of_visits: 0, asset_ids: [],
+  includes_parts: true, includes_onsite: true,
   visit_frequency: 'quarterly', notes: '', status: 'active',
 };
 
@@ -44,6 +45,7 @@ export default function AMCPage() {
   const [amcs, setAmcs] = useState([]);
   const [stats, setStats] = useState(null);
   const [clients, setClients] = useState([]);
+  const [clientAssets, setClientAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterClient, setFilterClient] = useState('');
@@ -52,6 +54,7 @@ export default function AMCPage() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ ...EMPTY });
   const [saving, setSaving] = useState(false);
+  const [assetSearch, setAssetSearch] = useState('');
 
   const loadData = useCallback(async () => {
     try {
@@ -69,6 +72,24 @@ export default function AMCPage() {
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  // Load assets when client is selected in form
+  useEffect(() => {
+    if (form.client_id) {
+      workspaceApi.getAssets({ client_id: form.client_id, parent_only: 'true', limit: 500 })
+        .then(res => setClientAssets(res?.assets || []))
+        .catch(() => setClientAssets([]));
+    } else {
+      setClientAssets([]);
+    }
+  }, [form.client_id]);
+
+  const toggleAsset = (assetId) => {
+    setForm(prev => {
+      const ids = prev.asset_ids || [];
+      return { ...prev, asset_ids: ids.includes(assetId) ? ids.filter(a => a !== assetId) : [...ids, assetId] };
+    });
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     if (!form.client_id || !form.contract_name || !form.start_date || !form.end_date) {
@@ -76,7 +97,7 @@ export default function AMCPage() {
     }
     setSaving(true);
     try {
-      const payload = { ...form, amount: parseFloat(form.amount) || 0, devices_covered: parseInt(form.devices_covered) || 0, created_by: employee?.employee_id || '' };
+      const payload = { ...form, amount: parseFloat(form.amount) || 0, devices_covered: parseInt(form.devices_covered) || 0, number_of_visits: parseInt(form.number_of_visits) || 0, created_by: employee?.employee_id || '' };
       if (editing) { await workspaceApi.updateAMC(editing.id, payload); toast.success('AMC updated'); }
       else { await workspaceApi.createAMC(payload); toast.success('AMC created'); }
       setShowForm(false); setEditing(null); setForm({ ...EMPTY }); loadData();
@@ -90,6 +111,7 @@ export default function AMCPage() {
       start_date: amc.start_date || '', end_date: amc.end_date || '',
       coverage_type: amc.coverage_type || 'comprehensive', amount: amc.amount || 0,
       billing_cycle: amc.billing_cycle || 'annual', devices_covered: amc.devices_covered || 0,
+      number_of_visits: amc.number_of_visits || 0, asset_ids: amc.asset_ids || [],
       includes_parts: amc.includes_parts !== false, includes_onsite: amc.includes_onsite !== false,
       visit_frequency: amc.visit_frequency || 'quarterly', notes: amc.notes || '',
       status: amc.status || 'active',
@@ -158,10 +180,10 @@ export default function AMCPage() {
           <TableHeader><TableRow>
             <TableHead>Contract</TableHead><TableHead>Client</TableHead><TableHead>Coverage</TableHead>
             <TableHead>Period</TableHead><TableHead>Amount</TableHead><TableHead>Devices</TableHead>
-            <TableHead>Visits</TableHead><TableHead>Status</TableHead><TableHead className="w-20">Actions</TableHead>
+            <TableHead>Visits</TableHead><TableHead>Linked Assets</TableHead><TableHead>Status</TableHead><TableHead className="w-20">Actions</TableHead>
           </TableRow></TableHeader>
           <TableBody>
-            {amcs.length === 0 && <TableRow><TableCell colSpan={9} className="text-center py-12 text-slate-400">No AMC contracts found.</TableCell></TableRow>}
+            {amcs.length === 0 && <TableRow><TableCell colSpan={10} className="text-center py-12 text-slate-400">No AMC contracts found.</TableCell></TableRow>}
             {amcs.map(amc => (
               <TableRow key={amc.id} className={isExpiringSoon(amc.end_date) ? 'bg-amber-50' : ''} data-testid={`amc-row-${amc.id}`}>
                 <TableCell className="font-medium text-sm">{amc.contract_name}</TableCell>
@@ -170,7 +192,10 @@ export default function AMCPage() {
                 <TableCell className="text-xs text-slate-500">{amc.start_date} → {amc.end_date}</TableCell>
                 <TableCell className="text-sm font-medium">₹{(amc.amount || 0).toLocaleString('en-IN')}</TableCell>
                 <TableCell className="text-sm text-center">{amc.devices_covered || '—'}</TableCell>
-                <TableCell className="text-xs capitalize">{amc.visit_frequency?.replace('_', ' ')}</TableCell>
+                <TableCell className="text-sm text-center">{amc.number_of_visits || '—'}</TableCell>
+                <TableCell className="text-sm text-center">
+                  {amc.asset_ids?.length ? <span className="flex items-center gap-1 text-xs text-blue-600"><Link2 className="w-3 h-3" />{amc.asset_ids.length}</span> : '—'}
+                </TableCell>
                 <TableCell><StatusBadge status={amc.status} /></TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
@@ -213,6 +238,7 @@ export default function AMCPage() {
                 </select>
               </div>
               <div><Label>Devices Covered</Label><Input type="number" value={form.devices_covered} onChange={e => setForm({ ...form, devices_covered: e.target.value })} data-testid="amc-devices" /></div>
+              <div><Label>Number of Visits</Label><Input type="number" value={form.number_of_visits} onChange={e => setForm({ ...form, number_of_visits: e.target.value })} placeholder="e.g. 4" data-testid="amc-num-visits" /></div>
               <div><Label>Visit Frequency</Label>
                 <select value={form.visit_frequency} onChange={e => setForm({ ...form, visit_frequency: e.target.value })} className="w-full h-10 px-3 rounded-md border text-sm" data-testid="amc-visits">
                   {VISIT_OPTS.map(v => <option key={v.value} value={v.value}>{v.label}</option>)}
@@ -228,6 +254,40 @@ export default function AMCPage() {
                 <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.includes_onsite} onChange={e => setForm({ ...form, includes_onsite: e.target.checked })} /> Includes On-site</label>
               </div>
             </div>
+            {/* Linked Assets */}
+            {form.client_id && (
+              <div data-testid="amc-asset-linker">
+                <Label className="flex items-center gap-2 mb-2"><Link2 className="w-4 h-4" /> Link Assets from Register</Label>
+                {(form.asset_ids || []).length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {(form.asset_ids || []).map(aid => {
+                      const a = clientAssets.find(x => x.id === aid);
+                      return <span key={aid} className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs">
+                        <Monitor className="w-3 h-3" />{a ? `${a.asset_tag} ${a.brand} ${a.model}` : aid}
+                        <button type="button" onClick={() => toggleAsset(aid)} className="hover:text-red-500"><XIcon className="w-3 h-3" /></button>
+                      </span>;
+                    })}
+                  </div>
+                )}
+                <Input placeholder="Search assets..." value={assetSearch} onChange={e => setAssetSearch(e.target.value)} className="h-8 text-xs mb-1" data-testid="amc-asset-search" />
+                <div className="max-h-32 overflow-y-auto border rounded-md">
+                  {clientAssets
+                    .filter(a => !assetSearch || `${a.asset_tag} ${a.brand} ${a.model} ${a.serial_number}`.toLowerCase().includes(assetSearch.toLowerCase()))
+                    .slice(0, 20)
+                    .map(a => (
+                      <label key={a.id} className={`flex items-center gap-2 px-3 py-1.5 text-xs cursor-pointer hover:bg-slate-50 border-b last:border-0 ${(form.asset_ids || []).includes(a.id) ? 'bg-blue-50' : ''}`}>
+                        <input type="checkbox" checked={(form.asset_ids || []).includes(a.id)} onChange={() => toggleAsset(a.id)} className="rounded" />
+                        <span className="font-mono text-slate-500">{a.asset_tag}</span>
+                        <span className="capitalize">{a.type}</span>
+                        <span className="font-medium">{a.brand} {a.model}</span>
+                        {a.serial_number && <span className="text-slate-400">S/N: {a.serial_number}</span>}
+                      </label>
+                    ))
+                  }
+                  {clientAssets.length === 0 && <div className="p-3 text-xs text-slate-400 text-center">No assets found for this client</div>}
+                </div>
+              </div>
+            )}
             <div><Label>Notes</Label><textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="w-full h-20 px-3 py-2 rounded-md border text-sm resize-none" placeholder="Additional notes..." /></div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditing(null); }}>Cancel</Button>

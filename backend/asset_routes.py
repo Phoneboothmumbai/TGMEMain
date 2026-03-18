@@ -382,6 +382,66 @@ async def get_asset_qr(asset_id: str):
     }
 
 
+@router.get("/{asset_id}/service-history")
+async def get_asset_service_history(asset_id: str):
+    """Get complete service history for an asset: tasks, service entries, parts used."""
+    asset = await db.assets.find_one({"_id": ObjectId(asset_id)})
+    if not asset:
+        raise HTTPException(status_code=404, detail="Asset not found")
+
+    asset_tag = asset.get("asset_tag", "")
+    serial = asset.get("serial_number", "")
+
+    # Find service entries linked to this asset
+    se_query = {"$or": [{"asset_id": asset_id}, {"asset_tag": asset_tag}]}
+    if serial:
+        se_query["$or"].append({"notes_search": {"$regex": serial, "$options": "i"}})
+    entries = await db.workspace_service_entries.find(se_query, {"_id": 0}).sort("created_at", -1).to_list(100)
+
+    # Find tasks that reference this asset
+    task_query = {"$or": [
+        {"asset_id": asset_id},
+        {"asset_tag": asset_tag},
+        {"serial_number": serial} if serial else {"_never": True},
+    ]}
+    tasks = []
+    async for t in db.workspace_tasks.find(task_query).sort("created_at", -1).limit(50):
+        tasks.append({
+            "id": str(t["_id"]),
+            "job_id": t.get("job_id", ""),
+            "title": t.get("title", ""),
+            "status": t.get("status", ""),
+            "task_type": t.get("task_type", ""),
+            "assigned_to": t.get("assigned_to", ""),
+            "created_at": t.get("created_at", ""),
+            "completed_at": t.get("completed_at", ""),
+            "diagnosis_notes": t.get("diagnosis_notes", ""),
+            "parts_used": [],
+        })
+
+    # Find AMC contracts covering this asset
+    amcs = []
+    async for amc in db.amc_contracts.find({"asset_ids": asset_id}):
+        amcs.append({
+            "id": str(amc["_id"]),
+            "contract_name": amc.get("contract_name", ""),
+            "status": amc.get("status", ""),
+            "start_date": amc.get("start_date", ""),
+            "end_date": amc.get("end_date", ""),
+            "coverage_type": amc.get("coverage_type", ""),
+        })
+
+    return {
+        "asset_id": asset_id,
+        "asset_tag": asset_tag,
+        "service_entries": entries,
+        "tasks": tasks,
+        "amc_contracts": amcs,
+        "assignment_history": asset.get("assignment_history", []),
+        "status_history": asset.get("status_history", []),
+    }
+
+
 @router.post("/bulk")
 async def bulk_create_assets(payload: dict):
     """Bulk upload assets from CSV data."""

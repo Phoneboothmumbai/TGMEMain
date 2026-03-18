@@ -34,6 +34,7 @@ class AMCCreate(BaseModel):
     billing_cycle: str = "annual"  # annual, quarterly, monthly
     devices_covered: int = 0
     asset_ids: List[str] = []
+    number_of_visits: int = 0
     includes_parts: bool = True
     includes_onsite: bool = True
     visit_frequency: str = "quarterly"  # monthly, quarterly, half_yearly, on_demand
@@ -50,6 +51,7 @@ class AMCUpdate(BaseModel):
     billing_cycle: Optional[str] = None
     devices_covered: Optional[int] = None
     asset_ids: Optional[List[str]] = None
+    number_of_visits: Optional[int] = None
     includes_parts: Optional[bool] = None
     includes_onsite: Optional[bool] = None
     visit_frequency: Optional[str] = None

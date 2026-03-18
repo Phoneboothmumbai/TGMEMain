@@ -260,6 +260,23 @@ export const workspaceApi = {
   updateLicense: (id, data) => workspaceApi.fetch(`/subscriptions/licenses/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteLicense: (id) => workspaceApi.fetch(`/subscriptions/licenses/${id}`, { method: 'DELETE' }),
   getLicenseStats: (clientId) => workspaceApi.fetch(`/subscriptions/licenses/stats${clientId ? '?client_id=' + clientId : ''}`),
+
+  // Client Portal Admin
+  getPortalUsers: (clientId) => {
+    const API_URL = process.env.REACT_APP_BACKEND_URL;
+    return fetch(`${API_URL}/api/portal/users${clientId ? '?client_id=' + clientId : ''}`).then(r => { if (!r.ok) return r.json().then(e => { throw new Error(e.detail) }); return r.json(); });
+  },
+  createPortalUser: (data) => {
+    const API_URL = process.env.REACT_APP_BACKEND_URL;
+    return fetch(`${API_URL}/api/portal/users`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(r => { if (!r.ok) return r.json().then(e => { throw new Error(e.detail) }); return r.json(); });
+  },
+  deletePortalUser: (id) => {
+    const API_URL = process.env.REACT_APP_BACKEND_URL;
+    return fetch(`${API_URL}/api/portal/users/${id}`, { method: 'DELETE' }).then(r => r.json());
+  },
+
+  // Asset Service History
+  getAssetServiceHistory: (id) => workspaceApi.fetch(`/assets/${id}/service-history`),
 };
 
 export default WorkspaceAuthContext;

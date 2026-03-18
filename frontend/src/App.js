@@ -51,6 +51,18 @@ import SuppliersPage from "./pages/workspace/SuppliersPage";
 import AssetsPage from "./pages/workspace/AssetsPage";
 import AMCManagementPage from "./pages/workspace/AMCManagementPage";
 import LicensesPage from "./pages/workspace/LicensesPage";
+import PortalUsersPage from "./pages/workspace/PortalUsersPage";
+
+// Client Portal
+import { PortalAuthProvider } from "./contexts/PortalAuthContext";
+import PortalLoginPage from "./pages/portal/PortalLoginPage";
+import PortalLayout from "./pages/portal/PortalLayout";
+import PortalDashboard from "./pages/portal/PortalDashboard";
+import PortalAssetsPage from "./pages/portal/PortalAssetsPage";
+import PortalContactsPage from "./pages/portal/PortalContactsPage";
+import PortalAMCsPage from "./pages/portal/PortalAMCsPage";
+import PortalTicketsPage from "./pages/portal/PortalTicketsPage";
+import PortalRaiseTicketPage from "./pages/portal/PortalRaiseTicketPage";
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -128,6 +140,7 @@ function AppRoutes() {
         <Route path="assets" element={<AssetsPage />} />
         <Route path="amc-management" element={<AMCManagementPage />} />
         <Route path="licenses" element={<LicensesPage />} />
+        <Route path="portal-users" element={<PortalUsersPage />} />
         <Route path="service-entries" element={<ServiceEntriesPage />} />
         <Route path="billing" element={<BillingPage />} />
         <Route path="parts-requests" element={<PartsRequestsPage />} />
@@ -138,6 +151,18 @@ function AppRoutes() {
         <Route path="field-task/:taskId" element={<TaskDetailPage />} />
         <Route path="my-expenses" element={<MyExpensesPage />} />
         <Route path="request-parts" element={<RequestPartsPage />} />
+      </Route>
+
+      {/* Client Portal Routes */}
+      <Route path="/portal/login" element={<PortalLoginPage />} />
+      <Route path="/portal" element={<PortalLayout />}>
+        <Route index element={<PortalDashboard />} />
+        <Route path="dashboard" element={<PortalDashboard />} />
+        <Route path="assets" element={<PortalAssetsPage />} />
+        <Route path="contacts" element={<PortalContactsPage />} />
+        <Route path="amcs" element={<PortalAMCsPage />} />
+        <Route path="tickets" element={<PortalTicketsPage />} />
+        <Route path="raise-ticket" element={<PortalRaiseTicketPage />} />
       </Route>
     </Routes>
   );
@@ -150,8 +175,10 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <WorkspaceAuthProvider>
+            <PortalAuthProvider>
             <AppRoutes />
             <WhatsAppWidget />
+            </PortalAuthProvider>
           </WorkspaceAuthProvider>
         </AuthProvider>
       </BrowserRouter>
