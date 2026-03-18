@@ -19,6 +19,7 @@ from blog_routes import router as blog_router, set_blog_db, start_scheduler, syn
 from contact_routes import router as contact_router
 from seo_routes import router as seo_router, set_seo_db
 from leads_routes import router as leads_router, set_leads_db
+from asset_routes import router as asset_router
 
 
 ROOT_DIR = Path(__file__).parent
@@ -118,6 +119,9 @@ app.include_router(seo_router)
 
 # Include Leads router
 app.include_router(leads_router)
+
+# Include Asset router
+app.include_router(asset_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -224,6 +224,20 @@ export const workspaceApi = {
   bulkUploadClients: (rows) => workspaceApi.fetch('/bulk/clients', { method: 'POST', body: JSON.stringify({ rows }) }),
   bulkUploadEmployees: (rows) => workspaceApi.fetch('/bulk/employees', { method: 'POST', body: JSON.stringify({ rows }) }),
   bulkUploadParts: (rows) => workspaceApi.fetch('/bulk/parts', { method: 'POST', body: JSON.stringify({ rows }) }),
+
+  // Assets
+  getAssets: (filters = {}) => {
+    const params = new URLSearchParams(filters).toString();
+    return workspaceApi.fetch(`/assets${params ? '?' + params : ''}`);
+  },
+  getAsset: (id) => workspaceApi.fetch(`/assets/${id}`),
+  createAsset: (data) => workspaceApi.fetch('/assets', { method: 'POST', body: JSON.stringify(data) }),
+  updateAsset: (id, data) => workspaceApi.fetch(`/assets/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteAsset: (id) => workspaceApi.fetch(`/assets/${id}`, { method: 'DELETE' }),
+  getAssetQR: (id) => workspaceApi.fetch(`/assets/${id}/qr`),
+  getAssetStats: (clientId) => workspaceApi.fetch(`/assets/stats${clientId ? '?client_id=' + clientId : ''}`),
+  getClientsAssetSummary: () => workspaceApi.fetch('/assets/clients-summary'),
+  bulkUploadAssets: (rows) => workspaceApi.fetch('/assets/bulk', { method: 'POST', body: JSON.stringify({ rows }) }),
 };
 
 export default WorkspaceAuthContext;

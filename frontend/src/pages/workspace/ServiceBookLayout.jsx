@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/button';
 import { 
   LayoutDashboard, Users, Building2, Package, ClipboardList, 
   FileText, Receipt, Truck, Settings, LogOut, Menu, X, Bell,
-  ChevronRight, AlertCircle, Clock, CheckCircle2, Wrench, Sparkles
+  ChevronRight, AlertCircle, Clock, CheckCircle2, Wrench, Sparkles, Monitor
 } from 'lucide-react';
 
 export default function ServiceBookLayout() {
@@ -47,6 +47,7 @@ export default function ServiceBookLayout() {
     { path: '/workspace/servicebook', icon: LayoutDashboard, label: 'Dashboard', exact: true },
     { path: '/workspace/servicebook/tasks', icon: ClipboardList, label: 'Jobs / Tasks' },
     { path: '/workspace/servicebook/clients', icon: Building2, label: 'Clients' },
+    { path: '/workspace/servicebook/assets', icon: Monitor, label: 'Asset Management' },
     { path: '/workspace/servicebook/employees', icon: Users, label: 'Employees' },
     { path: '/workspace/servicebook/suppliers', icon: Truck, label: 'Suppliers' },
     { path: '/workspace/servicebook/parts', icon: Package, label: 'Parts & Materials' },

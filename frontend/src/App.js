@@ -48,6 +48,7 @@ import TaskWorkflowPage from "./pages/workspace/TaskWorkflowPage";
 import MyExpensesPage from "./pages/workspace/MyExpensesPage";
 import RequestPartsPage from "./pages/workspace/RequestPartsPage";
 import SuppliersPage from "./pages/workspace/SuppliersPage";
+import AssetsPage from "./pages/workspace/AssetsPage";
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -122,6 +123,7 @@ function AppRoutes() {
         <Route path="parts" element={<PartsPage />} />
         <Route path="tasks" element={<TasksPage />} />
         <Route path="suppliers" element={<SuppliersPage />} />
+        <Route path="assets" element={<AssetsPage />} />
         <Route path="service-entries" element={<ServiceEntriesPage />} />
         <Route path="billing" element={<BillingPage />} />
         <Route path="parts-requests" element={<PartsRequestsPage />} />
