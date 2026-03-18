@@ -1,32 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { Badge } from '../../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
 import { workspaceApi } from '../../contexts/WorkspaceAuthContext';
 import { useWorkspaceAuth } from '../../contexts/WorkspaceAuthContext';
 import { toast } from 'sonner';
+import { ASSET_TYPE_CONFIGS, ALL_TYPE_OPTIONS, BULK_TEMPLATE_HEADERS } from '../../data/assetTypeConfigs';
 import {
   Monitor, Plus, Search, Loader2, QrCode, Trash2, Pencil, ChevronDown, ChevronUp,
   Laptop, Server, Printer, Wifi, Shield, HardDrive, Mouse, Keyboard,
-  AlertTriangle, CheckCircle2, Wrench, Package, X, Download
+  AlertTriangle, CheckCircle2, Wrench, Package, Download, Upload, Camera, X,
+  History, FileText
 } from 'lucide-react';
-
-const TYPE_OPTIONS = [
-  { value: 'laptop', label: 'Laptop' }, { value: 'desktop', label: 'Desktop' },
-  { value: 'monitor', label: 'Monitor' }, { value: 'printer', label: 'Printer' },
-  { value: 'server', label: 'Server' }, { value: 'ups', label: 'UPS' },
-  { value: 'router', label: 'Router' }, { value: 'switch', label: 'Switch' },
-  { value: 'access_point', label: 'Access Point' }, { value: 'firewall', label: 'Firewall' },
-  { value: 'keyboard', label: 'Keyboard' }, { value: 'mouse', label: 'Mouse' },
-  { value: 'webcam', label: 'Webcam' }, { value: 'headset', label: 'Headset' },
-  { value: 'phone', label: 'Phone' }, { value: 'tablet', label: 'Tablet' },
-  { value: 'scanner', label: 'Scanner' }, { value: 'projector', label: 'Projector' },
-  { value: 'nas', label: 'NAS' }, { value: 'other', label: 'Other' },
-];
 
 const STATUS_OPTIONS = [
   { value: 'active', label: 'Active', color: 'bg-green-100 text-green-700' },
@@ -41,16 +29,71 @@ const TYPE_ICONS = {
   laptop: Laptop, desktop: Monitor, monitor: Monitor, server: Server, printer: Printer,
   router: Wifi, switch: Wifi, access_point: Wifi, firewall: Shield,
   ups: HardDrive, keyboard: Keyboard, mouse: Mouse, nas: HardDrive,
+  cctv: Camera, nvr: Camera, phone: Monitor, tablet: Monitor,
 };
 
 function StatusBadge({ status }) {
   const opt = STATUS_OPTIONS.find(s => s.value === status) || STATUS_OPTIONS[0];
-  return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${opt.color}`} data-testid={`status-${status}`}>{opt.label}</span>;
+  return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${opt.color}`}>{opt.label}</span>;
 }
 
 function TypeIcon({ type }) {
   const Icon = TYPE_ICONS[type] || Package;
   return <Icon className="w-4 h-4 text-slate-500" />;
+}
+
+// Dynamic spec fields renderer
+function SpecFields({ type, specs, onChange }) {
+  const config = ASSET_TYPE_CONFIGS[type];
+  if (!config?.specFields?.length) return null;
+
+  return (
+    <div className="border-t border-slate-100 pt-4 mt-4">
+      <h4 className="text-sm font-semibold text-slate-600 mb-3 uppercase tracking-wide">
+        {config.label} Configuration
+      </h4>
+      <div className="grid grid-cols-2 gap-3">
+        {config.specFields.map(field => (
+          <div key={field.key}>
+            <Label className="text-xs">{field.label}</Label>
+            {field.type === 'select' ? (
+              <select
+                value={specs[field.key] || ''}
+                onChange={e => onChange({ ...specs, [field.key]: e.target.value })}
+                className="w-full h-9 px-3 rounded-md border text-sm bg-white"
+                data-testid={`spec-${field.key}`}
+              >
+                <option value="">Select...</option>
+                {field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+              </select>
+            ) : (
+              <Input
+                type={field.type === 'date' ? 'date' : 'text'}
+                value={specs[field.key] || ''}
+                onChange={e => onChange({ ...specs, [field.key]: e.target.value })}
+                placeholder={field.placeholder}
+                className="h-9 text-sm"
+                data-testid={`spec-${field.key}`}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// CSV Parser
+function parseCSV(text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+  return lines.slice(1).map(line => {
+    const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || line.split(',');
+    const row = {};
+    headers.forEach((h, i) => { row[h] = (values[i] || '').trim().replace(/^"|"$/g, ''); });
+    return row;
+  });
 }
 
 const EMPTY_FORM = {
@@ -67,20 +110,21 @@ export default function AssetsPage() {
   const [loading, setLoading] = useState(true);
   const [clients, setClients] = useState([]);
   const [locations, setLocations] = useState([]);
+  const fileInputRef = useRef(null);
 
-  // Filters
   const [search, setSearch] = useState('');
   const [filterClient, setFilterClient] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [filterType, setFilterType] = useState('');
 
-  // Dialogs
   const [showAdd, setShowAdd] = useState(false);
   const [showQR, setShowQR] = useState(null);
   const [expandedAsset, setExpandedAsset] = useState(null);
   const [expandedData, setExpandedData] = useState(null);
   const [editingAsset, setEditingAsset] = useState(null);
   const [showAccessory, setShowAccessory] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
+  const [bulkResult, setBulkResult] = useState(null);
 
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [accessoryForm, setAccessoryForm] = useState({ ...EMPTY_FORM });
@@ -216,6 +260,61 @@ export default function AssetsPage() {
     } catch { toast.error('Failed to generate QR'); }
   };
 
+  // Bulk upload handler
+  const handleBulkUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSaving(true);
+    setBulkResult(null);
+    try {
+      const text = await file.text();
+      const rows = parseCSV(text);
+      if (rows.length === 0) { toast.error('No data found in file'); return; }
+
+      // Map CSV rows to asset format, extract specs from extra columns
+      const commonFields = ['client_name', 'location', 'type', 'brand', 'model', 'serial_number', 'status', 'assigned_to', 'purchase_date', 'warranty_expiry', 'notes'];
+      const mappedRows = rows.map(row => {
+        const specs = {};
+        Object.keys(row).forEach(k => {
+          if (!commonFields.includes(k) && row[k]) specs[k] = row[k];
+        });
+        return { ...row, specs };
+      });
+
+      const result = await workspaceApi.bulkUploadAssets(mappedRows);
+      setBulkResult(result);
+      toast.success(`${result.created} assets created`);
+      if (result.errors?.length) toast.warning(`${result.errors.length} errors`);
+      loadData();
+    } catch (error) {
+      toast.error(error.message || 'Upload failed');
+    } finally {
+      setSaving(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  // Download CSV template
+  const downloadTemplate = (type) => {
+    const common = BULK_TEMPLATE_HEADERS.common;
+    const typeSpecific = BULK_TEMPLATE_HEADERS[type] || BULK_TEMPLATE_HEADERS.default;
+    const headers = [...common, ...typeSpecific];
+    const sampleRow = headers.map(h => {
+      const samples = {
+        client_name: 'Acme Corp', location: 'Head Office', type: type, brand: 'HP',
+        model: 'ProBook 450', serial_number: 'ABC123', status: 'active',
+        assigned_to: 'John', purchase_date: '2024-01-15', warranty_expiry: '2025-01-15', notes: '',
+      };
+      return samples[h] || '';
+    });
+    const csv = [headers.join(','), sampleRow.join(',')].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `asset_template_${type}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-amber-500" /></div>;
   }
@@ -262,7 +361,7 @@ export default function AssetsPage() {
           <select value={filterType} onChange={e => setFilterType(e.target.value)}
             className="h-9 px-3 rounded-md border border-slate-200 text-sm bg-white" data-testid="filter-type">
             <option value="">All Types</option>
-            {TYPE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+            {ALL_TYPE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
           <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
             className="h-9 px-3 rounded-md border border-slate-200 text-sm bg-white" data-testid="filter-status">
@@ -270,9 +369,14 @@ export default function AssetsPage() {
             {STATUS_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         </div>
-        <Button onClick={openAdd} className="bg-amber-500 hover:bg-amber-600 text-white h-9 text-sm" data-testid="add-asset-btn">
-          <Plus className="w-4 h-4 mr-1" /> Add Asset
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowBulk(true)} className="h-9 text-sm" data-testid="bulk-upload-btn">
+            <Upload className="w-4 h-4 mr-1" /> Bulk Upload
+          </Button>
+          <Button onClick={openAdd} className="bg-amber-500 hover:bg-amber-600 text-white h-9 text-sm" data-testid="add-asset-btn">
+            <Plus className="w-4 h-4 mr-1" /> Add Asset
+          </Button>
+        </div>
       </div>
 
       {/* Asset Table */}
@@ -290,7 +394,7 @@ export default function AssetsPage() {
                 <TableHead>Location</TableHead>
                 <TableHead>Assigned To</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="w-24">Actions</TableHead>
+                <TableHead className="w-28">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -304,7 +408,7 @@ export default function AssetsPage() {
                       {expandedAsset === asset.id ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
                     </TableCell>
                     <TableCell className="font-mono text-xs font-semibold text-amber-600">{asset.asset_tag}</TableCell>
-                    <TableCell><div className="flex items-center gap-1.5"><TypeIcon type={asset.type} /><span className="text-sm capitalize">{asset.type?.replace('_', ' ')}</span></div></TableCell>
+                    <TableCell><div className="flex items-center gap-1.5"><TypeIcon type={asset.type} /><span className="text-sm capitalize">{(ALL_TYPE_OPTIONS.find(t => t.value === asset.type)?.label) || asset.type?.replace('_', ' ')}</span></div></TableCell>
                     <TableCell className="text-sm">{asset.brand} {asset.model}</TableCell>
                     <TableCell className="font-mono text-xs text-slate-500">{asset.serial_number || '—'}</TableCell>
                     <TableCell className="text-sm">{asset.client_name || '—'}</TableCell>
@@ -313,9 +417,9 @@ export default function AssetsPage() {
                     <TableCell><StatusBadge status={asset.status} /></TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => openQR(asset.id)} className="p-1.5 hover:bg-slate-100 rounded" title="QR Code" data-testid={`qr-btn-${asset.asset_tag}`}><QrCode className="w-4 h-4 text-slate-500" /></button>
-                        <button onClick={() => openEdit(asset)} className="p-1.5 hover:bg-slate-100 rounded" title="Edit" data-testid={`edit-btn-${asset.asset_tag}`}><Pencil className="w-4 h-4 text-slate-500" /></button>
-                        <button onClick={() => handleDelete(asset.id)} className="p-1.5 hover:bg-red-50 rounded" title="Delete" data-testid={`delete-btn-${asset.asset_tag}`}><Trash2 className="w-4 h-4 text-red-400" /></button>
+                        <button onClick={() => openQR(asset.id)} className="p-1.5 hover:bg-slate-100 rounded" title="QR Code"><QrCode className="w-4 h-4 text-slate-500" /></button>
+                        <button onClick={() => openEdit(asset)} className="p-1.5 hover:bg-slate-100 rounded" title="Edit"><Pencil className="w-4 h-4 text-slate-500" /></button>
+                        <button onClick={() => handleDelete(asset.id)} className="p-1.5 hover:bg-red-50 rounded" title="Delete"><Trash2 className="w-4 h-4 text-red-400" /></button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -323,49 +427,10 @@ export default function AssetsPage() {
                   {expandedAsset === asset.id && expandedData && (
                     <TableRow>
                       <TableCell colSpan={10} className="bg-slate-50 p-0">
-                        <div className="p-5 space-y-4" data-testid="asset-detail">
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                            <div><span className="text-slate-400 text-xs block">Purchase Date</span><span className="font-medium">{expandedData.purchase_date || '—'}</span></div>
-                            <div><span className="text-slate-400 text-xs block">Warranty Expiry</span><span className="font-medium">{expandedData.warranty_expiry || '—'}</span></div>
-                            <div><span className="text-slate-400 text-xs block">AMC Linked</span><span className="font-medium">{expandedData.amc_linked ? `Yes (exp: ${expandedData.amc_expiry || '—'})` : 'No'}</span></div>
-                            <div><span className="text-slate-400 text-xs block">Created By</span><span className="font-medium">{expandedData.created_by || '—'}</span></div>
-                          </div>
-                          {expandedData.specs && Object.keys(expandedData.specs).length > 0 && (
-                            <div>
-                              <span className="text-slate-400 text-xs block mb-1">Specs</span>
-                              <div className="flex flex-wrap gap-2">
-                                {Object.entries(expandedData.specs).map(([k, v]) => (
-                                  <span key={k} className="bg-white border px-2 py-1 rounded text-xs"><span className="text-slate-400">{k}:</span> {v}</span>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          {expandedData.notes && <div><span className="text-slate-400 text-xs block">Notes</span><p className="text-sm">{expandedData.notes}</p></div>}
-
-                          {/* Accessories */}
-                          <div>
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Accessories ({expandedData.accessories?.length || 0})</span>
-                              <Button size="sm" variant="outline" onClick={() => { setAccessoryForm({ ...EMPTY_FORM, type: 'keyboard' }); setShowAccessory(true); }} className="h-7 text-xs" data-testid="add-accessory-btn">
-                                <Plus className="w-3 h-3 mr-1" /> Add Accessory
-                              </Button>
-                            </div>
-                            {expandedData.accessories?.length > 0 ? (
-                              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                                {expandedData.accessories.map(acc => (
-                                  <div key={acc.id} className="flex items-center gap-2 bg-white border rounded-lg p-2.5 text-sm">
-                                    <TypeIcon type={acc.type} />
-                                    <div className="flex-1 min-w-0">
-                                      <div className="font-medium truncate">{acc.brand} {acc.model}</div>
-                                      <div className="text-xs text-slate-400">{acc.asset_tag} {acc.serial_number ? `/ ${acc.serial_number}` : ''}</div>
-                                    </div>
-                                    <StatusBadge status={acc.status} />
-                                  </div>
-                                ))}
-                              </div>
-                            ) : <p className="text-xs text-slate-400">No accessories attached.</p>}
-                          </div>
-                        </div>
+                        <ExpandedAssetDetail
+                          data={expandedData}
+                          onAddAccessory={() => { setAccessoryForm({ ...EMPTY_FORM, type: 'keyboard' }); setShowAccessory(true); }}
+                        />
                       </TableCell>
                     </TableRow>
                   )}
@@ -376,16 +441,16 @@ export default function AssetsPage() {
         </CardContent>
       </Card>
 
-      {/* Add/Edit Asset Dialog */}
+      {/* Add/Edit Asset Dialog with Dynamic Form */}
       <Dialog open={showAdd} onOpenChange={v => { if (!v) { setShowAdd(false); setEditingAsset(null); } }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle data-testid="asset-dialog-title">{editingAsset ? 'Edit Asset' : 'Add New Asset'}</DialogTitle></DialogHeader>
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Type *</Label>
-                <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} className="w-full h-10 px-3 rounded-md border text-sm" data-testid="asset-type">
-                  {TYPE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                <Label>Device Type *</Label>
+                <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value, specs: {} })} className="w-full h-10 px-3 rounded-md border text-sm" data-testid="asset-type">
+                  {ALL_TYPE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
               <div>
@@ -396,7 +461,7 @@ export default function AssetsPage() {
               </div>
               <div>
                 <Label>Brand *</Label>
-                <Input value={form.brand} onChange={e => setForm({ ...form, brand: e.target.value })} placeholder="e.g. HP, Dell, Cisco" required data-testid="asset-brand" />
+                <Input value={form.brand} onChange={e => setForm({ ...form, brand: e.target.value })} placeholder="e.g. HP, Dell, Cisco, Hikvision" required data-testid="asset-brand" />
               </div>
               <div>
                 <Label>Model *</Label>
@@ -445,6 +510,10 @@ export default function AssetsPage() {
                 </div>
               )}
             </div>
+
+            {/* Dynamic Spec Fields */}
+            <SpecFields type={form.type} specs={form.specs} onChange={specs => setForm({ ...form, specs })} />
+
             <div>
               <Label>Notes</Label>
               <textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })}
@@ -468,7 +537,7 @@ export default function AssetsPage() {
             <div>
               <Label>Type</Label>
               <select value={accessoryForm.type} onChange={e => setAccessoryForm({ ...accessoryForm, type: e.target.value })} className="w-full h-10 px-3 rounded-md border text-sm">
-                {TYPE_OPTIONS.filter(t => ['keyboard', 'mouse', 'webcam', 'headset', 'monitor', 'other'].includes(t.value)).map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                {ALL_TYPE_OPTIONS.filter(t => ['keyboard', 'mouse', 'webcam', 'headset', 'monitor', 'other'].includes(t.value)).map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -509,6 +578,159 @@ export default function AssetsPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Bulk Upload Dialog */}
+      <Dialog open={showBulk} onOpenChange={v => { setShowBulk(v); setBulkResult(null); }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>Bulk Asset Upload</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-slate-500">Upload a CSV file with asset data. Download a template first, fill it in, then upload.</p>
+
+            <div>
+              <Label className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2 block">Download Template</Label>
+              <div className="flex flex-wrap gap-2">
+                {['laptop', 'desktop', 'server', 'printer', 'cctv', 'router', 'switch', 'firewall', 'ups', 'monitor'].map(t => (
+                  <button key={t} onClick={() => downloadTemplate(t)}
+                    className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-md font-medium text-slate-700 transition-colors" data-testid={`template-${t}`}>
+                    <Download className="w-3 h-3 inline mr-1" />{ALL_TYPE_OPTIONS.find(o => o.value === t)?.label || t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center">
+              <Upload className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm text-slate-500 mb-3">Drop CSV file here or click to browse</p>
+              <input ref={fileInputRef} type="file" accept=".csv" onChange={handleBulkUpload} className="hidden" data-testid="bulk-file-input" />
+              <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={saving} data-testid="browse-file-btn">
+                {saving ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Processing...</> : 'Choose File'}
+              </Button>
+            </div>
+
+            {bulkResult && (
+              <div className="rounded-lg border p-4 space-y-2" data-testid="bulk-result">
+                <div className="flex items-center gap-2 text-green-600">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span className="font-semibold">{bulkResult.created} assets created successfully</span>
+                </div>
+                {bulkResult.errors?.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-sm font-medium text-red-600 mb-1">{bulkResult.errors.length} errors:</p>
+                    <div className="max-h-32 overflow-y-auto text-xs text-red-500 bg-red-50 rounded p-2">
+                      {bulkResult.errors.map((err, i) => <div key={i}>{err}</div>)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+// Expanded asset detail with specs, accessories, and service history
+function ExpandedAssetDetail({ data, onAddAccessory }) {
+  const config = ASSET_TYPE_CONFIGS[data.type];
+  const specFields = config?.specFields || [];
+  const filledSpecs = specFields.filter(f => data.specs?.[f.key]);
+
+  return (
+    <div className="p-5 space-y-4" data-testid="asset-detail">
+      {/* Basic Info */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+        <div><span className="text-slate-400 text-xs block">Purchase Date</span><span className="font-medium">{data.purchase_date || '—'}</span></div>
+        <div><span className="text-slate-400 text-xs block">Warranty Expiry</span>
+          <span className={`font-medium ${data.warranty_expiry && data.warranty_expiry < new Date().toISOString().slice(0, 10) ? 'text-red-600' : ''}`}>
+            {data.warranty_expiry || '—'}
+          </span>
+        </div>
+        <div><span className="text-slate-400 text-xs block">AMC</span><span className="font-medium">{data.amc_linked ? `Yes (exp: ${data.amc_expiry || '—'})` : 'No'}</span></div>
+        <div><span className="text-slate-400 text-xs block">Created By</span><span className="font-medium">{data.created_by || '—'}</span></div>
+      </div>
+
+      {/* Device-specific specs */}
+      {filledSpecs.length > 0 && (
+        <div>
+          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide block mb-2">
+            {config?.label || 'Device'} Specifications
+          </span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+            {filledSpecs.map(f => (
+              <div key={f.key} className="bg-white border rounded-lg px-3 py-2">
+                <span className="text-slate-400 text-[10px] uppercase tracking-wide block">{f.label}</span>
+                <span className="text-sm font-medium text-slate-700">{data.specs[f.key]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Generic specs fallback */}
+      {filledSpecs.length === 0 && data.specs && Object.keys(data.specs).length > 0 && (
+        <div>
+          <span className="text-slate-400 text-xs block mb-1">Specs</span>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(data.specs).map(([k, v]) => (
+              <span key={k} className="bg-white border px-2 py-1 rounded text-xs"><span className="text-slate-400">{k}:</span> {v}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.notes && <div><span className="text-slate-400 text-xs block">Notes</span><p className="text-sm">{data.notes}</p></div>}
+
+      {/* Accessories */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Accessories ({data.accessories?.length || 0})</span>
+          <Button size="sm" variant="outline" onClick={onAddAccessory} className="h-7 text-xs" data-testid="add-accessory-btn">
+            <Plus className="w-3 h-3 mr-1" /> Add Accessory
+          </Button>
+        </div>
+        {data.accessories?.length > 0 ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {data.accessories.map(acc => (
+              <div key={acc.id} className="flex items-center gap-2 bg-white border rounded-lg p-2.5 text-sm">
+                <TypeIcon type={acc.type} />
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium truncate">{acc.brand} {acc.model}</div>
+                  <div className="text-xs text-slate-400">{acc.asset_tag} {acc.serial_number ? `/ ${acc.serial_number}` : ''}</div>
+                </div>
+                <StatusBadge status={acc.status} />
+              </div>
+            ))}
+          </div>
+        ) : <p className="text-xs text-slate-400">No accessories attached.</p>}
+      </div>
+
+      {/* Service History */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <History className="w-4 h-4 text-slate-500" />
+          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Service History ({data.maintenance_history?.length || 0})</span>
+        </div>
+        {data.maintenance_history?.length > 0 ? (
+          <div className="space-y-2">
+            {data.maintenance_history.map((entry, i) => (
+              <div key={i} className="bg-white border rounded-lg p-3 text-sm">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-medium text-slate-700">{entry.service_type || entry.work_done || 'Service Entry'}</span>
+                  <span className="text-xs text-slate-400">{entry.service_date || entry.created_at?.slice(0, 10) || ''}</span>
+                </div>
+                {entry.description && <p className="text-xs text-slate-500">{entry.description}</p>}
+                {entry.parts_used && (
+                  <div className="flex items-center gap-1 mt-1 text-xs text-slate-400">
+                    <FileText className="w-3 h-3" /> Parts: {Array.isArray(entry.parts_used) ? entry.parts_used.join(', ') : entry.parts_used}
+                  </div>
+                )}
+                {entry.technician && <div className="text-xs text-slate-400 mt-1">Technician: {entry.technician}</div>}
+              </div>
+            ))}
+          </div>
+        ) : <p className="text-xs text-slate-400">No service history recorded for this asset.</p>}
+      </div>
     </div>
   );
 }

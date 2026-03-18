@@ -359,3 +359,427 @@ class TestStatsAfterCleanup:
         # Total should match
         assert stats["total"] == list_data["total"], \
             f"Stats total ({stats['total']}) doesn't match list total ({list_data['total']})"
+
+
+# ==================== PHASE 1 FEATURES - Dynamic Specs & Bulk Upload ====================
+
+class TestAssetSpecsDeviceSpecific:
+    """Test device-specific spec fields for various asset types (Phase 1 feature)"""
+    
+    created_cctv_id = None
+    created_laptop_id = None
+    created_router_id = None
+    created_printer_id = None
+    created_server_id = None
+    created_switch_id = None
+    
+    def test_create_cctv_camera_with_specs(self, api_client):
+        """POST /assets creates CCTV camera with device-specific specs"""
+        payload = {
+            "type": "cctv",
+            "brand": "TEST_Hikvision",
+            "model": "DS-2CD2143G2-IU",
+            "serial_number": "TEST_CCTV001",
+            "status": "active",
+            "client_id": TEST_CLIENT_ID,
+            "specs": {
+                "camera_type": "Dome",
+                "resolution": "4MP (2K)",
+                "night_vision": "IR (Infrared)",
+                "placement": "Indoor",
+                "poe": "Yes",
+                "ip_address": "192.168.1.64",
+                "storage_device": "NVR Channel 1",
+                "location_detail": "Main entrance lobby"
+            },
+            "notes": "Test CCTV with specs"
+        }
+        
+        response = api_client.post(API_BASE, json=payload)
+        assert response.status_code == 200, f"Create CCTV failed: {response.text}"
+        
+        data = response.json()
+        assert data["type"] == "cctv"
+        assert "specs" in data
+        assert data["specs"]["camera_type"] == "Dome"
+        assert data["specs"]["resolution"] == "4MP (2K)"
+        assert data["specs"]["night_vision"] == "IR (Infrared)"
+        assert data["specs"]["ip_address"] == "192.168.1.64"
+        assert data["specs"]["location_detail"] == "Main entrance lobby"
+        
+        TestAssetSpecsDeviceSpecific.created_cctv_id = data["id"]
+        print(f"Created CCTV asset: {data['asset_tag']} with specs")
+    
+    def test_create_laptop_with_specs(self, api_client):
+        """POST /assets creates laptop with hardware specs"""
+        payload = {
+            "type": "laptop",
+            "brand": "TEST_HP",
+            "model": "ProBook 450 G9",
+            "serial_number": "TEST_LAP001",
+            "status": "active",
+            "client_id": TEST_CLIENT_ID,
+            "specs": {
+                "processor": "Intel i5-1340P",
+                "ram": "16GB DDR5",
+                "storage": "512GB NVMe SSD",
+                "os": "Windows 11 Pro",
+                "screen_size": "15.6\"",
+                "battery_health": "Good",
+                "charger_type": "USB-C"
+            },
+            "notes": "Test laptop with full specs"
+        }
+        
+        response = api_client.post(API_BASE, json=payload)
+        assert response.status_code == 200, f"Create laptop failed: {response.text}"
+        
+        data = response.json()
+        assert data["type"] == "laptop"
+        assert data["specs"]["processor"] == "Intel i5-1340P"
+        assert data["specs"]["ram"] == "16GB DDR5"
+        assert data["specs"]["storage"] == "512GB NVMe SSD"
+        assert data["specs"]["os"] == "Windows 11 Pro"
+        
+        TestAssetSpecsDeviceSpecific.created_laptop_id = data["id"]
+        print(f"Created laptop asset: {data['asset_tag']} with specs")
+    
+    def test_create_router_with_specs(self, api_client):
+        """POST /assets creates router with network specs"""
+        payload = {
+            "type": "router",
+            "brand": "TEST_Cisco",
+            "model": "RV340",
+            "serial_number": "TEST_RTR001",
+            "status": "active",
+            "client_id": TEST_CLIENT_ID,
+            "specs": {
+                "wan_ports": "2x GbE WAN",
+                "lan_ports": "4x GbE LAN",
+                "wifi_standard": "No WiFi",
+                "throughput": "900Mbps",
+                "vpn_support": "Yes",
+                "ip_address": "192.168.1.1",
+                "isp": "Airtel Business"
+            },
+            "notes": "Test router with specs"
+        }
+        
+        response = api_client.post(API_BASE, json=payload)
+        assert response.status_code == 200, f"Create router failed: {response.text}"
+        
+        data = response.json()
+        assert data["type"] == "router"
+        assert data["specs"]["wan_ports"] == "2x GbE WAN"
+        assert data["specs"]["lan_ports"] == "4x GbE LAN"
+        assert data["specs"]["vpn_support"] == "Yes"
+        
+        TestAssetSpecsDeviceSpecific.created_router_id = data["id"]
+        print(f"Created router asset: {data['asset_tag']} with specs")
+    
+    def test_create_printer_with_specs(self, api_client):
+        """POST /assets creates printer with printer-specific specs"""
+        payload = {
+            "type": "printer",
+            "brand": "TEST_HP",
+            "model": "LaserJet Pro M404dn",
+            "serial_number": "TEST_PRT001",
+            "status": "active",
+            "client_id": TEST_CLIENT_ID,
+            "specs": {
+                "printer_type": "Laser",
+                "color_mode": "Mono (B&W)",
+                "connectivity": "USB + Network (LAN)",
+                "duplex": "Yes",
+                "scanner": "No (Print Only)",
+                "paper_size": "A4",
+                "toner_cartridge": "HP 58A",
+                "ip_address": "192.168.1.100"
+            },
+            "notes": "Test printer with specs"
+        }
+        
+        response = api_client.post(API_BASE, json=payload)
+        assert response.status_code == 200, f"Create printer failed: {response.text}"
+        
+        data = response.json()
+        assert data["type"] == "printer"
+        assert data["specs"]["printer_type"] == "Laser"
+        assert data["specs"]["color_mode"] == "Mono (B&W)"
+        assert data["specs"]["duplex"] == "Yes"
+        
+        TestAssetSpecsDeviceSpecific.created_printer_id = data["id"]
+        print(f"Created printer asset: {data['asset_tag']} with specs")
+    
+    def test_create_server_with_specs(self, api_client):
+        """POST /assets creates server with server-specific specs"""
+        payload = {
+            "type": "server",
+            "brand": "TEST_Dell",
+            "model": "PowerEdge R750",
+            "serial_number": "TEST_SRV001",
+            "status": "active",
+            "client_id": TEST_CLIENT_ID,
+            "specs": {
+                "processor": "Intel Xeon Gold 5318Y x2",
+                "ram": "128GB ECC DDR4",
+                "storage": "4x 1.2TB SAS RAID-5",
+                "raid_config": "RAID 5",
+                "os": "Windows Server 2022",
+                "rack_unit": "2U",
+                "ip_address": "192.168.1.10",
+                "roles": "AD, DNS, File Server",
+                "remote_access": "iDRAC: 192.168.1.11"
+            },
+            "notes": "Test server with specs"
+        }
+        
+        response = api_client.post(API_BASE, json=payload)
+        assert response.status_code == 200, f"Create server failed: {response.text}"
+        
+        data = response.json()
+        assert data["type"] == "server"
+        assert data["specs"]["raid_config"] == "RAID 5"
+        assert data["specs"]["os"] == "Windows Server 2022"
+        assert data["specs"]["roles"] == "AD, DNS, File Server"
+        
+        TestAssetSpecsDeviceSpecific.created_server_id = data["id"]
+        print(f"Created server asset: {data['asset_tag']} with specs")
+    
+    def test_create_switch_with_specs(self, api_client):
+        """POST /assets creates network switch with switch-specific specs"""
+        payload = {
+            "type": "switch",
+            "brand": "TEST_Cisco",
+            "model": "CBS350-24P",
+            "serial_number": "TEST_SW001",
+            "status": "active",
+            "client_id": TEST_CLIENT_ID,
+            "specs": {
+                "port_count": "24",
+                "switch_type": "Managed",
+                "speed": "1Gbps",
+                "poe": "Yes (PoE+)",
+                "poe_budget": "195W",
+                "sfp_ports": "4x SFP",
+                "ip_address": "192.168.1.2"
+            },
+            "notes": "Test switch with specs"
+        }
+        
+        response = api_client.post(API_BASE, json=payload)
+        assert response.status_code == 200, f"Create switch failed: {response.text}"
+        
+        data = response.json()
+        assert data["type"] == "switch"
+        assert data["specs"]["port_count"] == "24"
+        assert data["specs"]["switch_type"] == "Managed"
+        assert data["specs"]["poe"] == "Yes (PoE+)"
+        
+        TestAssetSpecsDeviceSpecific.created_switch_id = data["id"]
+        print(f"Created switch asset: {data['asset_tag']} with specs")
+    
+    def test_get_cctv_asset_with_specs(self, api_client):
+        """GET /assets/{id} returns CCTV with specs in response"""
+        if not TestAssetSpecsDeviceSpecific.created_cctv_id:
+            pytest.skip("No CCTV created")
+        
+        response = api_client.get(f"{API_BASE}/{TestAssetSpecsDeviceSpecific.created_cctv_id}")
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert data["type"] == "cctv"
+        assert "specs" in data
+        assert data["specs"]["camera_type"] == "Dome"
+        assert data["specs"]["resolution"] == "4MP (2K)"
+        assert "maintenance_history" in data  # Service history should be present
+    
+    def test_get_laptop_asset_with_specs(self, api_client):
+        """GET /assets/{id} returns laptop with specs in response"""
+        if not TestAssetSpecsDeviceSpecific.created_laptop_id:
+            pytest.skip("No laptop created")
+        
+        response = api_client.get(f"{API_BASE}/{TestAssetSpecsDeviceSpecific.created_laptop_id}")
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert data["type"] == "laptop"
+        assert "specs" in data
+        assert data["specs"]["processor"] == "Intel i5-1340P"
+        assert data["specs"]["ram"] == "16GB DDR5"
+    
+    def test_update_asset_specs(self, api_client):
+        """PUT /assets/{id} can update specs field"""
+        if not TestAssetSpecsDeviceSpecific.created_laptop_id:
+            pytest.skip("No laptop created")
+        
+        # Update specs
+        payload = {
+            "specs": {
+                "processor": "Intel i7-1360P",  # Upgraded
+                "ram": "32GB DDR5",  # Upgraded
+                "storage": "512GB NVMe SSD",
+                "os": "Windows 11 Pro",
+                "screen_size": "15.6\"",
+                "battery_health": "Excellent",  # Changed
+                "charger_type": "USB-C"
+            }
+        }
+        
+        response = api_client.put(f"{API_BASE}/{TestAssetSpecsDeviceSpecific.created_laptop_id}", json=payload)
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert data["specs"]["processor"] == "Intel i7-1360P"
+        assert data["specs"]["ram"] == "32GB DDR5"
+        assert data["specs"]["battery_health"] == "Excellent"
+        
+        # Verify persistence with GET
+        get_response = api_client.get(f"{API_BASE}/{TestAssetSpecsDeviceSpecific.created_laptop_id}")
+        get_data = get_response.json()
+        assert get_data["specs"]["processor"] == "Intel i7-1360P"
+
+
+class TestBulkUpload:
+    """Test bulk CSV upload feature (Phase 1 feature)"""
+    
+    def test_bulk_upload_with_valid_data(self, api_client):
+        """POST /assets/bulk creates multiple assets from CSV data"""
+        payload = {
+            "rows": [
+                {
+                    "client_name": "TEST_Acme Corp",
+                    "location": "Head Office",
+                    "type": "laptop",
+                    "brand": "TEST_BulkLenovo",
+                    "model": "ThinkPad T14",
+                    "serial_number": "TEST_BULK001",
+                    "status": "active",
+                    "assigned_to": "Bulk User 1",
+                    "specs": {
+                        "processor": "AMD Ryzen 5 PRO",
+                        "ram": "16GB",
+                        "storage": "256GB"
+                    }
+                },
+                {
+                    "client_name": "TEST_Acme Corp",
+                    "location": "Branch Office",
+                    "type": "printer",
+                    "brand": "TEST_BulkHP",
+                    "model": "LaserJet Pro",
+                    "serial_number": "TEST_BULK002",
+                    "status": "active",
+                    "specs": {
+                        "printer_type": "Laser",
+                        "color_mode": "Color"
+                    }
+                }
+            ]
+        }
+        
+        response = api_client.post(f"{API_BASE}/bulk", json=payload)
+        assert response.status_code == 200, f"Bulk upload failed: {response.text}"
+        
+        data = response.json()
+        assert "created" in data
+        assert "errors" in data
+        assert data["created"] == 2
+        assert len(data["errors"]) == 0
+        
+        print(f"Bulk upload successful: {data['created']} assets created")
+    
+    def test_bulk_upload_with_invalid_client(self, api_client):
+        """POST /assets/bulk reports errors for invalid clients"""
+        payload = {
+            "rows": [
+                {
+                    "client_name": "NonExistent Corp",
+                    "type": "laptop",
+                    "brand": "TEST_Invalid",
+                    "model": "Model X",
+                    "serial_number": "TEST_INVALID001",
+                    "status": "active"
+                }
+            ]
+        }
+        
+        response = api_client.post(f"{API_BASE}/bulk", json=payload)
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert data["created"] == 0
+        assert len(data["errors"]) == 1
+        assert "not found" in data["errors"][0].lower()
+    
+    def test_bulk_upload_with_empty_rows(self, api_client):
+        """POST /assets/bulk with empty rows returns error"""
+        payload = {"rows": []}
+        
+        response = api_client.post(f"{API_BASE}/bulk", json=payload)
+        assert response.status_code == 400
+    
+    def test_bulk_upload_with_specs_preserved(self, api_client):
+        """POST /assets/bulk preserves device-specific specs"""
+        payload = {
+            "rows": [
+                {
+                    "client_name": "TEST_Acme Corp",
+                    "type": "cctv",
+                    "brand": "TEST_BulkHikvision",
+                    "model": "DS-2CD2143G2",
+                    "serial_number": "TEST_BULKCCTV001",
+                    "status": "active",
+                    "specs": {
+                        "camera_type": "Bullet",
+                        "resolution": "8MP (4K)",
+                        "night_vision": "Color Night Vision",
+                        "poe": "Yes",
+                        "ip_address": "192.168.1.70"
+                    }
+                }
+            ]
+        }
+        
+        response = api_client.post(f"{API_BASE}/bulk", json=payload)
+        assert response.status_code == 200
+        
+        data = response.json()
+        assert data["created"] == 1
+        
+        # Verify specs were saved by searching for the asset
+        search_response = api_client.get(f"{API_BASE}?search=TEST_BULKCCTV001")
+        search_data = search_response.json()
+        assert search_data["total"] >= 1
+        
+        asset = next((a for a in search_data["assets"] if a["serial_number"] == "TEST_BULKCCTV001"), None)
+        assert asset is not None
+        
+        # Get full asset details to verify specs
+        detail_response = api_client.get(f"{API_BASE}/{asset['id']}")
+        detail_data = detail_response.json()
+        assert detail_data["specs"]["camera_type"] == "Bullet"
+        assert detail_data["specs"]["resolution"] == "8MP (4K)"
+
+
+class TestCleanupPhase1Assets:
+    """Clean up test assets created in Phase 1 tests"""
+    
+    def test_cleanup_spec_test_assets(self, api_client):
+        """Delete all TEST_ prefixed assets created during Phase 1 tests"""
+        # Search for all TEST_ assets
+        response = api_client.get(f"{API_BASE}?search=TEST_&parent_only=false")
+        assert response.status_code == 200
+        
+        data = response.json()
+        deleted_count = 0
+        
+        for asset in data["assets"]:
+            if "TEST_" in asset.get("brand", "") or "TEST_" in asset.get("serial_number", ""):
+                # Only delete parent assets (accessories will cascade)
+                if not asset.get("parent_asset_id"):
+                    del_response = api_client.delete(f"{API_BASE}/{asset['id']}")
+                    if del_response.status_code == 200:
+                        deleted_count += 1
+        
+        print(f"Cleaned up {deleted_count} test assets")

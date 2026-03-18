@@ -50,6 +50,8 @@ class AssetType(str, Enum):
     SCANNER = "scanner"
     PROJECTOR = "projector"
     NAS = "nas"
+    CCTV = "cctv"
+    NVR = "nvr"
     OTHER = "other"
 
 
@@ -376,7 +378,7 @@ async def bulk_create_assets(payload: dict):
                 "warranty_expiry": row.get("warranty_expiry", ""),
                 "amc_linked": False,
                 "amc_expiry": "",
-                "specs": {},
+                "specs": row.get("specs", {}),
                 "parent_asset_id": "",
                 "notes": row.get("notes", ""),
                 "created_by": "bulk_upload",
