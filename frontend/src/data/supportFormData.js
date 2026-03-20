@@ -44,6 +44,8 @@ export const quoteTopics = [
     subtopics: [
       { id: 'antivirus', label: 'Antivirus / Endpoint Security Solutions', fields: ['num_devices', 'os_types', 'current_solution', 'budget_range'] },
       { id: 'asset_mgmt', label: 'Asset Management / Device Monitoring', fields: ['num_devices', 'device_types_list', 'current_setup'] },
+      { id: 'access_control', label: 'Access Control System', fields: ['num_doors', 'access_control_type', 'num_users', 'site_address', 'current_setup', 'budget_range', 'timeline'] },
+      { id: 'attendance_machine', label: 'Attendance / Biometric Machine', fields: ['attendance_type', 'num_employees', 'num_locations', 'attendance_features', 'site_address', 'budget_range', 'timeline'] },
     ],
   },
   {
@@ -140,6 +142,19 @@ export const supportTopics = [
       { id: 'beeping', label: 'Continuous beeping', fields: ['ups_make_model'] },
       { id: 'backup_not_working', label: 'Power backup not working', fields: ['ups_make_model', 'ups_capacity', 'num_devices_connected'] },
       { id: 'ups_other', label: 'Other', fields: ['ups_make_model'] },
+    ],
+  },
+  {
+    id: 'access_attendance', label: 'Access Control / Attendance',
+    subtopics: [
+      { id: 'ac_not_working', label: 'Access control not working / Door not opening', fields: ['ac_make_model', 'num_doors_affected', 'ac_type_installed', 'error_message'] },
+      { id: 'ac_card_issue', label: 'Card / Fingerprint not recognized', fields: ['ac_make_model', 'num_affected_users', 'since_when'] },
+      { id: 'ac_new_user', label: 'Add / Remove user access', fields: ['ac_make_model', 'num_affected_users'] },
+      { id: 'att_not_marking', label: 'Attendance not marking / Incorrect', fields: ['att_make_model', 'att_type_installed', 'num_affected_users', 'since_when'] },
+      { id: 'att_data_issue', label: 'Attendance data / Report not syncing', fields: ['att_make_model', 'att_software', 'error_message'] },
+      { id: 'att_new_employee', label: 'Add / Remove employee in attendance', fields: ['att_make_model', 'num_affected_users'] },
+      { id: 'ac_att_installation', label: 'New installation request', fields: ['ac_att_device_type', 'num_doors', 'num_employees', 'site_address', 'preferred_date'] },
+      { id: 'ac_att_other', label: 'Other', fields: ['issue_brief'] },
     ],
   },
   {
@@ -295,4 +310,17 @@ export const fieldDefs = {
   payment_method: { label: 'Payment Method', type: 'select', options: ['Bank Transfer / NEFT', 'UPI', 'Cheque', 'Cash', 'Credit Card', 'Other'] },
   contract_id: { label: 'Contract / AMC ID', placeholder: 'If available' },
   service_name: { label: 'Service Name', placeholder: 'e.g., Google Workspace, Hosting, AMC' },
+  // Access Control & Attendance fields
+  num_doors: { label: 'Number of Doors / Entry Points', placeholder: 'e.g., 4', type: 'number' },
+  access_control_type: { label: 'Access Control Type', type: 'select', options: ['Card Based (RFID / Proximity)', 'Biometric (Fingerprint)', 'Face Recognition', 'PIN / Keypad', 'Biometric + Card Combo', 'Not Sure — Need Recommendation'] },
+  attendance_type: { label: 'Attendance Machine Type', type: 'select', options: ['Fingerprint Biometric', 'Face Recognition', 'Card Based (RFID / Proximity)', 'Fingerprint + Face Combo', 'Palm Vein', 'Not Sure — Need Recommendation'] },
+  num_employees: { label: 'Number of Employees', placeholder: 'e.g., 50', type: 'number' },
+  attendance_features: { label: 'Features Required', placeholder: 'e.g., Wi-Fi, Cloud sync, Mobile app, Multiple shifts, Late marking alerts', type: 'textarea' },
+  ac_make_model: { label: 'Access Control Make & Model', placeholder: 'e.g., HikVision DS-K1T804, eSSL X990' },
+  num_doors_affected: { label: 'Doors / Points Affected', placeholder: 'e.g., Main entrance, 2nd floor' },
+  ac_type_installed: { label: 'Type Installed', type: 'select', options: ['Card Based', 'Biometric', 'Face Recognition', 'PIN Keypad', 'Combo', 'Not Sure'] },
+  att_make_model: { label: 'Attendance Machine Make & Model', placeholder: 'e.g., eSSL X990, BioMax N-BM160W' },
+  att_type_installed: { label: 'Type Installed', type: 'select', options: ['Fingerprint', 'Face Recognition', 'Card Based', 'Combo', 'Not Sure'] },
+  att_software: { label: 'Attendance Software', placeholder: 'e.g., eTimeTrackLite, BioMax, ZKTeco' },
+  ac_att_device_type: { label: 'Device Type Needed', type: 'select', options: ['Access Control System', 'Attendance Machine', 'Both — Access Control + Attendance'] },
 };
