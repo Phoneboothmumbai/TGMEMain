@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Chaarudutt Motta — The Good Men Enterprise</title>
+<meta name="description" content="IT Support, AMC, CCTV, Networking, Cloud & more in Mumbai. Contact Chaarudutt Motta — The Good Men Enterprise.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;min-height:100vh;display:flex;justify-content:center}
+.wrap{width:100%;max-width:420px;padding:24px 16px}
+.card{background:#fff;border-radius:24px;box-shadow:0 4px 24px rgba(0,0,0,.06);border:1px solid #f1f5f9;overflow:hidden;margin-bottom:20px}
+.accent{height:4px;background:linear-gradient(90deg,#f59e0b,#fb923c)}
+.info{padding:20px 24px}
+.name{font-size:24px;font-weight:700;color:#0f172a;line-height:1.2}
+.desg{color:#d97706;font-weight:600;font-size:16px;margin-top:2px}
+.company{color:#64748b;font-size:14px;margin-top:4px}
+.addr{display:flex;align-items:flex-start;gap:6px;margin-top:12px;color:#94a3b8;font-size:12px}
+.addr svg{width:14px;height:14px;flex-shrink:0;margin-top:1px}
+.actions{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.btn{display:flex;align-items:center;gap:16px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid #f1f5f9;text-decoration:none;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:box-shadow .15s,border-color .15s}
+.btn:active{transform:scale(.98)}
+.ic{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ic svg{width:20px;height:20px}
+.ic-amber{background:#fffbeb}.ic-amber svg{color:#d97706}
+.ic-green{background:#f0fdf4}.ic-green svg{color:#16a34a}
+.ic-blue{background:#eff6ff}.ic-blue svg{color:#2563eb}
+.ic-purple{background:#faf5ff}.ic-purple svg{color:#9333ea}
+.bl{font-weight:600;color:#1e293b;font-size:14px}
+.bs{color:#94a3b8;font-size:12px;margin-top:1px}
+.svc-wrap{background:#fff;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid #f1f5f9;overflow:hidden;margin-bottom:20px}
+.svc-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:none;border:none;cursor:pointer;font:inherit}
+.svc-toggle span{font-weight:600;color:#334155;font-size:14px}
+.svc-toggle svg{width:16px;height:16px;color:#94a3b8;transition:transform .2s}
+.svc-toggle.open svg{transform:rotate(180deg)}
+.svc-grid{display:none;grid-template-columns:1fr 1fr;gap:8px;padding:0 20px 20px}
+.svc-grid.show{display:grid}
+.svc-item{display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;background:#f8fafc}
+.svc-item svg{width:16px;height:16px;color:#f59e0b;flex-shrink:0}
+.svc-item span{font-size:12px;color:#475569;font-weight:500}
+.links{display:flex;justify-content:center;gap:16px;margin-bottom:24px}
+.lnk{width:44px;height:44px;border-radius:12px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid #f1f5f9;display:flex;align-items:center;justify-content:center;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.lnk svg{width:18px;height:18px;color:#64748b}
+.foot{text-align:center;font-size:12px;color:#cbd5e1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="accent"></div>
+    <div class="info">
+      <div class="name">Chaarudutt Motta</div>
+      <div class="desg">मालिक</div>
+      <div class="company">The Good Men Enterprise</div>
+      <div class="addr">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>7, Lok Kedar, JSD Road, Mulund West, Mumbai - 400080</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a class="btn" href="#" onclick="downloadVCard();return false" data-testid="save-contact-btn">
+      <div class="ic ic-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+      <div><div class="bl">Save Contact</div><div class="bs">Add to your phonebook</div></div>
+    </a>
+    <a class="btn" href="https://wa.me/919820998208?text=Hi%20Chaarudutt%2C%20I%20scanned%20your%20business%20card.%20I%E2%80%99d%20like%20to%20know%20more%20about%20TGME%E2%80%99s%20IT%20services." target="_blank" rel="noopener" data-testid="whatsapp-btn">
+      <div class="ic ic-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></div>
+      <div><div class="bl">Chat on WhatsApp</div><div class="bs">Quick message, instant reply</div></div>
+    </a>
+    <a class="btn" href="tel:+919820998208" data-testid="call-btn">
+      <div class="ic ic-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+      <div><div class="bl">Call Now</div><div class="bs">+919820998208</div></div>
+    </a>
+    <a class="btn" href="https://thegoodmen.in/support" data-testid="support-btn">
+      <div class="ic ic-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg></div>
+      <div><div class="bl">Request Support</div><div class="bs">IT help &amp; service requests</div></div>
+    </a>
+  </div>
+
+  <div class="svc-wrap">
+    <button class="svc-toggle" onclick="toggleSvc(this)" data-testid="services-toggle">
+      <span>What we do</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="svc-grid" id="svcGrid">
+      <div class="svc-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>IT Support &amp; AMC</span></div>
+      <div class="svc-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg><span>CCTV &amp; Security</span></div>
+      <div class="svc-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg><span>Networking</span></div>
+      <div class="svc-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Email &amp; Cloud</span></div>
+      <div class="svc-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Cybersecurity</span></div>
+      <div class="svc-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg><span>Hardware Repair</span></div>
+    </div>
+  </div>
+
+  <div class="links">
+    <a class="lnk" href="https://thegoodmen.in" target="_blank" rel="noopener" data-testid="website-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></a>
+    <a class="lnk" href="mailto:ckmotta@thegoodmen.in" data-testid="email-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+    <a class="lnk" href="https://maps.google.com/?q=7+Lok+Kedar+JSD+Road+Mulund+West+Mumbai+400080" target="_blank" rel="noopener" data-testid="map-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></a>
+    <a class="lnk" href="#" onclick="shareCard();return false" data-testid="share-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></a>
+  </div>
+
+  <div class="foot">thegoodmen.in</div>
+</div>
+
+<script>
+function downloadVCard(){var v="BEGIN:VCARD\nVERSION:3.0\nFN:Chaarudutt Motta\nN:Motta;Chaarudutt;;;\nORG:The Good Men Enterprise\nTITLE:\u092E\u093E\u0932\u093F\u0915\nTEL;TYPE=CELL:+919820998208\nEMAIL;TYPE=WORK:ckmotta@thegoodmen.in\nEMAIL;TYPE=WORK:support@thegoodmen.in\nNOTE:IT Support Mumbai | Computer AMC | CCTV Installation | Networking | Server | Printer Repair | UPS | Apple Mac iPad | Cybersecurity | Firewall | Email Setup | Google Workspace | Data Backup | Hardware Repair | Laptop Desktop | IT Company Mulund Thane | Annual Maintenance Contract | IT Infrastructure | Access Control | Attendance Machine | Software License | Cloud Solutions | WiFi Setup | IT Services\nURL:https://thegoodmen.in\nADR;TYPE=WORK:;;7, Lok Kedar, JSD Road, Mulund West, Mumbai - 400080;;;;\nEND:VCARD";var b=new Blob([v],{type:"text/vcard;charset=utf-8"});var u=URL.createObjectURL(b);var a=document.createElement("a");a.href=u;a.download="Chaarudutt_Motta_TGME.vcf";a.click();URL.revokeObjectURL(u)}
+function toggleSvc(el){el.classList.toggle("open");document.getElementById("svcGrid").classList.toggle("show")}
+function shareCard(){if(navigator.share){navigator.share({title:"Chaarudutt Motta - TGME",text:"Contact for IT services in Mumbai",url:location.href}).catch(function(){})}else{navigator.clipboard.writeText(location.href);alert("Link copied!")}}
+</script>
+</body>
+</html>

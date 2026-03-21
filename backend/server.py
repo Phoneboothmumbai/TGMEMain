@@ -1,5 +1,6 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -131,6 +132,13 @@ app.include_router(subscription_router)
 
 # Include Client Portal router
 app.include_router(client_portal_router)
+
+# Serve business card as static HTML (fast, no React bundle)
+CARD_HTML = ROOT_DIR.parent / "frontend" / "public" / "card.html"
+
+@app.get("/card")
+async def serve_business_card():
+    return FileResponse(str(CARD_HTML), media_type="text/html")
 
 app.add_middleware(
     CORSMiddleware,
