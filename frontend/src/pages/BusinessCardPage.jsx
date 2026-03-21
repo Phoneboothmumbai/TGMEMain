@@ -33,6 +33,7 @@ function generateVCard() {
     `TEL;TYPE=CELL:${CONTACT.phone}`,
     `EMAIL;TYPE=WORK:${CONTACT.email}`,
     'EMAIL;TYPE=WORK:support@thegoodmen.in',
+    'NOTE:IT Support Mumbai | Computer AMC | CCTV Installation | Networking | Server | Printer Repair | UPS | Apple Mac iPad | Cybersecurity | Firewall | Email Setup | Google Workspace | Data Backup | Hardware Repair | Laptop Desktop | IT Company Mulund Thane | Annual Maintenance Contract | IT Infrastructure | Access Control | Attendance Machine | Software License | Cloud Solutions | WiFi Setup | IT Services',
     `URL:${CONTACT.website}`,
     `ADR;TYPE=WORK:;;${CONTACT.address};;;;`,
     'END:VCARD',
