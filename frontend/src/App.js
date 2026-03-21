@@ -19,6 +19,7 @@ import SupportFormPage from "./pages/SupportFormPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import SEOLandingPage from "./pages/SEOLandingPage";
+import BusinessCardPage from "./pages/BusinessCardPage";
 
 // Admin pages
 import { AuthProvider, useAuth } from "./contexts/KBAuthContext";
@@ -113,6 +114,7 @@ function AppRoutes() {
       <Route path="/services/cybersecurity" element={<CyberSecurityPage />} />
       <Route path="/services/repair" element={<HardwareRepairPage />} />
       <Route path="/amc" element={<AMCPage />} />
+      <Route path="/card" element={<BusinessCardPage />} />
       <Route path="/support" element={<SupportFormPage />} />
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/blog/preview/:slug" element={<BlogPostPage />} />

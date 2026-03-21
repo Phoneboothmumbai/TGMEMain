@@ -50,6 +50,7 @@ blog_uploads_dir.mkdir(parents=True, exist_ok=True)
 # Mount static files for uploads
 app.mount("/api/kb/uploads", StaticFiles(directory=str(uploads_dir)), name="kb_uploads")
 app.mount("/api/blog/uploads", StaticFiles(directory=str(blog_uploads_dir)), name="blog_uploads")
+app.mount("/api/uploads", StaticFiles(directory=str(ROOT_DIR / "uploads")), name="general_uploads")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")

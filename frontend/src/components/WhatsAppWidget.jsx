@@ -34,6 +34,10 @@ const PAGE_MESSAGES = {
 export function WhatsAppWidget() {
   const [isHovered, setIsHovered] = useState(false);
 
+  // Hide on business card page and portal pages
+  const path = typeof window !== 'undefined' ? window.location.pathname : '';
+  if (path.startsWith('/card') || path.startsWith('/portal')) return null;
+
   const getMessage = () => {
     const path = window.location.pathname;
     for (const [key, msg] of Object.entries(PAGE_MESSAGES)) {
