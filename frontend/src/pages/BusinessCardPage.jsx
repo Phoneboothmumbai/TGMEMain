@@ -70,18 +70,10 @@ export default function BusinessCardPage() {
         {/* Header Card */}
         <div className="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden mb-6">
           {/* Top Accent */}
-          <div className="h-24 bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400 relative">
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-          </div>
+          <div className="h-3 bg-gradient-to-r from-amber-500 via-amber-400 to-orange-400" />
 
-          {/* Avatar + Info */}
-          <div className="px-6 pb-6 -mt-12">
-            <div className="w-24 h-24 rounded-2xl bg-white border-4 border-white shadow-md flex items-center justify-center mb-4 overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl flex items-center justify-center">
-                <span className="text-3xl font-bold text-amber-400">CM</span>
-              </div>
-            </div>
-
+          {/* Info */}
+          <div className="px-6 py-5">
             <h1 className="text-2xl font-bold text-slate-900 leading-tight" data-testid="card-name">{CONTACT.name}</h1>
             <p className="text-amber-600 font-semibold text-base mt-0.5" data-testid="card-designation">{CONTACT.designation}</p>
             <p className="text-slate-500 text-sm mt-1">{CONTACT.company}</p>
