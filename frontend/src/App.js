@@ -62,6 +62,9 @@ import SalesPipelinePage from "./pages/workspace/SalesPipelinePage";
 import AccountsPage from "./pages/workspace/AccountsPage";
 import SalesContactsPage from "./pages/workspace/ContactsPage";
 import LeadDetailPage from "./pages/workspace/LeadDetailPage";
+import AdminLayout from "./pages/workspace/AdminLayout";
+import AdminDashboard from "./pages/workspace/AdminDashboard";
+import EmployeeManagementPage from "./pages/workspace/EmployeeManagementPage";
 
 // Client Portal
 import { PortalAuthProvider } from "./contexts/PortalAuthContext";
@@ -176,6 +179,12 @@ function AppRoutes() {
         <Route path="scraper" element={<ScraperPage />} />
         <Route path="visitors" element={<VisitorAnalyticsPage />} />
         <Route path="pipeline" element={<SalesPipelinePage />} />
+      </Route>
+
+      {/* Admin Command Centre Routes */}
+      <Route path="/workspace/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="employees" element={<EmployeeManagementPage />} />
       </Route>
 
       {/* Client Portal Routes */}

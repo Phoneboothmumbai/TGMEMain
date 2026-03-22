@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 const apps = [
   { id: 'servicebook', name: 'ServiceBook', description: 'Service Management & Field Operations' },
   { id: 'sales', name: 'Sales CRM', description: 'Lead Generation & Sales Pipeline' },
+  { id: 'admin', name: 'Admin Centre', description: 'User Management & App Permissions' },
 ];
 
 export default function WorkspaceLoginPage() {

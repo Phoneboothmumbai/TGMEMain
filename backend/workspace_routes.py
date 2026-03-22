@@ -97,7 +97,8 @@ async def employee_login(login_data: EmployeeLogin):
             "employee_id": employee["employee_id"],
             "name": employee["name"],
             "role": employee["role"],
-            "apps_access": employee.get("apps_access", [])
+            "apps_access": employee.get("apps_access", []),
+            "permissions": employee.get("permissions", {})
         },
         "section": login_data.section
     }
@@ -123,7 +124,9 @@ async def verify_token(token: str):
             "id": str(employee["_id"]),
             "employee_id": employee["employee_id"],
             "name": employee["name"],
-            "role": employee["role"]
+            "role": employee["role"],
+            "apps_access": employee.get("apps_access", []),
+            "permissions": employee.get("permissions", {})
         },
         "section": session["section"]
     }
@@ -135,6 +138,37 @@ async def employee_logout(token: str):
     return {"message": "Logged out successfully"}
 
 # ==================== EMPLOYEES ====================
+
+@router.get("/admin/employees")
+async def get_all_employees_admin():
+    """Get all employees with full details for admin"""
+    employees = await db.workspace_employees.find().to_list(1000)
+    result = []
+    for emp in employees:
+        result.append({
+            "id": str(emp["_id"]),
+            "employee_id": emp.get("employee_id", ""),
+            "name": emp.get("name", ""),
+            "phone": emp.get("phone", ""),
+            "email": emp.get("email", ""),
+            "role": emp.get("role", "engineer"),
+            "is_active": emp.get("is_active", True),
+            "apps_access": emp.get("apps_access", []),
+            "permissions": emp.get("permissions", {}),
+            "created_at": emp.get("created_at", ""),
+        })
+    return result
+
+@router.delete("/admin/employees/{employee_id}")
+async def delete_employee(employee_id: str):
+    """Deactivate an employee"""
+    result = await db.workspace_employees.update_one(
+        {"employee_id": employee_id},
+        {"$set": {"is_active": False}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return {"message": "Employee deactivated"}
 
 @router.get("/employees", response_model=List[EmployeeResponse])
 async def get_employees():

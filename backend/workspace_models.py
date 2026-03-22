@@ -55,12 +55,13 @@ class PartsRequestStatus(str, Enum):
 class EmployeeCreate(BaseModel):
     employee_id: str  # Custom ID like EMP001
     name: str
-    phone: str
+    phone: str = ""
     email: Optional[str] = None
-    role: EmployeeRole
+    role: EmployeeRole = EmployeeRole.ENGINEER
     password: str
     is_active: bool = True
-    apps_access: List[str] = ["servicebook"]  # Apps this employee can access
+    apps_access: List[str] = ["servicebook"]
+    permissions: Optional[dict] = {}
 
 class EmployeeLogin(BaseModel):
     employee_id: str
@@ -71,11 +72,12 @@ class EmployeeResponse(BaseModel):
     id: str
     employee_id: str
     name: str
-    phone: str
-    email: Optional[str]
-    role: EmployeeRole
-    is_active: bool
-    apps_access: List[str]
+    phone: str = ""
+    email: Optional[str] = None
+    role: EmployeeRole = EmployeeRole.ENGINEER
+    is_active: bool = True
+    apps_access: List[str] = []
+    permissions: Optional[dict] = {}
 
 # ============== CLIENT ==============
 
