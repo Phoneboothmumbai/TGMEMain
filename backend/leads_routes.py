@@ -55,6 +55,27 @@ class LeadUpdate(BaseModel):
     description: Optional[str] = None
     lead_source: Optional[str] = None
 
+class LeadManualCreate(BaseModel):
+    name: str
+    phone: Optional[str] = ""
+    email: Optional[str] = ""
+    company: Optional[str] = ""
+    website: Optional[str] = ""
+    address: Optional[str] = ""
+    business_type: Optional[str] = ""
+    location: Optional[str] = ""
+    status: Optional[str] = "new"
+    priority: Optional[str] = "medium"
+    notes: Optional[str] = ""
+    assigned_to: Optional[str] = ""
+    amount: Optional[float] = 0
+    probability: Optional[int] = 0
+    close_date: Optional[str] = ""
+    account_id: Optional[str] = ""
+    contact_ids: Optional[List[str]] = []
+    description: Optional[str] = ""
+    lead_source: Optional[str] = ""
+
 class AccountCreate(BaseModel):
     name: str
     industry: Optional[str] = ""
@@ -144,6 +165,42 @@ async def submit_lead(data: LeadData):
         pass
 
     return {"success": True, "message": "We'll call you back within 2 hours!"}
+
+
+@router.post("/manual/create")
+async def create_lead_manual(data: LeadManualCreate):
+    """Manually create a lead from the Sales CRM."""
+    if not data.name.strip():
+        raise HTTPException(status_code=400, detail="Name is required")
+    lead = {
+        "name": data.name.strip(),
+        "phone": data.phone.strip() if data.phone else "",
+        "email": data.email.strip() if data.email else "",
+        "company": data.company.strip() if data.company else "",
+        "website": data.website.strip() if data.website else "",
+        "address": data.address.strip() if data.address else "",
+        "business_type": data.business_type,
+        "location": data.location,
+        "status": data.status or "new",
+        "priority": data.priority or "medium",
+        "notes": data.notes,
+        "assigned_to": data.assigned_to,
+        "amount": data.amount or 0,
+        "probability": data.probability or 0,
+        "close_date": data.close_date,
+        "account_id": data.account_id,
+        "contact_ids": data.contact_ids or [],
+        "description": data.description,
+        "lead_source": data.lead_source or "manual",
+        "source": "manual",
+        "tags": [],
+        "next_followup": "",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    result = await db.leads.insert_one(lead)
+    lead["id"] = str(result.inserted_id)
+    lead.pop("_id", None)
+    return lead
 
 
 # ==================== LEAD DASHBOARD ====================

@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
 import { toast } from 'sonner';
 import {
   Search, Loader2, Users, Globe, Phone, Mail, MapPin,
-  TrendingUp, Eye, Zap, RefreshCw,
+  TrendingUp, Eye, Zap, RefreshCw, Plus,
   MessageCircle, Trash2, StickyNote
 } from 'lucide-react';
 
@@ -45,6 +47,10 @@ export default function LeadDashboardPage() {
   const [search, setSearch] = useState('');
   const [filterSource, setFilterSource] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
+  const [accounts, setAccounts] = useState([]);
+  const [createForm, setCreateForm] = useState({ name: '', phone: '', email: '', company: '', website: '', address: '', business_type: '', location: '', notes: '', lead_source: '', account_id: '', amount: 0, priority: 'medium' });
+  const [creating, setCreating] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -67,6 +73,26 @@ export default function LeadDashboardPage() {
     loadData();
   };
 
+  const openCreate = () => {
+    setCreateForm({ name: '', phone: '', email: '', company: '', website: '', address: '', business_type: '', location: '', notes: '', lead_source: '', account_id: '', amount: 0, priority: 'medium' });
+    fetch(`${API}/api/leads/accounts/list`).then(r => r.json()).then(setAccounts).catch(() => {});
+    setShowCreate(true);
+  };
+
+  const createLead = async () => {
+    if (!createForm.name.trim()) { toast.error('Name is required'); return; }
+    setCreating(true);
+    try {
+      const res = await fetch(`${API}/api/leads/manual/create`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(createForm) });
+      if (!res.ok) throw new Error();
+      const lead = await res.json();
+      toast.success('Lead created');
+      setShowCreate(false);
+      navigate(`/workspace/sales/leads/${lead.id}`);
+    } catch { toast.error('Failed to create lead'); }
+    finally { setCreating(false); }
+  };
+
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>;
 
   return (
@@ -74,7 +100,10 @@ export default function LeadDashboardPage() {
       {/* Stats */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-bold text-slate-800 flex items-center gap-2"><TrendingUp className="w-5 h-5" /> Leads</h1>
-        <Button variant="outline" size="sm" onClick={loadData}><RefreshCw className="w-4 h-4 mr-1" /> Refresh</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={loadData}><RefreshCw className="w-4 h-4 mr-1" /> Refresh</Button>
+          <Button size="sm" onClick={openCreate} className="bg-emerald-500 hover:bg-emerald-600 text-white" data-testid="create-lead-btn"><Plus className="w-4 h-4 mr-1" /> Create Lead</Button>
+        </div>
       </div>
 
       {stats && (
@@ -158,6 +187,55 @@ export default function LeadDashboardPage() {
           </TableBody>
         </Table>
       </CardContent></Card>
+
+      {/* Create Lead Dialog */}
+      <Dialog open={showCreate} onOpenChange={v => { if (!v) setShowCreate(false); }}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Create Lead</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label>Name *</Label><Input value={createForm.name} onChange={e => setCreateForm({ ...createForm, name: e.target.value })} placeholder="Lead / Contact name" data-testid="create-lead-name" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label>Phone</Label><Input value={createForm.phone} onChange={e => setCreateForm({ ...createForm, phone: e.target.value })} placeholder="+91..." /></div>
+              <div><Label>Email</Label><Input value={createForm.email} onChange={e => setCreateForm({ ...createForm, email: e.target.value })} placeholder="Email" /></div>
+            </div>
+            <div><Label>Company</Label><Input value={createForm.company} onChange={e => setCreateForm({ ...createForm, company: e.target.value })} placeholder="Company name" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label>Website</Label><Input value={createForm.website} onChange={e => setCreateForm({ ...createForm, website: e.target.value })} placeholder="https://" /></div>
+              <div><Label>Amount (INR)</Label><Input type="number" value={createForm.amount} onChange={e => setCreateForm({ ...createForm, amount: parseFloat(e.target.value) || 0 })} /></div>
+            </div>
+            <div><Label>Address</Label><Input value={createForm.address} onChange={e => setCreateForm({ ...createForm, address: e.target.value })} placeholder="Address" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label>Business Type</Label><Input value={createForm.business_type} onChange={e => setCreateForm({ ...createForm, business_type: e.target.value })} placeholder="e.g., Logistics, IT" /></div>
+              <div><Label>Location</Label><Input value={createForm.location} onChange={e => setCreateForm({ ...createForm, location: e.target.value })} placeholder="e.g., Andheri" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label>Priority</Label>
+                <select value={createForm.priority} onChange={e => setCreateForm({ ...createForm, priority: e.target.value })} className="w-full h-10 px-3 rounded-md border text-sm">
+                  <option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="urgent">Urgent</option>
+                </select>
+              </div>
+              <div><Label>Lead Source</Label>
+                <select value={createForm.lead_source} onChange={e => setCreateForm({ ...createForm, lead_source: e.target.value })} className="w-full h-10 px-3 rounded-md border text-sm">
+                  <option value="">None</option><option value="website">Website</option><option value="referral">Referral</option><option value="cold_call">Cold Call</option><option value="social_media">Social Media</option><option value="trade_show">Trade Show</option><option value="partner">Partner</option><option value="manual">Manual</option>
+                </select>
+              </div>
+            </div>
+            <div><Label>Account</Label>
+              <select value={createForm.account_id} onChange={e => setCreateForm({ ...createForm, account_id: e.target.value })} className="w-full h-10 px-3 rounded-md border text-sm">
+                <option value="">-- No Account --</option>
+                {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+              </select>
+            </div>
+            <div><Label>Notes</Label><textarea value={createForm.notes} onChange={e => setCreateForm({ ...createForm, notes: e.target.value })} className="w-full h-16 px-3 py-2 rounded-md border text-sm resize-none" placeholder="Notes about this lead..." /></div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>
+            <Button onClick={createLead} disabled={creating} className="bg-emerald-500 hover:bg-emerald-600 text-white" data-testid="save-create-lead-btn">
+              {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Lead'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
