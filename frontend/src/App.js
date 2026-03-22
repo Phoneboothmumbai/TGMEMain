@@ -53,6 +53,7 @@ import AssetsPage from "./pages/workspace/AssetsPage";
 import AMCManagementPage from "./pages/workspace/AMCManagementPage";
 import LicensesPage from "./pages/workspace/LicensesPage";
 import PortalUsersPage from "./pages/workspace/PortalUsersPage";
+import LeadDashboardPage from "./pages/workspace/LeadDashboardPage";
 
 // Client Portal
 import { PortalAuthProvider } from "./contexts/PortalAuthContext";
@@ -64,6 +65,7 @@ import PortalContactsPage from "./pages/portal/PortalContactsPage";
 import PortalAMCsPage from "./pages/portal/PortalAMCsPage";
 import PortalTicketsPage from "./pages/portal/PortalTicketsPage";
 import PortalRaiseTicketPage from "./pages/portal/PortalRaiseTicketPage";
+import { useVisitorTracking } from "./hooks/useVisitorTracking";
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -85,6 +87,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function AppRoutes() {
+  useVisitorTracking();
   return (
     <Routes>
       {/* Public Routes */}
@@ -143,6 +146,7 @@ function AppRoutes() {
         <Route path="amc-management" element={<AMCManagementPage />} />
         <Route path="licenses" element={<LicensesPage />} />
         <Route path="portal-users" element={<PortalUsersPage />} />
+        <Route path="leads" element={<LeadDashboardPage />} />
         <Route path="service-entries" element={<ServiceEntriesPage />} />
         <Route path="billing" element={<BillingPage />} />
         <Route path="parts-requests" element={<PartsRequestsPage />} />

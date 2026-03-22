@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/button';
 import { 
   LayoutDashboard, Users, Building2, Package, ClipboardList, 
   FileText, Receipt, Truck, Settings, LogOut, Menu, X, Bell,
-  ChevronRight, AlertCircle, Clock, CheckCircle2, Wrench, Sparkles, Monitor, Key, Shield, Globe
+  ChevronRight, AlertCircle, Clock, CheckCircle2, Wrench, Sparkles, Monitor, Key, Shield, Globe, TrendingUp
 } from 'lucide-react';
 
 export default function ServiceBookLayout() {
@@ -51,6 +51,7 @@ export default function ServiceBookLayout() {
     { path: '/workspace/servicebook/amc-management', icon: Shield, label: 'AMC Contracts' },
     { path: '/workspace/servicebook/licenses', icon: Key, label: 'Licenses & Subs' },
     { path: '/workspace/servicebook/portal-users', icon: Globe, label: 'Client Portal' },
+    { path: '/workspace/servicebook/leads', icon: TrendingUp, label: 'Lead Generation' },
     { path: '/workspace/servicebook/employees', icon: Users, label: 'Employees' },
     { path: '/workspace/servicebook/suppliers', icon: Truck, label: 'Suppliers' },
     { path: '/workspace/servicebook/parts', icon: Package, label: 'Parts & Materials' },
