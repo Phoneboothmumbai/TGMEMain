@@ -3,15 +3,17 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useWorkspaceAuth } from '../../contexts/WorkspaceAuthContext';
 import {
   TrendingUp, Users, Zap, BarChart3, Phone, Target,
-  LogOut, Menu, X, Bell, Settings
+  LogOut, Menu, X, Bell, Settings, Building2, UserCircle
 } from 'lucide-react';
 
 const NAV = [
   { path: '/workspace/sales', icon: BarChart3, label: 'Dashboard', exact: true },
-  { path: '/workspace/sales/leads', icon: Users, label: 'All Leads' },
+  { path: '/workspace/sales/accounts', icon: Building2, label: 'Accounts' },
+  { path: '/workspace/sales/contacts', icon: UserCircle, label: 'Contacts' },
+  { path: '/workspace/sales/leads', icon: Users, label: 'Leads' },
+  { path: '/workspace/sales/pipeline', icon: TrendingUp, label: 'Pipeline' },
   { path: '/workspace/sales/scraper', icon: Zap, label: 'Lead Scraper' },
   { path: '/workspace/sales/visitors', icon: Target, label: 'Visitor Analytics' },
-  { path: '/workspace/sales/pipeline', icon: TrendingUp, label: 'Sales Pipeline' },
 ];
 
 export default function SalesLayout() {

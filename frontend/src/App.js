@@ -59,6 +59,9 @@ import SalesDashboard from "./pages/workspace/SalesDashboard";
 import ScraperPage from "./pages/workspace/ScraperPage";
 import VisitorAnalyticsPage from "./pages/workspace/VisitorAnalyticsPage";
 import SalesPipelinePage from "./pages/workspace/SalesPipelinePage";
+import AccountsPage from "./pages/workspace/AccountsPage";
+import SalesContactsPage from "./pages/workspace/ContactsPage";
+import LeadDetailPage from "./pages/workspace/LeadDetailPage";
 
 // Client Portal
 import { PortalAuthProvider } from "./contexts/PortalAuthContext";
@@ -166,7 +169,10 @@ function AppRoutes() {
       {/* Sales CRM Routes */}
       <Route path="/workspace/sales" element={<SalesLayout />}>
         <Route index element={<SalesDashboard />} />
+        <Route path="accounts" element={<AccountsPage />} />
+        <Route path="contacts" element={<SalesContactsPage />} />
         <Route path="leads" element={<LeadDashboardPage />} />
+        <Route path="leads/:leadId" element={<LeadDetailPage />} />
         <Route path="scraper" element={<ScraperPage />} />
         <Route path="visitors" element={<VisitorAnalyticsPage />} />
         <Route path="pipeline" element={<SalesPipelinePage />} />

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
-import { Users, Zap, TrendingUp, Phone, Eye, ArrowRight, Target, Loader2, BarChart3 } from 'lucide-react';
+import { Users, Zap, TrendingUp, Phone, Eye, ArrowRight, Target, Loader2, BarChart3, Building2, UserCircle } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 
@@ -12,6 +12,7 @@ const STATUS_COLORS = {
 };
 
 export default function SalesDashboard() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [recentLeads, setRecentLeads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,42 +61,68 @@ export default function SalesDashboard() {
       )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link to="/workspace/sales/scraper">
-          <Card className="hover:shadow-md hover:border-emerald-200 transition-all cursor-pointer h-full">
-            <CardContent className="p-5 flex items-center gap-4">
-              <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
-                <Zap className="w-6 h-6 text-emerald-600" />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <Link to="/workspace/sales/accounts">
+          <Card className="hover:shadow-md hover:border-blue-200 transition-all cursor-pointer h-full">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+                <Building2 className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <div className="font-semibold text-slate-800">Run Lead Scraper</div>
-                <div className="text-xs text-slate-500">Find new businesses in Mumbai</div>
+                <div className="font-semibold text-sm text-slate-800">Accounts</div>
+                <div className="text-xs text-slate-500">Companies</div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/workspace/sales/contacts">
+          <Card className="hover:shadow-md hover:border-teal-200 transition-all cursor-pointer h-full">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center">
+                <UserCircle className="w-5 h-5 text-teal-600" />
+              </div>
+              <div>
+                <div className="font-semibold text-sm text-slate-800">Contacts</div>
+                <div className="text-xs text-slate-500">People</div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/workspace/sales/scraper">
+          <Card className="hover:shadow-md hover:border-emerald-200 transition-all cursor-pointer h-full">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center">
+                <Zap className="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <div className="font-semibold text-sm text-slate-800">Lead Scraper</div>
+                <div className="text-xs text-slate-500">Find businesses</div>
               </div>
             </CardContent>
           </Card>
         </Link>
         <Link to="/workspace/sales/pipeline">
           <Card className="hover:shadow-md hover:border-purple-200 transition-all cursor-pointer h-full">
-            <CardContent className="p-5 flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center">
-                <Target className="w-6 h-6 text-purple-600" />
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center">
+                <Target className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <div className="font-semibold text-slate-800">Sales Pipeline</div>
-                <div className="text-xs text-slate-500">Track deals & follow-ups</div>
+                <div className="font-semibold text-sm text-slate-800">Pipeline</div>
+                <div className="text-xs text-slate-500">Track deals</div>
               </div>
             </CardContent>
           </Card>
         </Link>
         <Link to="/workspace/sales/visitors">
-          <Card className="hover:shadow-md hover:border-blue-200 transition-all cursor-pointer h-full">
-            <CardContent className="p-5 flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                <BarChart3 className="w-6 h-6 text-blue-600" />
+          <Card className="hover:shadow-md hover:border-indigo-200 transition-all cursor-pointer h-full">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-indigo-600" />
               </div>
               <div>
-                <div className="font-semibold text-slate-800">Visitor Analytics</div>
-                <div className="text-xs text-slate-500">Track website traffic</div>
+                <div className="font-semibold text-sm text-slate-800">Visitors</div>
+                <div className="text-xs text-slate-500">Website traffic</div>
               </div>
             </CardContent>
           </Card>
@@ -112,7 +139,7 @@ export default function SalesDashboard() {
           {recentLeads.length === 0 && <p className="text-sm text-slate-400 py-4 text-center">No leads yet. Run the scraper to find businesses!</p>}
           <div className="space-y-2">
             {recentLeads.map(l => (
-              <div key={l.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg" data-testid={`recent-lead-${l.id}`}>
+              <div key={l.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => navigate(`/workspace/sales/leads/${l.id}`)} data-testid={`recent-lead-${l.id}`}>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm text-slate-800 truncate">{l.name}</div>
                   <div className="text-xs text-slate-400">{l.business_type || l.service || l.source || ''} {l.location && `• ${l.location}`}</div>
