@@ -9,9 +9,8 @@ import { Briefcase, User, Lock, ChevronDown, AlertCircle, Loader2 } from 'lucide
 import { toast } from 'sonner';
 
 const apps = [
-  { id: 'servicebook', name: 'ServiceBook', description: 'Digital Service Book & Field Service' },
-  // Future apps can be added here
-  // { id: 'inventory', name: 'Inventory', description: 'Stock & Inventory Management' },
+  { id: 'servicebook', name: 'ServiceBook', description: 'Service Management & Field Operations' },
+  { id: 'sales', name: 'Sales CRM', description: 'Lead Generation & Sales Pipeline' },
 ];
 
 export default function WorkspaceLoginPage() {

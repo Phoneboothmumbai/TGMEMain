@@ -3,7 +3,6 @@ TGME Workspace - ServiceBook API Routes
 """
 
 from fastapi import APIRouter, HTTPException, Depends
-from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from datetime import datetime, timezone
 from typing import List, Optional
@@ -12,7 +11,6 @@ import secrets
 import qrcode
 import base64
 from io import BytesIO
-import os
 
 from workspace_models import (
     EmployeeCreate, EmployeeLogin, EmployeeResponse, EmployeeRole,
@@ -29,12 +27,12 @@ from workspace_models import (
 
 router = APIRouter(prefix="/api/workspace", tags=["workspace"])
 
-# Database connection
-MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
-DB_NAME = os.environ.get("DB_NAME", "tgme_database")
+# Database reference - set by server.py via set_workspace_db()
+db = None
 
-client = AsyncIOMotorClient(MONGO_URL)
-db = client[DB_NAME]
+def set_workspace_db(database):
+    global db
+    db = database
 
 # Helper function
 def serialize_doc(doc):
@@ -76,6 +74,7 @@ async def employee_login(login_data: EmployeeLogin):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Check if employee has access to this section/app
+    print(f"DEBUG LOGIN: section={login_data.section}, apps_access={employee.get('apps_access', [])}, check={login_data.section not in employee.get('apps_access', [])}")
     if login_data.section not in employee.get("apps_access", []):
         raise HTTPException(status_code=403, detail="Access denied to this section")
     
@@ -423,7 +422,7 @@ async def bulk_upload_employees(data: dict):
                 "role": row.get("role", "engineer"),
                 "password": hash_password(row.get("password", "tgme123")),
                 "is_active": True,
-                "apps_access": ["servicebook"],
+                "apps_access": ["servicebook", "sales"],
                 "created_at": datetime.now(timezone.utc)
             }
             await db.workspace_employees.insert_one(emp_dict)
@@ -1181,7 +1180,7 @@ async def setup_workspace():
         "role": EmployeeRole.ADMIN,
         "password": hash_password("Charu@123@"),
         "is_active": True,
-        "apps_access": ["servicebook", "admin"],
+        "apps_access": ["servicebook", "sales", "admin"],
         "created_at": datetime.now(timezone.utc)
     }
     await db.workspace_employees.insert_one(admin)

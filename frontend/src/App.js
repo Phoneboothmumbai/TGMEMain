@@ -54,6 +54,11 @@ import AMCManagementPage from "./pages/workspace/AMCManagementPage";
 import LicensesPage from "./pages/workspace/LicensesPage";
 import PortalUsersPage from "./pages/workspace/PortalUsersPage";
 import LeadDashboardPage from "./pages/workspace/LeadDashboardPage";
+import SalesLayout from "./pages/workspace/SalesLayout";
+import SalesDashboard from "./pages/workspace/SalesDashboard";
+import ScraperPage from "./pages/workspace/ScraperPage";
+import VisitorAnalyticsPage from "./pages/workspace/VisitorAnalyticsPage";
+import SalesPipelinePage from "./pages/workspace/SalesPipelinePage";
 
 // Client Portal
 import { PortalAuthProvider } from "./contexts/PortalAuthContext";
@@ -146,7 +151,6 @@ function AppRoutes() {
         <Route path="amc-management" element={<AMCManagementPage />} />
         <Route path="licenses" element={<LicensesPage />} />
         <Route path="portal-users" element={<PortalUsersPage />} />
-        <Route path="leads" element={<LeadDashboardPage />} />
         <Route path="service-entries" element={<ServiceEntriesPage />} />
         <Route path="billing" element={<BillingPage />} />
         <Route path="parts-requests" element={<PartsRequestsPage />} />
@@ -157,6 +161,15 @@ function AppRoutes() {
         <Route path="field-task/:taskId" element={<TaskDetailPage />} />
         <Route path="my-expenses" element={<MyExpensesPage />} />
         <Route path="request-parts" element={<RequestPartsPage />} />
+      </Route>
+
+      {/* Sales CRM Routes */}
+      <Route path="/workspace/sales" element={<SalesLayout />}>
+        <Route index element={<SalesDashboard />} />
+        <Route path="leads" element={<LeadDashboardPage />} />
+        <Route path="scraper" element={<ScraperPage />} />
+        <Route path="visitors" element={<VisitorAnalyticsPage />} />
+        <Route path="pipeline" element={<SalesPipelinePage />} />
       </Route>
 
       {/* Client Portal Routes */}
